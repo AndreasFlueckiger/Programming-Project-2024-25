@@ -1,6 +1,8 @@
 # Battleship Programming Project
+# The ReadMe still Needs to be updated and Written properly in Markdown
 
-**Authors:** Marco Meneghetti, Alexis Flückiger  
+
+
 **Language:** Java 17  
 **GUI:** Java Swing  
 **Grid Size:** 10 × 10
