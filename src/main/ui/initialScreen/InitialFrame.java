@@ -6,7 +6,7 @@ import java.awt.ToolKit;
 
 import javax.swing.JFrame;
 
-import main.battleship.BattleshipConfiguration
+import main.battleship.BattleshipConfiguration;
 
 @SuppressWarnings("serial")
 public class initialFrame extends JFrame {

@@ -1,5 +1,7 @@
 package main.rules.designPatterns;
 
-public class Observer {
-    
+public interface Observer {
+
+	public void notify(Observable o);
+	
 }
