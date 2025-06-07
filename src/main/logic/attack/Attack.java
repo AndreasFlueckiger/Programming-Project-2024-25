@@ -7,13 +7,13 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 
 import main.Title;
-import rules.designPatterns.IObservable;
-import rules.designPatterns.IObserver;
+import rules.designPatterns.Observable;
+import rules.designPatterns.Observer;
 import rules.designPatterns.RulesFacade;
 import main.battleship.BattleshipConfiguration;
 
 @SuppressWarnings("serial")
-public class Attack extends JFrame implements IObserver{
+public class Attack extends JFrame implements Observer{
 	
 	private String currentPlayerName;
 	
@@ -87,7 +87,7 @@ public class Attack extends JFrame implements IObserver{
 	}
 	
 	@Override
-	public void notify(IObservable o) {
+	public void notify(Observable o) {
 		Object lob[] = (Object []) o.get();
 		
 		int currentPlayer = (int) lob[K.objectValues.CURRENT_PLAYER.getValue()];
