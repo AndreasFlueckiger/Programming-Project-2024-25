@@ -1,8 +1,11 @@
-
-
 import java.awt.Color;
-
-
+    //added:
+public class BattleshipConfiguration {
+	public static final int SHIP = 1;
+	public static final int HIT = 2;
+	public static final int MISS = 3;
+	public static final int EMPTY = 0;
+	//
 	public static final int LARG_DEFAULT = 1024;
 	public static final int ALT_DEFAULT = 768;
 
