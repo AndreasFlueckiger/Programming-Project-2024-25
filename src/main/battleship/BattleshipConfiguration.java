@@ -1,5 +1,5 @@
 import java.awt.Color;
-    //added:
+    //added -> my opinion (Alexis) not necessary!
 public class BattleshipConfiguration {
 	public static final int SHIP = 1;
 	public static final int HIT = 2;
