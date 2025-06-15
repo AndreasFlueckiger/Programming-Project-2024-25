@@ -138,7 +138,7 @@ public class NameForm extends JFrame{
             public void actionPerformed(ActionEvent e) {
             	
             	if(player1Txt.getText().equals("Player 1 name") || player2Txt.getText().equals("Player 2 name")) {
-            		JOptionPane.showMessageDialog(null, "Insira os dois nomes!");
+            		JOptionPane.showMessageDialog(null, "Enter both names!");
             	}
             	else {
             		
