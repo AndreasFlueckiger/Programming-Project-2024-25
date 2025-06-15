@@ -14,7 +14,9 @@ import javax.swing.SwingUtilities;
 import main.logic.attack.Attack;
 import main.logic.shippositioning.PositioningGrid;
 import main.battleship.BattleshipConfiguration.PHASE;
+import main.battleship.BattleshipConfiguration;
 import main.rules.designPatterns.RulesFacade;
+import main.logic.ships.Ship
 
 
 @SuppressWarnings("serial")
