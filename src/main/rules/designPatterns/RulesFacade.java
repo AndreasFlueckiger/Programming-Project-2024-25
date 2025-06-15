@@ -1,8 +1,8 @@
 package main.rules.designPatterns;
 
 
-import main.logic.ships.*;
-import main.battleship.*;
+import main.logic.ships.Ship;
+import main.battleship.BattleshipConfiguration.PHASE;
 import main.logic.ships.Ship;
 import main.rules.CtrlRules;
 
@@ -36,7 +36,7 @@ public class RulesFacade {
 		ctrl.resetGame();
 	}
 
-
+// Positioning in the boad
 
       public void shipRotate() {
 		ctrl.shipRotate();
@@ -54,7 +54,8 @@ public class RulesFacade {
 		ctrl.checkPos(x, y, definedCells);
 	}
     
-
+// Attacking Phase
+	
         public void startGame() {
     	ctrl.startGame();
     }
@@ -65,7 +66,7 @@ public class RulesFacade {
 		ctrl.attack(x, y);
 	}
 
-
+// the "Get" and "Set"
 
         public PHASE getPhase() {
     	return ctrl.getPhase();
@@ -95,7 +96,7 @@ public class RulesFacade {
     	return ctrl.getSelectedShip();
     }    
 
-
+// list of Messages
 
     	public void addMessage(String message) {
 		ctrl.addMessage(message);
@@ -104,13 +105,14 @@ public class RulesFacade {
 		ctrl.emptyMessagesList();
 	}
 	
-	
+// Observer Functions
 	
     public void register(Observer o) {
         ctrl.addObserver(o);
     }
     
-    
+// Save / Load
+	
     public CtrlRules getCtrl() {
     	return ctrl;
     }
