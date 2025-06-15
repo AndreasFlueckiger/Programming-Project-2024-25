@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import main.battleship.BattleshipConfiguration
 
 @SuppressWarnings("serial")
 public class Board extends JPanel{
@@ -51,7 +52,7 @@ public class Board extends JPanel{
 			
 			numbersContainers[i] = new JPanel();
 			numbersContainers[i].setLayout(new GridBagLayout());
-			numbersContainers[i].setBounds(labelSpace, K.JPANEL_BORDER - K.LABELS_SIZE, K.SQUARE_SIZE, K.LABELS_SIZE);
+			numbersContainers[i].setBounds(labelSpace, BattleshipConfiguration.JPANEL_BORDER - BattleshipConfiguration.LABELS_SIZE, BattleshipConfiguration.SQUARE_SIZE, BattleshipConfiguration.LABELS_SIZE);
 			numbersContainers[i].setOpaque(false);
 			
 			JLabel number = new JLabel(Integer.toString(i+1));
