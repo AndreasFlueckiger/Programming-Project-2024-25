@@ -40,7 +40,7 @@ public class initialFrame extends JFrame {
 		
 		getContentPane().add(new InitialScreen());
 		
-		setTitle("Batalha Naval");
+		setTitle("Battleship");
 	}
 
 }
