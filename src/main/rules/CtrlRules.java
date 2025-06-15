@@ -3,10 +3,12 @@ package main.rules;
 import java.io.Serializable;
 import java.util.*;
 
-import main.battleship.*;
+import main.battleship.BattleshipConfiguration;
+import main.battleship.BattleshipConfiguration.*;
 import main.logic.ships.*;
 import main.rules.designPatterns.*;
 import main.rules.designPatterns.Observable;
+import main.rules.designPatterns.Observer;
 import main.logic.shippositioning.*;
 
 public class CtrlRules implements Observable, Serializable {
@@ -25,16 +27,21 @@ public class CtrlRules implements Observable, Serializable {
 	List<String> messages = new ArrayList<String>();
 
 	// List of Observers
+	
 	List<Observer> lob = new ArrayList<Observer>();
 
+	
 	// Non-Observer Attributes
+	
 	private PHASE phase;
 	private Ship selectedShip;
 	private int pointsPlayer1 = 0;
 	private int pointsPlayer2 = 0;
 	private int currentAttackCount = 1;
 
+	
 	// Constructor
+	
 	public CtrlRules() {
 		newGame();
 	}
@@ -70,6 +77,82 @@ public class CtrlRules implements Observable, Serializable {
 		refreshBoard();
 	}
 
+	// Public Functions for postioning on the board
+
+	public void shipRotate() {
+		if(selectedShip == null) return;
+		selectedShip.rotate();
+		refreshBoard();
+	}
+	public void positionShip(int x, int y, int[][] definedCells) {
+		if(selectedShip == null) {
+			setIsValid(false);
+			addMessage("Select a ship");
+			return;
+		}
+				
+		checkPos(x, y, definedCells);
+		
+		if(!isValid) {
+			addMessage("Invalid position");
+			refreshBoard();
+			return;
+		}
+		
+		addMessage("Positioning ship");
+		PositioningGrid.getGrid().paintCells(cellsToPaint);
+		ShipOptions.getShipOptions().reduceShipCount(selectedShip);
+		
+		if(!selectedShip.getAvailability()) {
+			unsetSelectedShip();
+			refreshBoard();
+			return;
+		}
+		
+		cellsToPaint = BattleshipConfiguration.createEmptyGrid();
+		refreshBoard();
+		
+	}
+	public void repositionShip(int x, int y, int[][] definedCells) {
+		
+		isValid = true;
+		addMessage("Repositioning Ship");
+		
+		int[][] cellsToRemove = BattleshipConfiguration.createEmptyGrid();
+		
+		setSelectedShipBySize(definedCells[x][y]);
+		cellsToRemove = removeShip(x, y, definedCells);
+						
+		PositioningGrid.getGrid().repositionRepaint(cellsToRemove);
+		ShipOptions.getShipOptions().increaseShipCount(selectedShip);		
+	}
+	public void resetGrid() {
+		setIsValid(true);
+		
+		addMessage("Reseting Grid");
+		
+		PositioningGrid.getGrid().reset();
+		
+		ShipOptions.getShipOptions().resetShipCount();
+		
+		unsetSelectedShip();
+	}
+	public void checkPos(int x, int y, int[][] definedCells) {
+		
+		if(selectedShip == null) {
+			return;
+		}
+				
+		if(selectedShip.getClass().getName() == "main.logic.ships.Seaplane") {
+			checkPosSeaplane(x, y, definedCells);
+		}
+		else{
+			checkPosShip(x, y, definedCells);
+		}
+		
+		refreshBoard();
+	}
+	
 	public void startGame() {
 		if (phase == PHASE.POSITION) {
 			phase = PHASE.ATTACK;
@@ -108,93 +191,1075 @@ public class CtrlRules implements Observable, Serializable {
 		refreshBoard();
 	}
 
-	public void shipRotate() {
-		if (selectedShip != null) {
-			selectedShip.rotate();
+//////////////////////////////////////
+
+	// Private Functions for the position of the board
+
+
+	private int[][] removeShip(int x, int y, int[][] cellsToRemove){
+		
+		if(cellsToRemove[x][y] == SHIPS.SEAPLANE.getValue()) {
+			return removeSeaplane(x, y, cellsToRemove);
+		}
+		
+		if(cellsToRemove[x][y] == SHIPS.SUBMARINE.getValue()) {
+			cellsToRemove[x][y] = 100;
+			return cellsToRemove;
+		}
+		
+		try { 
+			//LEFT-RIGHT -> Reach the left end and go to the right end
+			if(cellsToRemove[x+1][y] > 0) {
+				try {
+					while(cellsToRemove[x][y] != 0) {
+						x--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) {   }
+
+				//Reached end => sum 1 to x to get back to ship
+				x += 1;
+
+				//Beginning left to right removal
+				try {
+					while(cellsToRemove[x][y] != 0) {
+						cellsToRemove[x][y] = 100;
+						x++;
+					}
+					return cellsToRemove;
+				} catch(ArrayIndexOutOfBoundsException e) { }
+			}; 
+		} catch(ArrayIndexOutOfBoundsException e) { }
+		try { 
+			//LEFT-RIGHT -> Reach the left end and go to the right end
+			if(cellsToRemove[x-1][y] > 0) {
+				try {
+					while(cellsToRemove[x][y] != 0) {
+						x--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) { }
+
+				//Reached end => sum 1 to x to get back to ship
+				x += 1;
+
+				//Beginning the left to right removal
+				try {
+					while(cellsToRemove[x][y] != 0) {
+						cellsToRemove[x][y] = 100;
+						x++;
+					}
+					return cellsToRemove;
+				} catch(ArrayIndexOutOfBoundsException e) { }
+			}; 
+		} catch(ArrayIndexOutOfBoundsException e) { }
+		try { 
+			//BOTTOM-TOP -> Reach the bottom and go to the top end
+			if(cellsToRemove[x][y+1] > 0) {
+				try {
+					while(cellsToRemove[x][y] != 0) {
+						y--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) { }
+
+				//Reached end => sum 1 to y to get back to ship
+				y += 1;
+
+				//Beginning bottom to top removal
+				try {
+					while(cellsToRemove[x][y] != 0) {
+						cellsToRemove[x][y] = 100;
+						y++;
+					}
+					return cellsToRemove;
+				} catch(ArrayIndexOutOfBoundsException e) { }
+			}; 
+		} catch(ArrayIndexOutOfBoundsException e) { }	
+		try { 
+			//BOTTOM-TOP -> Reach the bottom and go to the top end
+			if(cellsToRemove[x][y-1] > 0) {
+				try {
+					while(cellsToRemove[x][y] != 0) {
+						y--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) { }
+
+				//Reached end => sum 1 to y to get back to ship
+				y += 1;
+
+				//Beginning the bottom to top removal
+				try {
+					while(cellsToRemove[x][y] != 0) {
+						cellsToRemove[x][y] = 100;
+						y++;
+					}
+					return cellsToRemove;
+				} catch(ArrayIndexOutOfBoundsException e) { }
+			};
+		} catch(ArrayIndexOutOfBoundsException e) { }
+		
+		return null;
+	}
+	private int[][] removeSeaplane(int x, int y, int[][] cellsToRemove) {
+		
+		try {
+			if(cellsToRemove[x+1][y+1] == SHIPS.SEAPLANE.getValue()) {
+				//Check if the block on middle of Seaplane
+				try {
+					if(cellsToRemove[x+1][y-1] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x+1][y+1] = 100;
+						cellsToRemove[x+1][y-1] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				//Check if the block on end of Seaplane
+				try {
+					if(cellsToRemove[x][y+2] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x+1][y+1] = 100;
+						cellsToRemove[x][y+2] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				try {
+					if(cellsToRemove[x+2][y] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x+1][y+1] = 100;
+						cellsToRemove[x+2][y] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+			}
+		}catch(ArrayIndexOutOfBoundsException e) {}
+		
+		try {
+			if(cellsToRemove[x+1][y-1] == SHIPS.SEAPLANE.getValue()) {
+				//Check if the block on middle of Seaplane
+				try {
+					if(cellsToRemove[x-1][y-1] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x+1][y-1] = 100;
+						cellsToRemove[x-1][y-1] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				//Check if the block on end of Seaplane
+				try {
+					if(cellsToRemove[x+2][y] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x+1][y-1] = 100;
+						cellsToRemove[x+2][y] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				try {
+					if(cellsToRemove[x][y-2] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x+1][y-1] = 100;
+						cellsToRemove[x][y-2] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+			}
+		}catch(ArrayIndexOutOfBoundsException e) {}
+		try {
+			if(cellsToRemove[x-1][y-1] == SHIPS.SEAPLANE.getValue()) {
+				//Check if the block is on middle of the Seaplane
+				try {
+					if(cellsToRemove[x-1][y+1] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x-1][y-1] = 100;
+						cellsToRemove[x-1][y+1] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				//Check if the block is on end of the Seaplane
+				try {
+					if(cellsToRemove[x][y-2] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x-1][y-1] = 100;
+						cellsToRemove[x][y-2] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				try {
+					if(cellsToRemove[x-2][y] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x-1][y-1] = 100;
+						cellsToRemove[x-2][y] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+			}
+		}catch(ArrayIndexOutOfBoundsException e) {}
+		try {
+			if(cellsToRemove[x-1][y+1] == SHIPS.SEAPLANE.getValue()) {
+				//Check if the block is on middle of the Seaplane
+				try {
+					if(cellsToRemove[x+1][y+1] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x-1][y+1] = 100;
+						cellsToRemove[x+1][y+1] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				//Check if the block is on the end of the Seaplane
+				try {
+					if(cellsToRemove[x-2][y] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x-1][y+1] = 100;
+						cellsToRemove[x-2][y] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				
+				try {
+					if(cellsToRemove[x][y+2] == SHIPS.SEAPLANE.getValue()) {
+						cellsToRemove[x][y] = 100;
+						cellsToRemove[x-1][y+1] = 100;
+						cellsToRemove[x][y+2] = 100;
+						return cellsToRemove;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+			}
+		}catch(ArrayIndexOutOfBoundsException e) {}
+				
+		
+		return cellsToRemove;
+	}
+	private void setSelectedShipBySize(int shipSize) {
+		if(shipSize == 1) {
+			setSelectedShip(Submarine.getSubmarine());
+		}
+		else if(shipSize == 2) {
+			setSelectedShip(Destroyer.getDestroyer());
+		}
+		else if(shipSize == 3) {
+			setSelectedShip(Seaplane.getSeaplane());
+		}
+		else if(shipSize == 4) {
+			setSelectedShip(Cruiser.getCruiser());
+		}
+		else if(shipSize == 5) {
+			setSelectedShip(Battleship.getBattleship());
+		}
+	}
+	private void checkPosShip(int x, int y, int[][] definedCells){
+		
+		cellsToPaint = BattleshipConfiguration.createEmptyGrid();
+		setIsValid(true);
+		
+		if(!selectedShip.getAvailability()) {
+			setIsValid(false);
+			return;
+		}
+		
+		if(selectedShip.orientation == ORIENTATION.TOP) {
+			for(int i = 0; i < selectedShip.shipSize; i++) {
+				try {
+					if(definedCells[x][y-i] != 0) setIsValid(false);
+					cellsToPaint[x][y-i] = selectedShip.shipSize;
+				}
+				catch(ArrayIndexOutOfBoundsException e) {
+					setIsValid(false);
+				}
+			}
+		}
+		else if(selectedShip.orientation == ORIENTATION.RIGHT) {
+			for(int i = 0; i < selectedShip.shipSize; i++) {
+				try {
+					if(definedCells[x+i][y] != 0) setIsValid(false);
+					cellsToPaint[x+i][y] = selectedShip.shipSize;
+				}
+				catch(ArrayIndexOutOfBoundsException e) {
+					setIsValid(false);
+				}
+			}
+		}
+		else if(selectedShip.orientation == ORIENTATION.DOWN) {
+			for(int i = 0; i < selectedShip.shipSize; i++) {
+				try {
+					if(definedCells[x][y+i] != 0) setIsValid(false);
+					cellsToPaint[x][y+i] = selectedShip.shipSize;
+				}
+				catch(ArrayIndexOutOfBoundsException e) {
+					setIsValid(false);
+				}
+			}
+		}
+		else if(selectedShip.orientation == ORIENTATION.LEFT) {
+			for(int i = 0; i < selectedShip.shipSize; i++) {
+				try {
+					if(definedCells[x-i][y] != 0) setIsValid(false);
+					cellsToPaint[x-i][y] = selectedShip.shipSize;
+				}
+				catch(ArrayIndexOutOfBoundsException e) {
+					setIsValid(false);
+				}
+			}
+		}
+		
+		if(isValid) {
+			setIsValid( checkSurroundingsShip(x, y, definedCells) );
+		}
+						
+	}
+	private void checkPosSeaplane(int x, int y, int [][] definedCells){
+		
+		cellsToPaint = BattleshipConfiguration.createEmptyGrid();
+		
+		setIsValid(true);
+		
+		if(!selectedShip.getAvailability()) {
+			setIsValid(false);
+			return;
+		}
+		
+		if(definedCells[x][y] != 0) {
+			setIsValid(false);
+		}
+		
+		if(selectedShip.orientation == ORIENTATION.TOP) {
+			cellsToPaint[x][y] = selectedShip.shipSize;
+			try {
+				if(definedCells[x-1][y-1] != 0) setIsValid(false);
+				cellsToPaint[x-1][y-1] = selectedShip.shipSize;
+			}
+			catch (ArrayIndexOutOfBoundsException e){
+				setIsValid(false);
+			}
+			try {
+				if(definedCells[x][y-2] != 0) setIsValid(false);
+				cellsToPaint[x][y-2] = selectedShip.shipSize;
+			}
+			catch (ArrayIndexOutOfBoundsException e){
+				setIsValid(false);
+			}
+		}
+		else if(selectedShip.orientation == ORIENTATION.RIGHT) {
+			cellsToPaint[x][y] = selectedShip.shipSize;
+			try {
+				if(definedCells[x+1][y-1] != 0) setIsValid(false);
+				cellsToPaint[x+1][y-1] = selectedShip.shipSize;
+			}
+			catch (ArrayIndexOutOfBoundsException e){
+				setIsValid(false);
+			}
+			try {
+				if(definedCells[x+2][y] != 0) setIsValid(false);
+				cellsToPaint[x+2][y] = selectedShip.shipSize;
+			}
+			catch (ArrayIndexOutOfBoundsException e){
+				setIsValid(false);
+			}
+		}
+		else if(selectedShip.orientation == ORIENTATION.DOWN) {
+			cellsToPaint[x][y] = selectedShip.shipSize;
+			try {
+				if(definedCells[x+1][y+1] != 0) setIsValid(false);
+				cellsToPaint[x+1][y+1] = selectedShip.shipSize;
+			}
+			catch (ArrayIndexOutOfBoundsException e){
+				setIsValid(false);
+			}
+			try {
+				if(definedCells[x][y+2] != 0) setIsValid(false);
+				cellsToPaint[x][y+2] = selectedShip.shipSize;
+			}
+			catch (ArrayIndexOutOfBoundsException e){
+				setIsValid(false);
+			}
+		}
+		else if(selectedShip.orientation == ORIENTATION.LEFT) {
+			cellsToPaint[x][y] = selectedShip.shipSize;
+			try {
+				if(definedCells[x-1][y+1] != 0) setIsValid(false);
+				cellsToPaint[x-1][y+1] = selectedShip.shipSize;
+			}
+			catch (ArrayIndexOutOfBoundsException e){
+				setIsValid(false);
+			}
+			try {
+				if(definedCells[x-2][y] != 0) setIsValid(false);
+				cellsToPaint[x-2][y] = selectedShip.shipSize;
+			}
+			catch (ArrayIndexOutOfBoundsException e){
+				setIsValid(false);
+			}
+		}
+		
+		if(isValid) {
+			setIsValid( checkSurroundingsSeaplane(x, y, definedCells) );
+		}
+				
+	}
+	private boolean checkSurroundingsShip(int x, int y, int[][] definedCells) {
+		
+		if(selectedShip.orientation == ORIENTATION.TOP) {
+			for(int i = selectedShip.shipSize-1; i >= 0; i--) {
+				try { if(definedCells[x+1][y-i] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x][y-i+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-1][y-i] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x][y-i-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x+1][y-i+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-1][y-i+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x+1][y-i-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-1][y-i-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			}
+		}
+		else if(selectedShip.orientation == ORIENTATION.RIGHT) {
+			for(int i = 0; i < selectedShip.shipSize; i++) {
+				try { if(definedCells[x+i+1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x+i][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x+i-1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x+i][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x+i+1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x+i-1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x+i+1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x+i-1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			}
+		}
+		else if(selectedShip.orientation == ORIENTATION.DOWN) {
+			for(int i = 0; i < selectedShip.shipSize; i++) {
+				try { if(definedCells[x+1][y+i] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x][y+i+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-1][y+i] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x][y+i-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x+1][y+i+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-1][y+i+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x+1][y+i-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-1][y+i-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}	
+			}
+		}
+		else if(selectedShip.orientation == ORIENTATION.LEFT) {
+			for(int i = selectedShip.shipSize-1; i >= 0; i--) {
+				try { if(definedCells[x-i+1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-i][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-i-1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-i][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-i+1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-i-1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-i+1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+				try { if(definedCells[x-i-1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			}
+		}
+		
+		return true;
+	}
+	private boolean checkSurroundingsSeaplane(int x, int y, int[][] definedCells) {
+		
+		try { if(definedCells[x+1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+		try { if(definedCells[x][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+		try { if(definedCells[x-1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+		try { if(definedCells[x][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+		
+		try { if(definedCells[x+1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+		try { if(definedCells[x-1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+		try { if(definedCells[x+1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+		try { if(definedCells[x-1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+		
+		if(selectedShip.orientation == ORIENTATION.TOP) {
+			try { if(definedCells[x-1+1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1][y-1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1-1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1][y-1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x-1+1][y-1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1-1][y-1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1+1][y-1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1-1][y-1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x+1][y-2] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x][y-2+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1][y-2] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x][y-2-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x+1][y-2+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1][y-2+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1][y-2-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1][y-2-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+
+		}
+		else if(selectedShip.orientation == ORIENTATION.RIGHT) {
+			try { if(definedCells[x+1+1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1][y-1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1-1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1][y-1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x+1+1][y-1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1-1][y-1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1+1][y-1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1-1][y-1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x+2+1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+2][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+2-1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+2][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x+2+1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+2-1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+2+1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+2-1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+		}
+		else if(selectedShip.orientation == ORIENTATION.DOWN) {
+			try { if(definedCells[x+1+1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1][y+1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1-1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1][y+1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x+1+1][y+1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1+1][y+1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1-1][y+1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1-1][y+1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x+1][y+2] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x][y+2+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1][y+2] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x][y+2-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x+1][y+2+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1][y+2+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x+1][y+2-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1][y+2-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+		}
+		else if(selectedShip.orientation == ORIENTATION.LEFT) {
+			try { if(definedCells[x-1+1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1][y+1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1-1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1][y+1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x-1+1][y+1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1-1][y+1+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1+1][y+1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-1-1][y+1-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x-2+1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-2][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-2-1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-2][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			
+			try { if(definedCells[x-2+1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-2-1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-2+1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+			try { if(definedCells[x-2-1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
+		}
+		
+		return true;
+	}
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+// Public Functions for the attacking phase
+
+		public void startGame() {
+		phase = PHASE.ATTACK;
+	}
+	public void nextPlayer() {
+		checkResult();
+		
+		if(result) {
+			System.out.printf("Player %d wins!\n", currentPlayer);
+			refreshBoard();
+			return;
+		}
+		
+		currentPlayer = getNextPlayer();
+		refreshBoard();
+	}
+	public void attack(int x, int y) {
+		
+		if(getOppositeBoard(currentPlayer)[x][y] == SHIPS.D_WATER.getValue() || getOppositeBoard(currentPlayer)[x][y] < 0) {
+			addMessage("This cell was already clicked!");
+			return;
+		}
+		else if(getOppositeBoard(currentPlayer)[x][y] > 0 && getOppositeBoard(currentPlayer)[x][y] < SHIPS.D_WATER.getValue()) {
+			addMessage(getPlayerName(currentPlayer) + " hit a " + BattleshipConfiguration.getShipNameBySize(getOppositeBoard(currentPlayer)[x][y]) + "!");
+			attackShip(x, y);
+		}
+		else if(getOppositeBoard(currentPlayer)[x][y] == 0) {			
+			addMessage(getPlayerName(currentPlayer) + " missed!");
+			attackShip(x, y);
+		}
+		
+		if(currentAttackCount == 3 ) {	
+			currentAttackCount = 1;
+			nextPlayer();
+		}
+		else {
+			checkResult();
+			currentAttackCount++;
 			refreshBoard();
 		}
+	
 	}
 
-	public void positionShip(int x, int y, int[][] definedCells) {
-		checkPos(x, y, definedCells);
-		if (isValid && selectedShip != null) {
-			selectedShip.setPosition(x, y);
-			BattleshipConfiguration.placeShip(getCurrentBoard(), selectedShip, definedCells);
-			unsetSelectedShip();
+
+	// Private Functions for the attacking phase
+
+		private void attackShip(int x, int y) {
+		int[][] currentBoard = getOppositeBoard(currentPlayer);
+		int currentPlayerPoints = 0;
+		
+		if(currentBoard[x][y] == 0) {
+			currentBoard[x][y] = SHIPS.D_WATER.getValue();
 		}
+		else if(currentBoard[x][y] > 0) {
+			currentPlayerPoints += 1;
+			currentBoard[x][y] = -currentBoard[x][y];
+			
+			if(currentBoard[x][y] == SHIPS.D_SEAPLANE.getValue()) {
+				if(checkAndDestroySeaplane(x, y)) {
+					addMessage(getPlayerName(currentPlayer) + " sinked a Seaplane !");
+				}
+			}
+			else if(checkIfShipDestroyed(x, y)) {
+				destroyShip(x, y);
+			}
+		}
+		
+		switch(currentPlayer) {
+			case 1: 
+				pointsPlayer1 += currentPlayerPoints;
+				break;
+			case 2: 
+				pointsPlayer2 += currentPlayerPoints;
+				break;
+		}
+	}
+	private boolean checkIfShipDestroyed(int x, int y) {
+		
+		int[][] currentBoard = getOppositeBoard(currentPlayer);
+		int destroyedCellsNum = 0;
+		
+		int shipSize = -currentBoard[x][y];
+		
+		if(currentBoard[x][y] == SHIPS.D_SUBMARINE.getValue()) {
+			return true;
+		}
+
+		try { 
+			//LEFT-RIGHT -> Reach the left end and go to the right end
+			if(currentBoard[x+1][y] < 0) {
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						x--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) {   }
+
+				//Reached end => sum 1 to x to get back to ship
+				x += 1;
+
+				//Beginning left to right check
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						if(currentBoard[x][y] < 0) {
+							destroyedCellsNum++;
+						}
+						x++;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) { }
+			}; 
+		} catch(ArrayIndexOutOfBoundsException e) { }
+		try { 
+			//LEFT-RIGHT -> Reach the left end and go to the right end
+			if(currentBoard[x-1][y] < 0) {
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						x--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) { }
+
+				//Reached end => sum 1 to x to get back to ship
+				x += 1;
+
+				//Beginning left to right check
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						if(currentBoard[x][y] < 0) {
+							destroyedCellsNum++;
+						}
+						x++;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) { }
+			}; 
+		} catch(ArrayIndexOutOfBoundsException e) { }
+		try { 
+			//BOTTOM-TOP -> Reach the bottom and go to the top end
+			if(currentBoard[x][y+1] < 0) {
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						y--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) { }
+
+				//Reached end => sum 1 to y to get back to ship
+				y += 1;
+
+				//Beginning bottom to top check
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						if(currentBoard[x][y] < 0) {
+							destroyedCellsNum++;
+						}
+						y++;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) { }
+			}; 
+		} catch(ArrayIndexOutOfBoundsException e) { }	
+		try { 
+			//BOTTOM-TOP -> Reach the bottom and go to the top end
+			if(currentBoard[x][y-1] < 0) {
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						y--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) { }
+
+				//Reached end => sum 1 to y to get back to ship
+				y += 1;
+
+				//Beginning bottom to top check
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						if(currentBoard[x][y] < 0) {
+							destroyedCellsNum++;
+						}
+						y++;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) { }
+			};
+		} catch(ArrayIndexOutOfBoundsException e) { }
+		
+		return shipSize == destroyedCellsNum;
+	}
+	private void destroyShip(int x, int y) {
+		int[][] currentBoard = getOppositeBoard(currentPlayer);
+
+		addMessage(getPlayerName(currentPlayer) + " sinked a " + BattleshipConfiguration.getShipNameBySize(getOppositeBoard(currentPlayer)[x][y]) + "!");
+		
+		if(currentBoard[x][y] == SHIPS.D_SUBMARINE.getValue()) {
+			currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+			return;
+		}	
+
+		try { 
+			//LEFT-RIGHT -> Reach the left end and delete
+			if(currentBoard[x+1][y] != 0 && currentBoard[x+1][y] != SHIPS.D_WATER.getValue()) {
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						x--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) {}
+
+				//Reached end => sum 1 to x to get back to ship
+				x += 1;
+
+				//Beginning left to right removal
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						x++;
+					}
+					return;
+				} catch(ArrayIndexOutOfBoundsException e) {}
+			}; 
+		} catch(ArrayIndexOutOfBoundsException e) {}
+		try { 
+			//LEFT-RIGHT -> Reach the left end and delete
+			if(currentBoard[x-1][y] != 0 && currentBoard[x-1][y] != SHIPS.D_WATER.getValue()) {
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						x--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) {}
+
+				//Reached end => sum 1 to x to get back to ship
+				x += 1;
+
+				//Beginning left to right removal
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						x++;
+					}
+					return;
+				} catch(ArrayIndexOutOfBoundsException e) {}
+			}; 
+		} catch(ArrayIndexOutOfBoundsException e) {}
+		try { 
+			//BOTTOM-TOP -> Reach bottom end and delete
+			if(currentBoard[x][y+1] != 0 && currentBoard[x][y+1] != SHIPS.D_WATER.getValue()) {
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						y--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) {}
+
+				//Reached end => sum 1 to y to get back to ship
+				y += 1;
+
+				//Beginning bottom to top removal
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						y++;
+					}
+					return;
+				} catch(ArrayIndexOutOfBoundsException e) {}
+			}; 
+		} catch(ArrayIndexOutOfBoundsException e) {}	
+		try { 
+			//BOTTOM-TOP -> Reach bottom end and delete
+			if(currentBoard[x][y-1] != 0 && currentBoard[x][y-1] != SHIPS.D_WATER.getValue()) {
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						y--;
+					}
+				} catch(ArrayIndexOutOfBoundsException e) {}
+
+				//Reached end => sum 1 to y to get back to ship
+				y += 1;
+
+				//Beginning bottom to top removal
+				try {
+					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						y++;
+					}
+					return;
+				} catch(ArrayIndexOutOfBoundsException e) {}
+			}; 
+		} catch(ArrayIndexOutOfBoundsException e) {}
+	}
+	private boolean checkAndDestroySeaplane(int x, int y) {
+		int[][] currentBoard = getOppositeBoard(currentPlayer);
+		
+		try {
+			if(currentBoard[x+1][y+1] == SHIPS.D_SEAPLANE.getValue()) {
+				//Check if block on middle of Seaplane
+				try {
+					if(currentBoard[x+1][y-1] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguaration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x+1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x+1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				//Check if block on end of Seaplane
+				try {
+					if(currentBoard[x][y+2] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x+1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x][y+2] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				try {
+					if(currentBoard[x+2][y] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x+1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x+2][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+			}
+		}catch(ArrayIndexOutOfBoundsException e) {}
+		
+		try {
+			if(currentBoard[x+1][y-1] == SHIPS.D_SEAPLANE.getValue()) {
+				//Check if block on middle of Seaplane
+				try {
+					if(currentBoard[x-1][y-1] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x+1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x-1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				//Check if the block is at the end of the Seaplane
+				try {
+					if(currentBoard[x+2][y] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x+1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x+2][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				try {
+					if(currentBoard[x][y-2] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x+1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x][y-2] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+			}
+		}catch(ArrayIndexOutOfBoundsException e) {}
+		try {
+			if(currentBoard[x-1][y-1] == SHIPS.D_SEAPLANE.getValue()) {
+				//Check if block on middle of Seaplane
+				try {
+					if(currentBoard[x-1][y+1] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x-1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x-1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				//Check if the block is at the end of the Seaplane
+				try {
+					if(currentBoard[x][y-2] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x-1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x][y-2] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				try {
+					if(currentBoard[x-2][y] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x-1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x-2][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+			}
+		}catch(ArrayIndexOutOfBoundsException e) {}
+		try {
+			if(currentBoard[x-1][y+1] == SHIPS.D_SEAPLANE.getValue()) {
+				//Check if the block is in the middle of the Seaplane
+				try {
+					if(currentBoard[x+1][y+1] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x-1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x+1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				//Check if the block is at the end of the Seaplane
+				try {
+					if(currentBoard[x-2][y] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x-1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x-2][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+				
+				try {
+					if(currentBoard[x][y+2] == SHIPS.D_SEAPLANE.getValue()) {
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x-1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x][y+2] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+						return true;
+					}
+				}catch(ArrayIndexOutOfBoundsException e) {}
+			}
+		}catch(ArrayIndexOutOfBoundsException e) {}
+		
+		return false;
+		
+	}
+	private void checkResult() {
+		
+		int currentPlayerPoints = 0;
+		
+		switch(currentPlayer) {
+			case 1: 
+				currentPlayerPoints = pointsPlayer1;
+				break;
+			case 2: 
+				currentPlayerPoints = pointsPlayer2;
+				break;
+		}
+				
+		if(currentPlayerPoints == 38) {
+			result = true;
+		}
+		
 		refreshBoard();
 	}
+	
+//////////////////////////////////////
 
-	public void repositionShip(int x, int y, int[][] definedCells) {
-		if (selectedShip != null) {
-			BattleshipConfiguration.removeShip(getCurrentBoard(), selectedShip);
-			positionShip(x, y, definedCells);
-		}
-	}
+// list of messages:
 
-	public void resetGrid() {
-		BattleshipConfiguration.clearBoard(board1);
-		BattleshipConfiguration.clearBoard(board2);
+
+	public void addMessage(String message) {
+		messages.add(message);
 		refreshBoard();
 	}
-
-	public void checkPos(int x, int y, int[][] definedCells) {
-		isValid = BattleshipConfiguration.canPlaceShip(getCurrentBoard(), x, y, definedCells);
+	public void emptyMessagesList() {
+		messages.clear();
 	}
+
+////////////////////////////////////////////////////////////////////
+
+// methods "get" and "set"
 
 	public PHASE getPhase() {
 		return phase;
 	}
-
-	public int getCurrentPhase() {
-		return (phase == PHASE.POSITION) ? 0 : 1;
-	}
-
-	public int getNextPlayer() {
-		return (currentPlayer == 1) ? 2 : 1;
-	}
-
-	public void setBoard(int playerNum) {
-		currentPlayer = playerNum;
-		refreshBoard();
-	}
-
-	public String getPlayerName(int playerNum) {
-		return (playerNum == 1) ? player1 : player2;
-	}
-
-	public void setPlayerName(int playerNum, String playerName) {
-		if (playerNum == 1) player1 = playerName;
-		else if (playerNum == 2) player2 = playerName;
-		refreshBoard();
-	}
-
 	public void setSelectedShip(Ship ship) {
-		this.selectedShip = ship;
-	}
-
+		selectedShip = ship;
+    }
 	public void unsetSelectedShip() {
-		this.selectedShip = null;
+		if(selectedShip == null) return;
+    	selectedShip.unselectPreviousShip();
+		selectedShip = null;
+		
+		cellsToPaint = BattleshipConfiguration.createEmptyGrid();
+		refreshBoard();
+    }
+	public int getCurrentPlayer() {
+		return currentPlayer;
 	}
-
+	public int getNextPlayer() {
+		if(currentPlayer == 1) {
+			return 2;
+		}
+		else {
+			return 1;
+		}
+	}
+	public void setBoard(int playerNum) {
+		switch(playerNum) {
+			case 1: board1 = PositioningGrid.getGrid().getFinalGrid();
+			case 2: board2 = PositioningGrid.getGrid().getFinalGrid();
+		}
+	}
+	public String getPlayerName(int playerNum) {
+		switch(playerNum) {
+			case 1: return player1;
+			case 2: return player2;
+		}
+		return null;
+	}
+	public void setPlayerName(int playerNum, String playerName) {
+		switch(playerNum) {
+		case 1: player1 = playerName;
+		case 2: player2 = playerName;
+		}
+	}
 	public Ship getSelectedShip() {
 		return selectedShip;
 	}
-
-	public void addMessages(String message) {
-		messages.add(message);
-		refreshBoard();
+	
+	private void setIsValid(boolean validation) {
+		isValid = validation;
+	}
+	private int[][] getOppositeBoard(int playerNum) {
+		switch(playerNum) {
+			case 1: return board2;
+			case 2: return board1;
+		}
+		return null;
 	}
 
-	public void emptyMessagesList() {
-		messages.clear();
-		refreshBoard();
-	}
-
-	private int[][] getCurrentBoard() {
-		return (currentPlayer == 1) ? board1 : board2;
-	}
-
+//////////////////////////////////////////////////////
+	
 	// Observer Functions
 	@Override
 	public void addObserver(Observer o) {
