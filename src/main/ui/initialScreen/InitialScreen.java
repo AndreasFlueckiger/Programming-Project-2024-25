@@ -40,7 +40,7 @@ public class InitialScreen extends JPanel {
 		startBtn.setMinimumSize(btnDimension);
 		startBtn.setMaximumSize(btnDimension);
 		startBtn.setAlignmentX( Component.CENTER_ALIGNMENT );
-		startBtn.setToolTipText("Começar um novo jogo.");
+		startBtn.setToolTipText("Start a new game.");
 		startBtn.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent e) { 
 				new NameForm().setVisible(true);
@@ -54,7 +54,7 @@ public class InitialScreen extends JPanel {
 		loadBtn.setMinimumSize(btnDimension);
 		loadBtn.setMaximumSize(btnDimension);
 		loadBtn.setAlignmentX( Component.CENTER_ALIGNMENT );
-		loadBtn.setToolTipText("Carregar um arquivo de jogo salvo.");
+		loadBtn.setToolTipText("Load an archieve of a saved game.");
 		loadBtn.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  SaveLoadManager.get().Load();
@@ -68,7 +68,7 @@ public class InitialScreen extends JPanel {
 		exitBtn.setMinimumSize(btnDimension);
 		exitBtn.setMaximumSize(btnDimension);
 		exitBtn.setAlignmentX( Component.CENTER_ALIGNMENT );
-		exitBtn.setToolTipText("Sair do jogo :(");
+		exitBtn.setToolTipText("Leave the game :(");
 		exitBtn.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  System.exit(0);
