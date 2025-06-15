@@ -90,12 +90,12 @@ public class Attack extends JFrame implements Observer{
 	public void notify(Observable o) {
 		Object lob[] = (Object []) o.get();
 		
-		int currentPlayer = (int) lob[K.objectValues.CURRENT_PLAYER.getValue()];
+		int currentPlayer = (int) lob[BattleshipConfiguration.objectValues.CURRENT_PLAYER.getValue()];
 
 		if(currentPlayer == 1)
-			currentPlayerName = (String) lob[ K.objectValues.PLAYER_1_NAME.getValue() ];
+			currentPlayerName = (String) lob[ BattleshipConfiguration.objectValues.PLAYER_1_NAME.getValue() ];
 		else
-			currentPlayerName = (String) lob[ K.objectValues.PLAYER_2_NAME.getValue() ];
+			currentPlayerName = (String) lob[ BattleshipConfiguration.objectValues.PLAYER_2_NAME.getValue() ];
 		
 	}
 	
