@@ -135,7 +135,7 @@ public class Cell extends JPanel implements MouseListener{
 			return;
 		}
 		
-		RulesFacade.getRules().attack(x/K.SQUARE_SIZE, y/K.SQUARE_SIZE);
+		RulesFacade.getRules().attack(x/BattleshipConfiguration.SQUARE_SIZE, y/BattleshipConfiguration.SQUARE_SIZE);
 		
 	}
 
