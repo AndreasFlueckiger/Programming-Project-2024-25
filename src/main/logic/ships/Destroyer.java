@@ -1,6 +1,6 @@
 package main.logic.ships;
 
-import main.battleship.BattleshipConfiguration
+import main.battleship.BattleshipConfiguration;
 
 
 @SuppressWarnings("serial")
