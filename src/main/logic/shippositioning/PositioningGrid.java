@@ -11,7 +11,7 @@ import main.rules.designPatterns.RulesFacade;
 
 
 
-public class PositionGrid extends Grid implements Observer{
+public class PositioningGrid extends Grid implements Observer{
 
     static PositioningGrid positioningGrid = null;
 		
