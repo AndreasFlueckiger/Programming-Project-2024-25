@@ -121,8 +121,6 @@ public class ShipSelection extends JFrame implements KeyListener, Observer{
     }
 });
 
-
-
 		addKeyListener(this);
 	}
 	
