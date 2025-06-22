@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
 
 import main.battleship.BattleshipConfiguration;
 import main.battleship.BattleshipConfiguration.ORIENTATION;
-import rules.designPatterns.RulesFacade;
+import main.rules.designPatterns.RulesFacade;
 
 
 @SuppressWarnings("serial")
@@ -28,7 +28,7 @@ public abstract class Ship extends JComponent implements MouseListener {
 	protected static final int OFFSET_Y = 100;
 	
 	public int shipSize;
-	public ORIENTATION orientation = ORIENTATION.RIGHT;;
+	public ORIENTATION orientation = ORIENTATION.RIGHT;
 	
 	private boolean available = true;
 

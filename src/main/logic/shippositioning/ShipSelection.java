@@ -8,11 +8,11 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 
-import logic.Title;
+import main.Title;
 import main.battleship.BattleshipConfiguration;
-import rules.designPatterns.Observable;
-import rules.designPatterns.Observer;
-import rules.designPatterns.RulesFacade;
+import main.rules.designPatterns.Observable;
+import main.rules.designPatterns.Observer;
+import main.rules.designPatterns.RulesFacade;
 
 
 @SuppressWarnings("serial")

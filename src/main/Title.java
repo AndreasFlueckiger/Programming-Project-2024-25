@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import battleship.battleshipConfiguration;
+import main.battleship.BattleshipConfiguration;
 
 @SuppressWarnings("serial")
 public class Title extends JPanel{
@@ -17,7 +17,7 @@ public class Title extends JPanel{
 	public Title(String title) {
 		
 		setLayout(null);
-		setBounds(0, 0, K.LARG_DEFAULT, 50);
+		setBounds(0, 0, BattleshipConfiguration.LARG_DEFAULT, 50);
 		setBackground(Color.CYAN);
 		setOpaque(false);
 		
