@@ -83,11 +83,11 @@ public class ShipSelection extends JFrame implements KeyListener, Observer{
 	public void keyTyped(KeyEvent k) {
 		int VK_ESCAPE = 27;
 		
-		if((int)BattleshipConfiguration.getKeyChar() == VK_ESCAPE) {			
+		if((int)k.getKeyChar() == VK_ESCAPE) {			
 			RulesFacade.getRules().unsetSelectedShip();
 		}
 		
-		if(BattleshipConfiguration.getKeyChar() == 'r') {
+		if(k.getKeyChar() == 'r') {
 			RulesFacade.getRules().resetGrid();
 		}		
 	}

@@ -14,7 +14,7 @@ public class Title extends JPanel{
 
 	JLabel titleLabel = new JLabel();
 	
-	public Title(String title) {
+	public Title(String title) { 
 		
 		setLayout(null);
 		setBounds(0, 0, BattleshipConfiguration.LARG_DEFAULT, 50);
