@@ -7,9 +7,9 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 
 import main.Title;
-import rules.designPatterns.Observable;
-import rules.designPatterns.Observer;
-import rules.designPatterns.RulesFacade;
+import main.rules.designPatterns.Observable;
+import main.rules.designPatterns.Observer;
+import main.rules.designPatterns.RulesFacade;
 import main.battleship.BattleshipConfiguration;
 
 @SuppressWarnings("serial")
@@ -41,9 +41,9 @@ public class Attack extends JFrame implements Observer{
 		Dimension screenSize = tk.getScreenSize();
 		int sl = screenSize.width;
 		int sa = screenSize.height;
-		int x = sl/2-K.LARG_DEFAULT/2;
-		int y = sa/2-K.ALT_DEFAULT/2;
-		setBounds(x,y,K.LARG_DEFAULT, K.ALT_DEFAULT);
+		int x = sl/2-BattleshipConfiguaration.LARG_DEFAULT/2;
+		int y = sa/2-BattleshipConfiguration.ALT_DEFAULT/2;
+		setBounds(x,y,BattleshipConfiguaration.LARG_DEFAULT, BattleshipConfiguration.ALT_DEFAULT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 		setLayout(null);
