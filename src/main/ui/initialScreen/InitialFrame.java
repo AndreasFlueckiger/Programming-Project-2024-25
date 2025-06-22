@@ -2,14 +2,14 @@ package main.ui.initialScreen;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.ToolKit;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
 import main.battleship.BattleshipConfiguration;
 
 @SuppressWarnings("serial")
-public class initialFrame extends JFrame {
+public class InitialFrame extends JFrame {
     
         static InitialFrame initialFrame;
     
