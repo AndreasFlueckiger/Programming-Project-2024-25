@@ -16,11 +16,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import battleship.BattleshipConfiguration;
-import rules.designPatterns.Observable;
-import rules.designPatterns.Observer;
-import rules.designPatterns.RulesFacade;
-import saveload.SaveLoadManager;
+import main.battleship.BattleshipConfiguration;
+import main.rules.designPatterns.Observable;
+import main.rules.designPatterns.Observer;
+import main.rules.designPatterns.RulesFacade;
+import main.saveload.SaveLoadManager;
 
 @SuppressWarnings("serial")
 public class AttackUtilities extends JPanel implements Observer{
@@ -55,7 +55,7 @@ public class AttackUtilities extends JPanel implements Observer{
 		
 		setLayout(null);
 		
-		setBounds(0, battleshipConfiguration.ALT_DEFAULT - UTILITIES_HEIGHT, battleshipConfiguration.LARG_DEFAULT, UTILITIES_HEIGHT);
+		setBounds(0, BattleshipConfiguration.ALT_DEFAULT - UTILITIES_HEIGHT, BattleshipConfiguration.LARG_DEFAULT, UTILITIES_HEIGHT);
 		setOpaque(false);
 		
 		Dimension btnDimension = new Dimension(150, 50);
@@ -63,7 +63,7 @@ public class AttackUtilities extends JPanel implements Observer{
 		/* MIDDLE */
 		
 		JPanel middlePanel = new JPanel();
-		middlePanel.setBounds(battleshipConfiguration.LARG_DEFAULT/2, 0, battleshipConfiguration.LARG_DEFAULT/4, UTILITIES_HEIGHT);
+		middlePanel.setBounds(BattleshipConfiguration.LARG_DEFAULT/2, 0, BattleshipConfiguration.LARG_DEFAULT/4, UTILITIES_HEIGHT);
 		middlePanel.setLayout(new GridBagLayout());
 		
 		JPanel nextContainer = new JPanel();
@@ -91,11 +91,11 @@ public class AttackUtilities extends JPanel implements Observer{
 		
 		JPanel rightPanel = new JPanel();
 		rightPanel.setLayout(null);
-		rightPanel.setBounds(3 * (battleshipConfiguration.LARG_DEFAULT/4), 0, battleshipConfiguration.LARG_DEFAULT/4, UTILITIES_HEIGHT);
+		rightPanel.setBounds(3 * (BattleshipConfiguration.LARG_DEFAULT/4), 0, BattleshipConfiguration.LARG_DEFAULT/4, UTILITIES_HEIGHT);
 		
 		JPanel buttonsContainer = new JPanel();
 		buttonsContainer.setLayout(new BoxLayout(buttonsContainer, BoxLayout.Y_AXIS));
-		buttonsContainer.setBounds((battleshipConfiguration.LARG_DEFAULT/4)-150-10, 10, 150, 305);
+		buttonsContainer.setBounds((BattleshipConfiguration.LARG_DEFAULT/4)-150-10, 10, 150, 305);
 		
 		exitBtn.setBackground(new Color(223, 21, 26));
 		exitBtn.setForeground(new Color(100, 5, 9));
@@ -133,21 +133,21 @@ public class AttackUtilities extends JPanel implements Observer{
 		
 		JPanel messagesPanel = new JPanel();
 		messagesPanel.setLayout(null);
-		messagesPanel.setBounds(0, 0, battleshipConfiguration.LARG_DEFAULT/2, UTILITIES_HEIGHT);
+		messagesPanel.setBounds(0, 0, BattleshipConfiguration.LARG_DEFAULT/2, UTILITIES_HEIGHT);
 		
-		message1.setBounds(0, 60, battleshipConfiguration.LARG_DEFAULT/2, 40);
+		message1.setBounds(0, 60, BattleshipConfiguration.LARG_DEFAULT/2, 40);
 		message1.setFont(new Font("SansSerif", Font.BOLD, 18));
 		message1.setForeground(new Color(0, 203, 231));
 		message1.setHorizontalAlignment(SwingConstants.CENTER);
 		message1.setVerticalAlignment(SwingConstants.CENTER);
 		
-		message2.setBounds(0, 40, battleshipConfiguration.LARG_DEFAULT/2, 30);
+		message2.setBounds(0, 40, BattleshipConfiguration.LARG_DEFAULT/2, 30);
 		message2.setFont(new Font("SansSerif", Font.BOLD, 15));
 		message2.setForeground(Color.GRAY);
 		message2.setHorizontalAlignment(SwingConstants.CENTER);
 		message2.setVerticalAlignment(SwingConstants.CENTER);
 		
-		message3.setBounds(0, 20, battleshipConfiguration.LARG_DEFAULT/2, 30);
+		message3.setBounds(0, 20, BattleshipConfiguration.LARG_DEFAULT/2, 30);
 		message3.setFont(new Font("SansSerif", Font.BOLD, 10));
 		message3.setForeground(Color.LIGHT_GRAY);
 		message3.setHorizontalAlignment(SwingConstants.CENTER);
@@ -197,9 +197,9 @@ public class AttackUtilities extends JPanel implements Observer{
 		
 		Object lob[] = (Object []) o.get();
 		
-		List<String> newMessages = (List<String>) lob[battleshipConfiguration.objectValues.MESSAGES.getValue()];
-		boolean validation = (boolean) lob[ battleshipConfiguration.objectValues.IS_VALID.getValue() ];
-		int currentPlayer = (int) lob[battleshipConfiguration.objectValues.CURRENT_PLAYER.getValue()];
+		List<String> newMessages = (List<String>) lob[BattleshipConfiguration.objectValues.MESSAGES.getValue()];
+		boolean validation = (boolean) lob[BattleshipConfiguration.objectValues.IS_VALID.getValue() ];
+		int currentPlayer = (int) lob[BattleshipConfiguration.objectValues.CURRENT_PLAYER.getValue()];
 
 		if(currentPlayer != turn) {
 			buttonEnable();
