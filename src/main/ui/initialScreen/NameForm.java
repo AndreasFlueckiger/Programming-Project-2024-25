@@ -147,7 +147,7 @@ public class NameForm extends JFrame{
 
             		
                 	(ShipSelection.getShipSelection()).setVisible(true);
-                	(InitialFrame.getInitialFrame()).setVisible(false);
+                	(initialFrame.getinitialFrame()).setVisible(false);
                     
                     setVisible(false);
             	}

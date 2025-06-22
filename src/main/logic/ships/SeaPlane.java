@@ -2,7 +2,7 @@ package main.logic.ships;
 
 import java.awt.geom.Rectangle2D;
 
-import main.battleship.BattleshipConfiguration
+import main.battleship.BattleshipConfiguration;
 
 
 @SuppressWarnings("serial")

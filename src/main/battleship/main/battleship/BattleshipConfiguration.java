@@ -1,9 +1,13 @@
+package main.battleship;
+
+
+
 import java.awt.Color;
     //added -> my opinion (Alexis) not necessary!
 
 
 public class BattleshipConfiguration {
-	
+
 	public static final int SHIP = 1;
 	public static final int HIT = 2;
 	public static final int MISS = 3;
