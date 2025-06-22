@@ -41,9 +41,9 @@ public class Attack extends JFrame implements Observer{
 		Dimension screenSize = tk.getScreenSize();
 		int sl = screenSize.width;
 		int sa = screenSize.height;
-		int x = sl/2-BattleshipConfiguaration.LARG_DEFAULT/2;
+		int x = sl/2-BattleshipConfiguration.LARG_DEFAULT/2;
 		int y = sa/2-BattleshipConfiguration.ALT_DEFAULT/2;
-		setBounds(x,y,BattleshipConfiguaration.LARG_DEFAULT, BattleshipConfiguration.ALT_DEFAULT);
+		setBounds(x,y,BattleshipConfiguration.LARG_DEFAULT, BattleshipConfiguration.ALT_DEFAULT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 		setLayout(null);

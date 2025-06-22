@@ -12,11 +12,11 @@ import javax.swing.Timer;
 
 import main.logic.attack.Attack;
 import main.logic.attack.AttackUtilities;
-import main.logic.initialScreen.InitialFrame;
-import main.logic.shipPositioning.ShipSelection;
-import main.logic.shipPositioning.PositioningGrid;
-import main.logic.shipPositioning.SelectionUtilities;
-import main.logic.shipPositioning.ShipOptions;
+import main.ui.initialScreen.InitialFrame;
+import main.logic.shippositioning.ShipSelection;
+import main.logic.shippositioning.PositioningGrid;
+import main.logic.shippositioning.SelectionUtilities;
+import main.logic.shippositioning.ShipOptions;
 import main.logic.ships.Battleship;
 import main.logic.ships.Cruiser;
 import main.logic.ships.Destroyer;
@@ -32,7 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import main.battleship.BattleshipConfiguration;
-import rules.designPatterns.RulesFacade;
+import main.rules.designPatterns.RulesFacade;
 
 
 @SuppressWarnings("serial")

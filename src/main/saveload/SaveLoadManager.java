@@ -9,11 +9,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import logic.attack.Attack;
-import logic.attack.AttackUtilities;
-import ui.initialScreen.InitialFrame;
-import rules.CtrlRules;
-import rules.designPatterns.RulesFacade;
+import main.logic.attack.Attack;
+import main.logic.attack.AttackUtilities;
+import main.ui.initialScreen.InitialFrame;
+import main.rules.CtrlRules;
+import main.rules.designPatterns.RulesFacade;
 
 
 

@@ -153,43 +153,6 @@ public class CtrlRules implements Observable, Serializable {
 		refreshBoard();
 	}
 	
-	public void startGame() {
-		if (phase == PHASE.POSITION) {
-			phase = PHASE.ATTACK;
-			currentPlayer = 1;
-			refreshBoard();
-		}
-	}
-
-	public void nextPlayer() {
-		currentPlayer = (currentPlayer == 1) ? 2 : 1;
-		refreshBoard();
-	}
-
-	public void attack(int x, int y) {
-		int[][] targetBoard = (currentPlayer == 1) ? board2 : board1;
-		isValid = false;
-		result = false;
-
-		if (targetBoard[x][y] == BattleshipConfiguration.SHIP) {
-			targetBoard[x][y] = BattleshipConfiguration.HIT;
-			result = true;
-			addMessages("Hit!");
-			if (currentPlayer == 1) pointsPlayer1++;
-			else pointsPlayer2++;
-		} else if (targetBoard[x][y] == BattleshipConfiguration.EMPTY) {
-			targetBoard[x][y] = BattleshipConfiguration.MISS;
-			result = false;
-			addMessages("Miss!");
-		} else {
-			addMessages("Cell already attacked.");
-			return;
-		}
-
-		isValid = true;
-		nextPlayer();
-		refreshBoard();
-	}
 
 //////////////////////////////////////
 
@@ -1041,7 +1004,7 @@ public class CtrlRules implements Observable, Serializable {
 				//Check if block on middle of Seaplane
 				try {
 					if(currentBoard[x+1][y-1] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguaration.DESTROYED_SHIP_LIMIT;
+						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
 						currentBoard[x+1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
 						currentBoard[x+1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
 						return true;
