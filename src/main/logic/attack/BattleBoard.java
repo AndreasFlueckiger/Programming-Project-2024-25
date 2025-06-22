@@ -3,7 +3,7 @@ package main.logic.attack;
 import main.logic.board.Board;
 import main.logic.board.Grid;
 import main.logic.victory.*;
-import main.battleship.*;
+import main.battleship.BattleshipConfiguaration;
 import main.rules.designPatterns.*;
 
 
@@ -30,8 +30,8 @@ public class BattleBoard extends Board implements Observer{
 		
 		addLabels();
 		
-		shownCells = battleshipconfiguration.createEmptyGrid();
-		hiddenCells = battleshipconfiguration.createEmptyGrid();
+		shownCells = Battleshipconfiguration.createEmptyGrid();
+		hiddenCells = Battleshipconfiguration.createEmptyGrid();
 		
 		if(battleGrid!=null)
 			add(battleGrid);
@@ -50,9 +50,9 @@ public class BattleBoard extends Board implements Observer{
 	}
 	
 	private void getShownCells() {
-		for(int i = 0; i < battleshipconfiguration.SQUARE_COUNT; i++)
+		for(int i = 0; i < Battleshipconfiguration.SQUARE_COUNT; i++)
 		{
-			for(int j = 0; j < battleshipconfiguration.SQUARE_COUNT; j++)
+			for(int j = 0; j < Battleshipconfiguration.SQUARE_COUNT; j++)
 			{
 				if(hiddenCells[j][i] < 0 || hiddenCells[j][i] == 10) {
 					shownCells[j][i] = hiddenCells[j][i];
@@ -62,8 +62,8 @@ public class BattleBoard extends Board implements Observer{
 	}
 	
 	public void resetBoard() {
-		shownCells = battleshipconfiguration.createEmptyGrid();
-		hiddenCells = battleshipconfiguration.createEmptyGrid();
+		shownCells = Battleshipconfiguration.createEmptyGrid();
+		hiddenCells = Battleshipconfiguration.createEmptyGrid();
 		repaint();
 	}
 	
@@ -74,18 +74,18 @@ public class BattleBoard extends Board implements Observer{
 		String player1Name = "";
 		String player2Name = "";
 		
-		boolean result = (boolean) lob[battleshipconfiguration.objectValues.RESULT.getValue()];
-		int currentPlayer = (int) lob[battleshipconfiguration.objectValues.CURRENT_PLAYER.getValue()];
+		boolean result = (boolean) lob[Battleshipconfiguration.objectValues.RESULT.getValue()];
+		int currentPlayer = (int) lob[Battleshipconfiguration.objectValues.CURRENT_PLAYER.getValue()];
 		
 		if(player == 1) {
-			hiddenCells = (int[][]) lob[battleshipconfiguration.objectValues.BOARD_1.getValue()];
-			player1Name = (String) lob[battleshipconfiguration.objectValues.PLAYER_1_NAME.getValue()];
-			player2Name = (String) lob[battleshipconfiguration.objectValues.PLAYER_2_NAME.getValue()];
+			hiddenCells = (int[][]) lob[Battleshipconfiguration.objectValues.BOARD_1.getValue()];
+			player1Name = (String) lob[Battleshipconfiguration.objectValues.PLAYER_1_NAME.getValue()];
+			player2Name = (String) lob[Battleshipconfiguration.objectValues.PLAYER_2_NAME.getValue()];
 		}
 		else {
-			hiddenCells = (int[][]) lob[battleshipconfiguration.objectValues.BOARD_2.getValue()];
-			player1Name = (String) lob[battleshipconfiguration.objectValues.PLAYER_2_NAME.getValue()];
-			player2Name = (String) lob[battleshipconfiguration.objectValues.PLAYER_1_NAME.getValue()];
+			hiddenCells = (int[][]) lob[Battleshipconfiguration.objectValues.BOARD_2.getValue()];
+			player1Name = (String) lob[Battleshipconfiguration.objectValues.PLAYER_2_NAME.getValue()];
+			player2Name = (String) lob[Battleshipconfiguration.objectValues.PLAYER_1_NAME.getValue()];
 		}
 			
 		if(player != currentPlayer) {
