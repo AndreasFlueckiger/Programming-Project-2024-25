@@ -14,11 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import gui.attack.Attack;
+import main.logic.attack.Attack;
 import main.battleship.BattleshipConfiguration;
-import rules.designPatterns.Observable;
-import rules.designPatterns.Observer;
-import rules.designPatterns.RulesFacade;
+import main.rules.designPatterns.Observable;
+import main.rules.designPatterns.Observer;
+import main.rules.designPatterns.RulesFacade;
 
 
 

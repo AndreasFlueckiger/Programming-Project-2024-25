@@ -16,7 +16,7 @@ import main.logic.shippositioning.PositioningGrid;
 import main.battleship.BattleshipConfiguration.PHASE;
 import main.battleship.BattleshipConfiguration;
 import main.rules.designPatterns.RulesFacade;
-import main.logic.ships.Ship
+import main.logic.ships.Ship;
 
 
 @SuppressWarnings("serial")

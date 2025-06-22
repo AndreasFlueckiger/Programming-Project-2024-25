@@ -2,12 +2,12 @@ package main.logic.shippositioning;
 
 import java.awt.Color;
 
-import logic.board.Cell;
-import logic.board.Grid;
+import main.logic.board.Cell;
+import main.logic.board.Grid;
 import main.battleship.BattleshipConfiguration;
-import rules.designPatterns.Observable;
-import rules.designPatterns.Observer;
-import rules.designPatterns.RulesFacade
+import main.rules.designPatterns.Observable;
+import main.rules.designPatterns.Observer;
+import main.rules.designPatterns.RulesFacade;
 
 
 

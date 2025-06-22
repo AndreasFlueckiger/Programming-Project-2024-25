@@ -1,6 +1,6 @@
 package main.logic.shippositioning;
 
-import main.logic.board.Board
+import main.logic.board.Board;
 
 @SuppressWarnings("serial")
 public class SelectionBoard extends Board{
