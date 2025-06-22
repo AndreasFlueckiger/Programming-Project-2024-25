@@ -1,3 +1,5 @@
+package main.logic.powers;
+
 import java.util.Set;
 
 public interface Power {

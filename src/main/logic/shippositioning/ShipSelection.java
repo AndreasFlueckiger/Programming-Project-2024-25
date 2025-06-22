@@ -6,10 +6,13 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import main.Title;
 import main.battleship.BattleshipConfiguration;
+import main.logic.powers.AirAttack;
+import main.logic.powers.ScatterBomb;
 import main.rules.designPatterns.Observable;
 import main.rules.designPatterns.Observer;
 import main.rules.designPatterns.RulesFacade;
@@ -22,7 +25,15 @@ public class ShipSelection extends JFrame implements KeyListener, Observer{
 	
 	private int currentPlayerNum;
 	private String currentPlayerName;
+
+
+	private boolean airUsedP1 = false;
+	private boolean bombUsedP1 = false;
+	private boolean airUsedP2 = false;
+	private boolean bombUsedP2 = false;
 	
+	private final String[] selectedPower = {""};
+ 
 	static ShipSelection shipSelection;
     
     public static ShipSelection getShipSelection() {
@@ -62,6 +73,56 @@ public class ShipSelection extends JFrame implements KeyListener, Observer{
 		int currentPlayerNum = RulesFacade.getRules().getCurrentPlayer();
 		setTitle("Ship Selection - " + RulesFacade.getRules().getPlayerName(currentPlayerNum));
 		
+		JButton bomberButton = new JButton("Bomber plane");
+		bomberButton.setBounds(650,50,140,40);
+		getContentPane().add(bomberButton);
+
+		JButton bombdropButton = new JButton("Bomb Drop");
+		bombdropButton.setBounds(650, 100, 150, 40);
+		getContentPane().add(bombdropButton);
+
+		bomberButton.addActionListener(e -> selectedPower[0] = "air");
+		bombdropButton.addActionListener(e -> selectedPower [0] = "bomb");
+
+
+
+		getContentPane().addMouseListener(new java.awt.event.MouseAdapter() {
+    public void mouseClicked(java.awt.event.MouseEvent evt) {
+        int cellSize = 40; // Adjust to match your board cell size
+        int gridOffsetX = 50, gridOffsetY = 100; // Adjust to match your grid's top-left corner
+
+        int x = (evt.getX() - gridOffsetX) / cellSize;
+        int y = (evt.getY() - gridOffsetY) / cellSize;
+
+        // Convert to coordinate format
+        char col = (char) ('A' + x);
+        int row = y + 1;
+        String coordinate = "" + col + row;
+
+        System.out.println("Clicked: " + coordinate);
+
+        if (selectedPower[0].equals("air")) {
+            if ((currentPlayerNum == 1 && !airUsedP1) || (currentPlayerNum == 2 && !airUsedP2)) {
+                new AirAttack() {}.use(col);
+                if (currentPlayerNum == 1) airUsedP1 = true;
+                else airUsedP2 = true;
+                selectedPower[0] = "";
+            }
+        } else if (selectedPower[0].equals("bomb")) {
+            if ((currentPlayerNum == 1 && !bombUsedP1) || (currentPlayerNum == 2 && !bombUsedP2)) {
+                new ScatterBomb() {}.use(coordinate);
+                if (currentPlayerNum == 1) bombUsedP1 = true;
+                else bombUsedP2 = true;
+                selectedPower[0] = "";
+            }
+        }
+
+        repaint(); // Refresh GUI
+    }
+});
+
+
+
 		addKeyListener(this);
 	}
 	
