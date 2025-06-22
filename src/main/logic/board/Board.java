@@ -10,7 +10,7 @@ import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import main.battleship.BattleshipConfiguration
+import main.battleship.BattleshipConfiguration;
 
 @SuppressWarnings("serial")
 public class Board extends JPanel{

@@ -11,11 +11,11 @@ import main.battleship.BattleshipConfiguration;
 @SuppressWarnings("serial")
 public class InitialFrame extends JFrame {
     
-        static InitialFrame initialFrame;
+        static initialFrame initialFrame;
     
-    public static InitialFrame getInitialFrame() {
+    public static initialFrame getInitialFrame() {
         if(initialFrame == null)
-        	initialFrame = new InitialFrame();
+        	initialFrame = new initialFrame();
         
         return initialFrame;
         
@@ -25,7 +25,7 @@ public class InitialFrame extends JFrame {
     	initialFrame = null;
     }
 	
-	private InitialFrame() {
+	private initialFrame() {
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		Dimension screenSize = tk.getScreenSize();
 		int sl = screenSize.width;
