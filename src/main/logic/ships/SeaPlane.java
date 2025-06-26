@@ -6,29 +6,31 @@ import main.battleship.BattleshipConfiguration;
 
 
 @SuppressWarnings("serial")
-public class Seaplane extends Ship {
+public class SeaPlane extends Ship {
 
 	private final int SEAPLANE_SIZE_X = 3; 
 	private final int SEAPLANE_SIZE_Y = 2;
 	
 	private static final int SEAPLANE_POSITION = 1;
 	
-	private static Seaplane seaplane;
+	private static SeaPlane seaplane;
 	
-	public static Seaplane getSeaplane() {
+	public static SeaPlane getSeaplane() {
 		if(seaplane == null) {
-			seaplane = new Seaplane(OFFSET_X, OFFSET_Y*SEAPLANE_POSITION-25);
+			seaplane = new SeaPlane(OFFSET_X, OFFSET_Y*SEAPLANE_POSITION-25);
 		}
 		
 		return seaplane;
 	}
+	
+	
 	
 	public void selfDestroy() {
 		seaplane = null;
 	}
 
 
-	private Seaplane(int x, int y) {
+	private void Seaplane(int x, int y) {
 
 		setBounds(x, y, BattleshipConfiguration.SQUARE_SIZE*SEAPLANE_SIZE_X, BattleshipConfiguration.SQUARE_SIZE*SEAPLANE_SIZE_Y);
 		setOpaque(false);
