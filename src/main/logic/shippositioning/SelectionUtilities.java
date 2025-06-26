@@ -19,6 +19,8 @@ import main.battleship.BattleshipConfiguration;
 import main.rules.designPatterns.Observable;
 import main.rules.designPatterns.Observer;
 import main.rules.designPatterns.RulesFacade;
+import main.battleship.GameSettings;
+import main.bot.BotManager;
 
 
 
@@ -119,20 +121,23 @@ public class SelectionUtilities extends JPanel implements Observer{
 		
 		next.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent e) { 
-				
 				buttonDisable();
-				
 				RulesFacade.getRules().unsetSelectedShip();
 				RulesFacade.getRules().setBoard(RulesFacade.getRules().getCurrentPlayer());
-				
-				if( RulesFacade.getRules().getCurrentPlayer() == 2 ) {
+
+				// Bot ship placement for Player 2
+				if (RulesFacade.getRules().getCurrentPlayer() == 2 && !"Human".equals(GameSettings.player2Type)) {
+					// Place ships for bot
+					java.util.Map<String, java.util.List<String>> placements = BotManager.placeShips(GameSettings.player2Type);
+					RulesFacade.getRules().getCtrl().placeBotShips(2, placements);
 					Attack.getAttackFrame().setVisible(true);
 					ShipSelection.getShipSelection().setVisible(false);
-				}
-				else {
+				} else if (RulesFacade.getRules().getCurrentPlayer() == 2) {
+					Attack.getAttackFrame().setVisible(true);
+					ShipSelection.getShipSelection().setVisible(false);
+				} else {
 					RulesFacade.getRules().resetGrid();
 				}
-				
 				RulesFacade.getRules().nextPlayer();
 			}
 		});

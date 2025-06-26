@@ -13,6 +13,7 @@ import java.awt.event.FocusListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,6 +23,7 @@ import javax.swing.JTextArea;
 
 import main.logic.shippositioning.ShipSelection;
 import main.rules.designPatterns.RulesFacade;
+import main.battleship.GameSettings;
 
 @SuppressWarnings("serial")
 public class NameForm extends JFrame{
@@ -34,6 +36,8 @@ public class NameForm extends JFrame{
 	
 	private JLabel player2Lbl = new JLabel("Player 2:");
 	private JTextArea player2Txt = new JTextArea("Player 2 name");
+	
+	private JComboBox<String> player2TypeCombo = new JComboBox<>(new String[]{"Human", "EasyBot", "HardBot", "LearningBot"});
 	
 	private JButton startBtn = new JButton("Start!");
 	
@@ -120,6 +124,8 @@ public class NameForm extends JFrame{
 		textsPnl.add(player1Txt);
 		textsPnl.add(Box.createRigidArea(new Dimension(0, 8)));
 		textsPnl.add(player2Txt);
+		textsPnl.add(Box.createRigidArea(new Dimension(0, 8)));
+		textsPnl.add(player2TypeCombo);
 		textsPnl.setOpaque(false);
 		containerPnl.add(textsPnl);
 		
@@ -144,8 +150,8 @@ public class NameForm extends JFrame{
             		
             		RulesFacade.getRules().setPlayerName(1, player1Txt.getText());
             		RulesFacade.getRules().setPlayerName(2, player2Txt.getText());
-
-            		
+            		String player2Type = (String) player2TypeCombo.getSelectedItem();
+            		GameSettings.player2Type = player2Type;
                 	(ShipSelection.getShipSelection()).setVisible(true);
                 	(InitialFrame.getInitialFrame()).setVisible(false);
                     

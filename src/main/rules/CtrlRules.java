@@ -10,6 +10,8 @@ import main.rules.designPatterns.*;
 import main.rules.designPatterns.Observable;
 import main.rules.designPatterns.Observer;
 import main.logic.shippositioning.*;
+import main.battleship.GameSettings;
+import main.bot.BotManager;
 
 public class CtrlRules implements Observable, Serializable {
 
@@ -38,6 +40,10 @@ public class CtrlRules implements Observable, Serializable {
 	private int pointsPlayer1 = 0;
 	private int pointsPlayer2 = 0;
 	private int currentAttackCount = 1;
+
+	// Track player 1's ship placements and attack moves for LearningBot
+	private java.util.List<String> player1ShipCoords = new java.util.ArrayList<>();
+	private java.util.List<String> player1AttackCoords = new java.util.ArrayList<>();
 
 	
 	// Constructor
@@ -102,6 +108,23 @@ public class CtrlRules implements Observable, Serializable {
 		addMessage("Positioning ship");
 		PositioningGrid.getGrid().paintCells(cellsToPaint);
 		ShipOptions.getShipOptions().reduceShipCount(selectedShip);
+		
+		// Track player 1 ship placement
+		if (currentPlayer == 1) {
+			// Find all cells for the selected ship and add to the list
+			for (int i = 0; i < definedCells.length; i++) {
+				for (int j = 0; j < definedCells[i].length; j++) {
+					if (definedCells[i][j] == selectedShip.shipSize) {
+						char col = (char) ('A' + i);
+						int row = j + 1;
+						String coord = "" + col + row;
+						if (!player1ShipCoords.contains(coord)) {
+							player1ShipCoords.add(coord);
+						}
+					}
+				}
+			}
+		}
 		
 		if(!selectedShip.getAvailability()) {
 			unsetSelectedShip();
@@ -721,18 +744,40 @@ public class CtrlRules implements Observable, Serializable {
 	}
 	public void nextPlayer() {
 		checkResult();
-		
 		if(result) {
 			System.out.printf("Player %d wins!\n", currentPlayer);
 			refreshBoard();
 			return;
 		}
-		
 		currentPlayer = getNextPlayer();
 		refreshBoard();
+		// Bot move logic
+		if(currentPlayer == 2 && !"Human".equals(GameSettings.player2Type)) {
+			// Generate bot move (e.g., "A5")
+			String move = BotManager.getBotMove(GameSettings.player2Type);
+			if(move != null && move.length() >= 2) {
+				char col = move.charAt(0);
+				int x = col - 'A';
+				int y;
+				try {
+					y = Integer.parseInt(move.substring(1)) - 1;
+				} catch (NumberFormatException e) {
+					return;
+				}
+				if (x >= 0 && x < 10 && y >= 0 && y < 10) {
+					attack(x, y);
+				}
+			}
+		}
 	}
 	public void attack(int x, int y) {
-		
+		// Track player 1 attack moves
+		if (currentPlayer == 1) {
+			char col = (char) ('A' + x);
+			int row = y + 1;
+			String coord = "" + col + row;
+			player1AttackCoords.add(coord);
+		}
 		if(getOppositeBoard(currentPlayer)[x][y] == SHIPS.D_WATER.getValue() || getOppositeBoard(currentPlayer)[x][y] < 0) {
 			addMessage("This cell was already clicked!");
 			return;
@@ -1257,5 +1302,52 @@ public class CtrlRules implements Observable, Serializable {
 	public void refreshBoard() {
 		for (Observer o : lob)
 			o.notify(this);
+	}
+
+	// Place bot ships on the board for the given player
+	public void placeBotShips(int playerNum, Map<String, List<String>> placements) {
+		int[][] board = (playerNum == 1) ? board1 : board2;
+		// Ship sizes mapping (should match BattleshipConfiguration)
+		Map<String, Integer> shipSizes = new HashMap<>();
+		shipSizes.put("Battleship", 5);
+		shipSizes.put("Cruiser", 4);
+		shipSizes.put("Destroyer", 3);
+		shipSizes.put("Submarine", 2);
+		shipSizes.put("Seaplane", 3);
+		Map<String, Integer> shipCodes = new HashMap<>();
+		shipCodes.put("Battleship", BattleshipConfiguration.SHIPS.BATTLESHIP.getValue());
+		shipCodes.put("Cruiser", BattleshipConfiguration.SHIPS.CRUISER.getValue());
+		shipCodes.put("Destroyer", BattleshipConfiguration.SHIPS.DESTROYER.getValue());
+		shipCodes.put("Submarine", BattleshipConfiguration.SHIPS.SUBMARINE.getValue());
+		shipCodes.put("Seaplane", BattleshipConfiguration.SHIPS.SEAPLANE.getValue());
+		for (Map.Entry<String, List<String>> entry : placements.entrySet()) {
+			String ship = entry.getKey();
+			int code = shipCodes.getOrDefault(ship, 0);
+			for (String coord : entry.getValue()) {
+				if (coord.length() < 2) continue;
+				char col = coord.charAt(0);
+				int x = col - 'A';
+				int y;
+				try {
+					y = Integer.parseInt(coord.substring(1)) - 1;
+				} catch (NumberFormatException e) {
+					continue;
+				}
+				if (x >= 0 && x < 10 && y >= 0 && y < 10) {
+					board[x][y] = code;
+				}
+			}
+		}
+		if (playerNum == 1) board1 = board;
+		else board2 = board;
+		refreshBoard();
+	}
+
+	// Getters for LearningBot
+	public java.util.List<String> getPlayer1ShipCoords() {
+		return player1ShipCoords;
+	}
+	public java.util.List<String> getPlayer1AttackCoords() {
+		return player1AttackCoords;
 	}
 }
