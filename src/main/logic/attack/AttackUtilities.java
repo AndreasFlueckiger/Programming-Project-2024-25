@@ -81,7 +81,7 @@ public class AttackUtilities extends JPanel implements Observer{
 		nextBtn.setEnabled(false);
 		nextBtn.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-				    Attack.getAttackFrame().showBoard(turn);
+				main.rules.designPatterns.RulesFacade.getRules().nextPlayer();
 			  } 
 			} );
 		
@@ -200,14 +200,24 @@ public class AttackUtilities extends JPanel implements Observer{
 		List<String> newMessages = (List<String>) lob[BattleshipConfiguration.objectValues.MESSAGES.getValue()];
 		boolean validation = (boolean) lob[BattleshipConfiguration.objectValues.IS_VALID.getValue() ];
 		int currentPlayer = (int) lob[BattleshipConfiguration.objectValues.CURRENT_PLAYER.getValue()];
-
-		if(currentPlayer != turn) {
-			buttonEnable();
-			Attack.getAttackFrame().blockCells = true;
-			turn = currentPlayer;
-		}
-		else {
+		int humanAttackCount = 0;
+		try {
+			java.lang.reflect.Field f = main.rules.CtrlRules.class.getDeclaredField("humanAttackCount");
+			f.setAccessible(true);
+			humanAttackCount = f.getInt(main.rules.designPatterns.RulesFacade.getRules().getCtrl());
+		} catch(Exception e) {}
+		
+		if(currentPlayer == 1) {
+			if(humanAttackCount < 3) {
+				buttonDisable();
+				Attack.getAttackFrame().blockCells = false;
+			} else {
+				buttonEnable();
+				Attack.getAttackFrame().blockCells = true;
+			}
+		} else {
 			buttonDisable();
+			Attack.getAttackFrame().blockCells = true;
 		}
 		
 		setMessages(newMessages, validation);

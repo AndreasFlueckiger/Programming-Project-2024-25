@@ -124,16 +124,23 @@ public class SelectionUtilities extends JPanel implements Observer{
 				RulesFacade.getRules().unsetSelectedShip();
 				RulesFacade.getRules().setBoard(RulesFacade.getRules().getCurrentPlayer());
 
-				// Bot ship placement for Player 2
-				if (RulesFacade.getRules().getCurrentPlayer() == 2 && !"Human".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
-					// Place ships for bot
-					java.util.Map<String, java.util.List<String>> placements = BotManager.placeShips(main.rules.designPatterns.RulesFacade.player2Type);
+				String botType = main.rules.designPatterns.RulesFacade.player2Type;
+				boolean isBot = "EasyBot".equals(botType) || "HardBot".equals(botType) || "LearningBot".equals(botType);
+
+				// Se il player 2 è un bot, posiziona automaticamente le sue navi e passa direttamente all'attacco
+				if (isBot) {
+					// Siamo alla fine del posizionamento del player umano
+					java.util.Map<String, java.util.List<String>> placements = main.bot.BotManager.placeShips(botType);
 					RulesFacade.getRules().getCtrl().placeBotShips(2, placements);
 					Attack.getAttackFrame().setVisible(true);
-					ShipSelection.getShipSelection().setVisible(false);
-				} else if (RulesFacade.getRules().getCurrentPlayer() == 2) {
+					main.logic.shippositioning.ShipSelection.getShipSelection().setVisible(false);
+					Attack.getAttackFrame().showBoard(1); // Sblocca subito la board per il player umano
+					return;
+				}
+				// Caso normale: Player 2 umano
+				else if (RulesFacade.getRules().getCurrentPlayer() == 2) {
 					Attack.getAttackFrame().setVisible(true);
-					ShipSelection.getShipSelection().setVisible(false);
+					main.logic.shippositioning.ShipSelection.getShipSelection().setVisible(false);
 				} else {
 					RulesFacade.getRules().resetGrid();
 				}

@@ -1,4 +1,4 @@
-package main.logic.ships;
+/*package main.logic.ships;
 
 import java.awt.geom.Rectangle2D;
 
@@ -57,3 +57,4 @@ public class Seaplane extends Ship {
 	}
 
 }
+*/

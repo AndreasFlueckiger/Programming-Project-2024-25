@@ -1,4 +1,4 @@
-package main.logic.victory;
+/*package main.logic.victory;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -167,3 +167,4 @@ public class VictoryPanel extends JPanel{
     }
 	
 }
+*/

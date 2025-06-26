@@ -43,6 +43,13 @@ public class CtrlRules implements Observable, Serializable {
 	// Track player 1's ship placements and attack moves for LearningBot
 	private java.util.List<String> player1ShipCoords = new java.util.ArrayList<>();
 	private java.util.List<String> player1AttackCoords = new java.util.ArrayList<>();
+	private java.util.List<String> player2AttackCoords = new java.util.ArrayList<>();
+
+	// Flag per evitare attacchi multipli del bot nello stesso ciclo
+	private boolean botHasAttacked = false;
+
+	// Contatore attacchi per il player umano
+	private int humanAttackCount = 0;
 
 	
 	// Constructor
@@ -418,9 +425,9 @@ public class CtrlRules implements Observable, Serializable {
 		else if(shipSize == 2) {
 			setSelectedShip(Destroyer.getDestroyer());
 		}
-		else if(shipSize == 3) {
-			setSelectedShip(Seaplane.getSeaplane());
-		}
+		//else if(shipSize == 3) {
+		//	setSelectedShip(Seaplane.getSeaplane());
+		//}
 		else if(shipSize == 4) {
 			setSelectedShip(Cruiser.getCruiser());
 		}
@@ -750,32 +757,58 @@ public class CtrlRules implements Observable, Serializable {
 		}
 		currentPlayer = getNextPlayer();
 		refreshBoard();
-		// Bot move logic
+		// Bot move logic: il bot attacca solo dopo che il player umano ha attaccato
 		if(currentPlayer == 2 && !"Human".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
-			// Generate bot move (e.g., "A5")
-			String move = BotManager.getBotMove(main.rules.designPatterns.RulesFacade.player2Type);
-			if(move != null && move.length() >= 2) {
-				char col = move.charAt(0);
-				int x = col - 'A';
-				int y;
-				try {
-					y = Integer.parseInt(move.substring(1)) - 1;
-				} catch (NumberFormatException e) {
-					return;
-				}
-				if (x >= 0 && x < 10 && y >= 0 && y < 10) {
-					attack(x, y);
+			int botAttacks = 0;
+			while (botAttacks < 3 && !result) {
+				String move = main.bot.BotManager.getBotMove(main.rules.designPatterns.RulesFacade.player2Type);
+				if(move != null && move.length() >= 2) {
+					char col = move.charAt(0);
+					int x = col - 'A';
+					int y;
+					try {
+						y = Integer.parseInt(move.substring(1)) - 1;
+					} catch (NumberFormatException e) {
+						continue;
+					}
+					int size = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
+					if (x >= 0 && x < size && y >= 0 && y < size) {
+						attack(y, x);
+						checkResult();
+						botAttacks++;
+						if(result) break;
+					}
 				}
 			}
+			botHasAttacked = true;
+			if (!result) {
+				currentPlayer = getNextPlayer();
+				// Sblocca la board per il player umano
+				main.logic.attack.Attack.getAttackFrame().blockCells = false;
+				main.logic.attack.AttackUtilities.getAttackUtilites().buttonDisable();
+				refreshBoard();
+			}
+		} else if(currentPlayer == 1) {
+			botHasAttacked = false;
+			humanAttackCount = 0;
+			// Sblocca la board per il player umano e aggiorna la UI
+			main.logic.attack.Attack.getAttackFrame().blockCells = false;
+			main.logic.attack.AttackUtilities.getAttackUtilites().buttonDisable();
+			refreshBoard();
 		}
 	}
 	public void attack(int x, int y) {
-		// Track player 1 attack moves
+		// Track player 1 and player 2 attack moves
 		if (currentPlayer == 1) {
-			char col = (char) ('A' + x);
-			int row = y + 1;
+			char col = (char) ('A' + y);
+			int row = x + 1;
 			String coord = "" + col + row;
 			player1AttackCoords.add(coord);
+		} else if (currentPlayer == 2) {
+			char col = (char) ('A' + y);
+			int row = x + 1;
+			String coord = "" + col + row;
+			player2AttackCoords.add(coord);
 		}
 		if(getOppositeBoard(currentPlayer)[x][y] == SHIPS.D_WATER.getValue() || getOppositeBoard(currentPlayer)[x][y] < 0) {
 			addMessage("This cell was already clicked!");
@@ -789,17 +822,29 @@ public class CtrlRules implements Observable, Serializable {
 			addMessage(getPlayerName(currentPlayer) + " missed!");
 			attackShip(x, y);
 		}
-		
-		if(currentAttackCount == 3 ) {	
-			currentAttackCount = 1;
-			nextPlayer();
-		}
-		else {
+
+		// Gestione attacchi multipli per player umano
+		if(currentPlayer == 1) {
+			humanAttackCount++;
 			checkResult();
-			currentAttackCount++;
+			if(result) {
+				return;
+			}
+			if(humanAttackCount == 3) {
+				humanAttackCount = 0;
+				main.logic.attack.Attack.getAttackFrame().blockCells = true;
+				main.logic.attack.AttackUtilities.getAttackUtilites().buttonEnable();
+				return;
+			} else {
+				main.logic.attack.Attack.getAttackFrame().blockCells = false;
+				main.logic.attack.AttackUtilities.getAttackUtilites().buttonDisable();
+				refreshBoard();
+			}
+		} else {
+			checkResult();
+			if(result) return;
 			refreshBoard();
 		}
-	
 	}
 
 
@@ -1333,7 +1378,7 @@ public class CtrlRules implements Observable, Serializable {
 					continue;
 				}
 				if (x >= 0 && x < 10 && y >= 0 && y < 10) {
-					board[x][y] = code;
+					board[y][x] = code;
 				}
 			}
 		}
@@ -1348,5 +1393,8 @@ public class CtrlRules implements Observable, Serializable {
 	}
 	public java.util.List<String> getPlayer1AttackCoords() {
 		return player1AttackCoords;
+	}
+	public java.util.List<String> getPlayer2AttackCoords() {
+		return player2AttackCoords;
 	}
 }

@@ -10,7 +10,7 @@ import main.battleship.BattleshipConfiguration;
 @SuppressWarnings("serial")
 public class Grid extends JPanel{
 	
-	protected Cell grid[][] = new Cell[BattleshipConfiguration.SQUARE_COUNT][BattleshipConfiguration.SQUARE_COUNT];
+	public Cell grid[][] = new Cell[BattleshipConfiguration.SQUARE_COUNT][BattleshipConfiguration.SQUARE_COUNT];
 	
 	protected int[][] definedCellsToPaint;
 	

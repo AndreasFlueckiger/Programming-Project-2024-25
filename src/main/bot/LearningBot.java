@@ -2,44 +2,62 @@ package main.bot;
 
 import java.io.*;
 import java.util.*;
+import main.logic.shippositioning.ShipPlacementValidator;
+import main.battleship.BattleshipConfiguration;
 
 public class LearningBot implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final String DATA_FILE = "learning_bot_data.ser";
+    private static final List<String> ALL_COORDS_15x15 = new ArrayList<>();
+    static {
+        for (char col = 'A'; col <= 'O'; col++) {
+            for (int row = 1; row <= 15; row++) {
+                ALL_COORDS_15x15.add("" + col + row);
+            }
+        }
+    }
 
     // Track heatmaps for player ship placements and attack patterns
     private int[][] shipPlacementHeatmap = new int[10][10];
     private int[][] attackPatternHeatmap = new int[10][10];
     private Set<String> movesMade = new HashSet<>();
+    private List<String> allCoords;
+    private int currentIndex;
+    private Queue<String> targetQueue = new LinkedList<>();
+    private String lastHit = null;
 
     public LearningBot() {
         loadLearningData();
+        movesMade = new HashSet<>();
+        targetQueue = new LinkedList<>();
+        lastHit = null;
+        allCoords = new ArrayList<>(ALL_COORDS_15x15);
+        Collections.shuffle(allCoords);
+        currentIndex = 0;
     }
 
     // Suggest a move based on learned player patterns
     public String suggestMove() {
-        int maxScore = Integer.MIN_VALUE;
-        int bestX = -1, bestY = -1;
-        for (int x = 0; x < 10; x++) {
-            for (int y = 0; y < 10; y++) {
-                String move = toCoordinate(x, y);
-                if (!movesMade.contains(move)) {
-                    int score = shipPlacementHeatmap[x][y] + attackPatternHeatmap[x][y];
-                    if (score > maxScore) {
-                        maxScore = score;
-                        bestX = x;
-                        bestY = y;
-                    }
-                }
+        String coordinate = null;
+        if (!targetQueue.isEmpty()) {
+            do {
+                coordinate = targetQueue.poll();
+            } while (coordinate != null && movesMade.contains(coordinate));
+        }
+        if (coordinate == null) {
+            // Pesca la prossima coordinata dalla lista mescolata
+            while (currentIndex < allCoords.size() && movesMade.contains(allCoords.get(currentIndex))) {
+                currentIndex++;
+            }
+            if (currentIndex < allCoords.size()) {
+                coordinate = allCoords.get(currentIndex);
+                currentIndex++;
+            } else {
+                return null;
             }
         }
-        if (bestX == -1 || bestY == -1) {
-            // fallback to random
-            return randomMove();
-        }
-        String move = toCoordinate(bestX, bestY);
-        movesMade.add(move);
-        return move;
+        movesMade.add(coordinate);
+        return coordinate;
     }
 
     // Update learning data after a game
@@ -81,34 +99,54 @@ public class LearningBot implements Serializable {
 
     // --- Helpers ---
     private String randomMove() {
-        Random rand = new Random();
-        String move;
-        do {
-            int x = rand.nextInt(10);
-            int y = rand.nextInt(10);
-            move = toCoordinate(x, y);
-        } while (movesMade.contains(move));
-        movesMade.add(move);
-        return move;
-    }
-
-    private String toCoordinate(int x, int y) {
-        char col = (char) ('A' + x);
-        int row = y + 1;
-        return "" + col + row;
+        int size = BattleshipConfiguration.SQUARE_COUNT;
+        List<String> available = new ArrayList<>();
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                String coord = ShipPlacementValidator.convertIndicesToCoordinate(row, col);
+                if (coord != null && !movesMade.contains(coord)) {
+                    available.add(coord);
+                }
+            }
+        }
+        if (available.isEmpty()) return null;
+        return available.get((int)(Math.random() * available.size()));
     }
 
     private int[] fromCoordinate(String coord) {
-        if (coord == null || coord.length() < 2) return null;
-        char col = coord.charAt(0);
-        int x = col - 'A';
-        int y;
-        try {
-            y = Integer.parseInt(coord.substring(1)) - 1;
-        } catch (NumberFormatException e) {
-            return null;
+        return ShipPlacementValidator.convertCoordinateToIndices(coord);
+    }
+
+    public void notifyHit(String coord, boolean hit) {
+        if (hit) {
+            lastHit = coord;
+            for (String adj : getAdjacentCoords(coord)) {
+                if (!movesMade.contains(adj)) {
+                    targetQueue.add(adj);
+                }
+            }
         }
-        if (x < 0 || x >= 10 || y < 0 || y >= 10) return null;
-        return new int[]{x, y};
+    }
+
+    private List<String> getAdjacentCoords(String coord) {
+        List<String> adj = new ArrayList<>();
+        int size = BattleshipConfiguration.SQUARE_COUNT;
+        int[] rc = ShipPlacementValidator.convertCoordinateToIndices(coord);
+        if (rc == null) return adj;
+        int row = rc[0];
+        int col = rc[1];
+        int[] dRow = {-1, 1, 0, 0};
+        int[] dCol = {0, 0, -1, 1};
+        for (int i = 0; i < 4; i++) {
+            int newRow = row + dRow[i];
+            int newCol = col + dCol[i];
+            if (newRow >= 0 && newRow < size && newCol >= 0 && newCol < size) {
+                String adjCoord = ShipPlacementValidator.convertIndicesToCoordinate(newRow, newCol);
+                if (adjCoord != null) {
+                    adj.add(adjCoord);
+                }
+            }
+        }
+        return adj;
     }
 } 

@@ -37,7 +37,7 @@ public class ShipOptions extends JPanel{
 	Cruiser cruiser;
 	Destroyer destroyer;
 	Submarine submarine;
-	Seaplane seaplane;
+	//Seaplane seaplane;
 	
 	static ShipOptions shipOptions;
     
@@ -65,7 +65,7 @@ public class ShipOptions extends JPanel{
 		addCruisers();
 		addDestroyers();
 		addSubmarines();
-		addSeaplanes();
+		//addSeaplanes();
 		
 		paintLabels();
 	}
@@ -133,10 +133,10 @@ public class ShipOptions extends JPanel{
 		submarine = Submarine.getSubmarine();
 		add(submarine);
 	}
-	public void addSeaplanes() {
-		seaplane = Seaplane.getSeaplane();
-		add(seaplane);
-	}
+	//public void addSeaplanes() {
+	//	seaplane = Seaplane.getSeaplane();
+	//	add(seaplane);
+	//}
 	
 	public void reduceShipCount(Ship ship) {
 		String shipName = ship.getClass().getName();
@@ -145,35 +145,35 @@ public class ShipOptions extends JPanel{
 			return;
 		}
 		
-		if(shipName == "logic.ships.Battleship") {
+		if(shipName.equals("main.logic.ships.Battleship")) {
 			battleship_count--;
 			
 			if(battleship_count == 0) {
 				ship.setUnavailable();
 			}
 		}
-		else if(shipName == "logic.ships.Cruiser") {
+		else if(shipName.equals("main.logic.ships.Cruiser")) {
 			cruiser_count--;
 			
 			if(cruiser_count == 0) {
 				ship.setUnavailable();
 			}
 		}
-		else if(shipName == "logic.ships.Destroyer") {
+		else if(shipName.equals("main.logic.ships.Destroyer")) {
 			destroyer_count--;
 			
 			if(destroyer_count == 0) {
 				ship.setUnavailable();
 			}
 		}
-		else if(shipName == "logic.ships.Submarine") {
+		else if(shipName.equals("main.logic.ships.Submarine")) {
 			submarine_count--;
 			
 			if(submarine_count == 0) {
 				ship.setUnavailable();
 			}
 		}
-		else if(shipName == "logic.ships.Seaplane") {
+		else if(shipName.equals("main.logic.ships.Seaplane")) {
 			seaplane_count--;
 			
 			if(seaplane_count == 0) {
@@ -181,31 +181,32 @@ public class ShipOptions extends JPanel{
 			}
 		}
 		
-		ship_count--;	
+		ship_count--;
+		System.out.println("[DEBUG] Ship count after placement: " + ship_count);
 		repaintLabels();
 		
-		if(ship_count == 0) {
+		if(ship_count == 5) {
+			System.out.println("[DEBUG] (TEMP) Calling buttonEnable() in SelectionUtilities con ship_count == 5");
 			SelectionUtilities.getSelectionUtilites().buttonEnable();
 		}
-		
 	}
 	
 	public void increaseShipCount(Ship ship) {
 		String shipName = ship.getClass().getName();
 		
-		if(shipName == "logic.ships.Battleship") {
+		if(shipName.equals("main.logic.ships.Battleship")) {
 			battleship_count++;
 		}
-		else if(shipName == "logic.ships.Cruiser") {
+		else if(shipName.equals("main.logic.ships.Cruiser")) {
 			cruiser_count++;
 		}
-		else if(shipName == "logic.ships.Destroyer") {
+		else if(shipName.equals("main.logic.ships.Destroyer")) {
 			destroyer_count++;
 		}
-		else if(shipName == "logic.ships.Submarine") {
+		else if(shipName.equals("main.logic.ships.Submarine")) {
 			submarine_count++;
 		}
-		else if(shipName == "logic.ships.Seaplane") {
+		else if(shipName.equals("main.logic.ships.Seaplane")) {
 			seaplane_count++;
 		}
 		
@@ -228,7 +229,7 @@ public class ShipOptions extends JPanel{
 		cruiser.setAvailable();
 		destroyer.setAvailable();
 		submarine.setAvailable();
-		seaplane.setAvailable();
+		//seaplane.setAvailable();
 		
 		repaintLabels();
 	}

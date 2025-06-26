@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 
 import main.battleship.BattleshipConfiguration;
 
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class ShipPlacement extends JPanel{

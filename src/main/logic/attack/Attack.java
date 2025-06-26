@@ -67,12 +67,11 @@ public class Attack extends JFrame implements Observer{
 	
 	public void showBoard(int player) {
 		System.out.println("[DEBUG] SHOWING BOARD " + Integer.toString(player));
-		
-		if(player == 1)
+		if(player == 1) {
+			board2.hideHiddenCells();
+		} else {
 			board1.showHiddenCells();
-		else 
-			board2.showHiddenCells();
-		
+		}
 		changeTitle("ATTACKING PLAYER - " + currentPlayerName);
 		AttackUtilities.getAttackUtilites().buttonDisable();
 		blockCells = false;
@@ -89,14 +88,32 @@ public class Attack extends JFrame implements Observer{
 	@Override
 	public void notify(Observable o) {
 		Object lob[] = (Object []) o.get();
-		
 		int currentPlayer = (int) lob[BattleshipConfiguration.objectValues.CURRENT_PLAYER.getValue()];
-
+		String player1Type = main.rules.designPatterns.RulesFacade.player2Type;
+		boolean isHumanVsHuman = "Human".equals(player1Type);
 		if(currentPlayer == 1)
 			currentPlayerName = (String) lob[ BattleshipConfiguration.objectValues.PLAYER_1_NAME.getValue() ];
 		else
 			currentPlayerName = (String) lob[ BattleshipConfiguration.objectValues.PLAYER_2_NAME.getValue() ];
-		
+		if(isHumanVsHuman) {
+			java.util.List<String> player1AttackCoords = main.rules.designPatterns.RulesFacade.getRules().getPlayer1AttackCoords();
+			java.util.List<String> player2AttackCoords = main.rules.designPatterns.RulesFacade.getRules().getPlayer2AttackCoords();
+			if(currentPlayer == 1) {
+				// Player 1: attacca a sinistra (board1), vede le sue navi a destra (board2)
+				board1.setAttackCoords(player1AttackCoords);
+				board1.setEnabled(true);
+				board2.showHiddenCells();
+				board2.setEnabled(false);
+			} else {
+				// Player 2: attacca a sinistra (board1), vede le sue navi a destra (board2)
+				board1.setAttackCoords(player2AttackCoords);
+				board1.setEnabled(true);
+				board2.showHiddenCells();
+				board2.setEnabled(false);
+			}
+			getContentPane().repaint();
+			getContentPane().revalidate();
+		}
 	}
 	
 }

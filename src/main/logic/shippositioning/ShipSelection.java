@@ -73,6 +73,13 @@ public class ShipSelection extends JFrame implements KeyListener, Observer{
 		int currentPlayerNum = RulesFacade.getRules().getCurrentPlayer();
 		setTitle("Ship Selection - " + RulesFacade.getRules().getPlayerName(currentPlayerNum));
 		
+		// Se il player corrente è un bot, chiudi subito la schermata
+		String botType = main.rules.designPatterns.RulesFacade.player2Type;
+		boolean isBot = "EasyBot".equals(botType) || "HardBot".equals(botType) || "LearningBot".equals(botType);
+		if (currentPlayerNum == 2 && isBot) {
+			setVisible(false);
+		}
+		
 		JButton bomberButton = new JButton("Bomber plane");
 		bomberButton.setBounds(650,50,140,40);
 		getContentPane().add(bomberButton);

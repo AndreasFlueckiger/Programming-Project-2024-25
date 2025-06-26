@@ -119,4 +119,11 @@ public class RulesFacade {
     	return ctrl;
     }
 
+    public java.util.List<String> getPlayer1AttackCoords() {
+        return ctrl.getPlayer1AttackCoords();
+    }
+    public java.util.List<String> getPlayer2AttackCoords() {
+        return ctrl.getPlayer2AttackCoords();
+    }
+
 }

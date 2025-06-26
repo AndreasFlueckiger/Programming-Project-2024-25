@@ -27,8 +27,8 @@ import main.rules.designPatterns.RulesFacade;
 @SuppressWarnings("serial")
 public class NameForm extends JFrame{
     
-    	final int LARG_DEFAULT = 230;
-	final int ALT_DEFAULT = 150;
+    	final int LARG_DEFAULT = 350;
+	final int ALT_DEFAULT = 180;
 	
 	private JLabel player1Lbl = new JLabel("Player 1:");
 	private JTextArea player1Txt = new JTextArea("Player 1 name");
@@ -61,7 +61,7 @@ public class NameForm extends JFrame{
 		containerPnl.setLayout(null);
 		
 		labelsPnl.setLayout(new BoxLayout(labelsPnl, BoxLayout.Y_AXIS));
-		labelsPnl.setBounds(0,5,80,80);
+		labelsPnl.setBounds(0,5,100,100);
 		player1Lbl.setFont(new Font("SansSerif", Font.BOLD, 12));
 		player2Lbl.setFont(new Font("SansSerif", Font.BOLD, 12));
 		player1Lbl.setAlignmentX(RIGHT_ALIGNMENT);
@@ -73,10 +73,10 @@ public class NameForm extends JFrame{
 		labelsPnl.setOpaque(false);
 		containerPnl.add(labelsPnl);
 		
-		Dimension txtDimension = new Dimension(130, 25);
+		Dimension txtDimension = new Dimension(180, 25);
 		
 		textsPnl.setLayout(new BoxLayout(textsPnl, BoxLayout.Y_AXIS));
-		textsPnl.setBounds(85,5,130,80);
+		textsPnl.setBounds(105,5,200,140);
 		player1Txt.setForeground(Color.GRAY);
 		player1Txt.setAlignmentX(LEFT_ALIGNMENT);
 		player1Txt.setPreferredSize(txtDimension);
@@ -119,11 +119,12 @@ public class NameForm extends JFrame{
 		        }
 		    }
 		});
-		textsPnl.add(Box.createRigidArea(new Dimension(0, 7)));
+		textsPnl.add(Box.createRigidArea(new Dimension(0, 20)));
 		textsPnl.add(player1Txt);
 		textsPnl.add(Box.createRigidArea(new Dimension(0, 8)));
 		textsPnl.add(player2Txt);
-		textsPnl.add(Box.createRigidArea(new Dimension(0, 8)));
+		textsPnl.add(Box.createRigidArea(new Dimension(0, 38)));
+		player2TypeCombo.setMaximumSize(new Dimension(180, 25));
 		textsPnl.add(player2TypeCombo);
 		textsPnl.setOpaque(false);
 		containerPnl.add(textsPnl);
@@ -141,22 +142,32 @@ public class NameForm extends JFrame{
 		startBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	
-            	if(player1Txt.getText().equals("Player 1 name") || player2Txt.getText().equals("Player 2 name")) {
-            		JOptionPane.showMessageDialog(null, "Enter both names!");
-            	}
-            	else {
-            		
-            		RulesFacade.getRules().setPlayerName(1, player1Txt.getText());
-            		RulesFacade.getRules().setPlayerName(2, player2Txt.getText());
-            		String player2Type = (String) player2TypeCombo.getSelectedItem();
-            		RulesFacade.player2Type = player2Type;
-                	(ShipSelection.getShipSelection()).setVisible(true);
-                	(InitialFrame.getInitialFrame()).setVisible(false);
-                    
+                String player1Name = player1Txt.getText();
+                String player2Name = player2Txt.getText();
+                String player2Type = (String) player2TypeCombo.getSelectedItem();
+
+                // Caso 2 giocatori umani
+                if (!player1Name.isEmpty() && !player2Name.isEmpty() && player2Type.equals("Human")) {
+                    main.rules.designPatterns.RulesFacade.player2Type = "Human";
+                    main.rules.designPatterns.RulesFacade.getRules().setPlayerName(1, player1Name);
+                    main.rules.designPatterns.RulesFacade.getRules().setPlayerName(2, player2Name);
+                    (main.logic.shippositioning.ShipSelection.getShipSelection()).setVisible(true);
+                    (InitialFrame.getInitialFrame()).setVisible(false);
                     setVisible(false);
-            	}
-            	
+                }
+                // Caso single player contro bot
+                else if (!player1Name.isEmpty() && !player2Type.equals("Human")) {
+                    main.rules.designPatterns.RulesFacade.player2Type = player2Type;
+                    main.rules.designPatterns.RulesFacade.getRules().setPlayerName(1, player1Name);
+                    main.rules.designPatterns.RulesFacade.getRules().setPlayerName(2, player2Type); // nome automatico per il bot
+                    // Mostra ShipSelection solo per il player umano
+                    (main.logic.shippositioning.ShipSelection.getShipSelection()).setVisible(true);
+                    (InitialFrame.getInitialFrame()).setVisible(false);
+                    setVisible(false);
+                    // Il resto (posizionamento bot e attacco) sarà gestito in SelectionUtilities
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(null, "Inserisci almeno il nome del Player 1 e scegli il tipo di avversario!");
+                }
             }
         });
 		buttonPnl.add(startBtn);
