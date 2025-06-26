@@ -31,7 +31,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import main.battleship.BattleshipConfiguration;
 import main.rules.designPatterns.RulesFacade;
 import main.bot.BotManager;
 
@@ -151,7 +150,7 @@ public class VictoryPanel extends JPanel{
         timer.start();
 		
 		// LearningBot learning hook
-		if ("LearningBot".equals(main.battleship.GameSettings.player2Type)) {
+		if ("LearningBot".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
 			java.util.List<String> playerShipCoords = main.rules.designPatterns.RulesFacade.getRules().getCtrl().getPlayer1ShipCoords();
 			java.util.List<String> playerAttackCoords = main.rules.designPatterns.RulesFacade.getRules().getCtrl().getPlayer1AttackCoords();
 			main.bot.BotManager.getLearningBot().learnFromGame(playerShipCoords, playerAttackCoords);

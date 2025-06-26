@@ -10,6 +10,8 @@ public class RulesFacade {
         CtrlRules ctrl;
     static RulesFacade rulesFacade=null;
     
+    public static String player2Type = "Human";
+    
     private RulesFacade() {
         ctrl=new CtrlRules();
     }

@@ -19,7 +19,6 @@ import main.battleship.BattleshipConfiguration;
 import main.rules.designPatterns.Observable;
 import main.rules.designPatterns.Observer;
 import main.rules.designPatterns.RulesFacade;
-import main.battleship.GameSettings;
 import main.bot.BotManager;
 
 
@@ -126,9 +125,9 @@ public class SelectionUtilities extends JPanel implements Observer{
 				RulesFacade.getRules().setBoard(RulesFacade.getRules().getCurrentPlayer());
 
 				// Bot ship placement for Player 2
-				if (RulesFacade.getRules().getCurrentPlayer() == 2 && !"Human".equals(GameSettings.player2Type)) {
+				if (RulesFacade.getRules().getCurrentPlayer() == 2 && !"Human".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
 					// Place ships for bot
-					java.util.Map<String, java.util.List<String>> placements = BotManager.placeShips(GameSettings.player2Type);
+					java.util.Map<String, java.util.List<String>> placements = BotManager.placeShips(main.rules.designPatterns.RulesFacade.player2Type);
 					RulesFacade.getRules().getCtrl().placeBotShips(2, placements);
 					Attack.getAttackFrame().setVisible(true);
 					ShipSelection.getShipSelection().setVisible(false);

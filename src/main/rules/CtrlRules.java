@@ -10,7 +10,6 @@ import main.rules.designPatterns.*;
 import main.rules.designPatterns.Observable;
 import main.rules.designPatterns.Observer;
 import main.logic.shippositioning.*;
-import main.battleship.GameSettings;
 import main.bot.BotManager;
 
 public class CtrlRules implements Observable, Serializable {
@@ -752,9 +751,9 @@ public class CtrlRules implements Observable, Serializable {
 		currentPlayer = getNextPlayer();
 		refreshBoard();
 		// Bot move logic
-		if(currentPlayer == 2 && !"Human".equals(GameSettings.player2Type)) {
+		if(currentPlayer == 2 && !"Human".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
 			// Generate bot move (e.g., "A5")
-			String move = BotManager.getBotMove(GameSettings.player2Type);
+			String move = BotManager.getBotMove(main.rules.designPatterns.RulesFacade.player2Type);
 			if(move != null && move.length() >= 2) {
 				char col = move.charAt(0);
 				int x = col - 'A';
