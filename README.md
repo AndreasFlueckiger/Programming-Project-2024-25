@@ -78,29 +78,23 @@ Each power can be used once per game. Only one power can be used per turn.
 
 ## Project Structure
 
-src/
-└── main/
-├── ui/
-│ ├── main/ # Launcher class (Launcher.java)
-│ └── initialScreen/ # Main menu, name form, initial screen layout
-│
-├── logic/
-│ ├── attack/ # Attack logic and utilities
-│ ├── board/ # Grid, Cell, and Board management
-│ ├── powers/ # AirAttack, ScatterBomb, Scanner, PowerManager
-│ ├── ships/ # Ship classes: Battleship, Submarine, etc.
-│ ├── shippositioning/ # Ship placement, selection, validation
-│ └── victory/ # Victory screen, animations, result memory
-│
-├── bot/ # AI bots: EasyBot, HardBot, LearningBot
-│
-├── rules/
-│ ├── designPatterns/ # Observer, Observable
-│ └── CtrlRules.java # Central game rules and coordination
-│
-├── saveload/ # SaveLoadManager for serialization
-│
-└── battleship/ # BattleshipConfiguration (constants & enums)
+- `src/main/`
+  - `ui/`
+    - `main/` – Launcher class (`Launcher.java`)
+    - `initialScreen/` – Main menu, name form, screen layout
+  - `logic/`
+    - `attack/` – Attack logic and utilities (`Attack.java`, `AttackUtilities.java`)
+    - `board/` – Grid, Cell, and Board logic
+    - `powers/` – Power classes (`AirAttack`, `Scanner`, `ScatterBomb`) + `PowerManager`
+    - `ships/` – Ship classes: `Battleship`, `Cruiser`, `Submarine`, etc.
+    - `shippositioning/` – Ship placement logic, validation, selection boards
+    - `victory/` – Victory screen UI, fireworks GIF, and result memory
+  - `bot/` – AI players: `EasyBot`, `HardBot`, `LearningBot`
+  - `rules/`
+    - `designPatterns/` – `Observer` and `Observable`
+    - `CtrlRules.java` – Core rule engine
+  - `saveload/` – `SaveLoadManager.java` for saving/loading progress
+  - `battleship/` – `BattleshipConfiguration.java` with global constants and enums
 
 
 
