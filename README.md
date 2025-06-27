@@ -1,11 +1,23 @@
 # Battleship Programming Project
-# The ReadMe still Needs to be updated and Written properly in Markdown
 
-## Team:
-Alexis Andreas Fleuckiger (AndreasFlueckiger)
-Matteo Fina (MatteoFindus)
-Marco Meneghetti (SirMarkusIT)
+## Team
+
+Alexis Andreas Fleuckiger (AndreasFlueckiger)<br>
+Matteo Fina (MatteoFindus)<br>
+Marco Meneghetti (SirMarkusIT)<br>
 Leonardo Fabricio Reyna Salas (Superleoxx)
+
+## Distribution of the workload
+<ul>
+<li> <b> GUI</b> Alexis</li>
+<li> <b> Powers</b> Marco</li>
+<li> <b> CtrlRules</b> Matteo and Alexis</li>
+<li> <b> Ships</b> Marco and Alexis</li>
+<li> <b> Attack logic</b> Matteo</li>
+<li> <b> Bots</b> Matteo</li>
+</ul>
+
+---
 
 **Language:** Java 17  
 **GUI:** Java Swing  
@@ -14,7 +26,8 @@ Leonardo Fabricio Reyna Salas (Superleoxx)
 ---
 
 ## Instructions to run it
-On the virtual machine is required Java 17 or later to run it. 
+
+On the virtual machine is required Java 17 or later to run it.
 To start the program you need to compile the file Launcher.java that is memorized in src/main/ui/main.
 You need to go on the location of the file and you need put on the terminal this command:
 javac Launcher.java
@@ -22,24 +35,19 @@ java Launcher
 
 ---
 
----
-
-
 This is a fully functional **2-player Battleship game** built using **Java Swing**. It includes ship placement, attack phase, power abilities (Air Attack and Scatter Bomb), and game state saving/loading.
 
 ---
-
-
 
 ## Overview
 
 This project is a digital implementation of the classic **Battleship** strategy game with two game modes:
 
 Players can choose between:
-- **Player vs Player (PvP)** 
-- **Player vs Bot (PvBot)**   
-  (Bot available in Easy, Hard and learning difficulties levels)
 
+- **Player vs Player (PvP)**
+- **Player vs Bot (PvBot)**
+  (Bot available in Easy, Hard and learning difficulties levels)
 
 ---
 
@@ -49,7 +57,6 @@ Each power can be used once per game. Only one power can be used per turn.
 
 - **Scatter Bomb**: Hits a 3×3 area centered on a selected cell. Ends your turn.
 - **Attacco Aereo**: Attacks all cells in a selected column. Ends your turn.
-
 
 ## Gameplay Flow
 
@@ -111,8 +118,6 @@ Each power can be used once per game. Only one power can be used per turn.
   - `saveload/` – `SaveLoadManager.java` for saving/loading progress
   - `battleship/` – `BattleshipConfiguration.java` with global constants and enums
 
-
-
 ## Key Classes Overview
 
 | Class                         | Role                              |
@@ -129,8 +134,6 @@ Each power can be used once per game. Only one power can be used per turn.
 | `LearningBot.java`            | Bot that improves from experience |
 | `SaveLoadManager.java`        | Handles saving/loading game data  |
 
-
-
 ---
 
 ## Game Concept
@@ -138,3 +141,73 @@ Each power can be used once per game. Only one power can be used per turn.
 Battleship is a turn-based strategy game played on two 10×10 grids per player.  
 One grid is used to place the player's own fleet; the other is used to record attacks on the opponent.  
 Players alternate turns by calling out grid coordinates (e.g., "B5"). The opponent responds with “hit” or “miss.” When all the tiles of a ship are hit, the ship is sunk. The first player to sink all of their opponent’s ships wins.
+
+## Different (high-level) components and interfaces between components
+
+<ol>
+         <li>Observer Pattern (Design Pattern)
+            Where?
+
+            Observable / Observer interfaces
+
+            Classes like CtrlRules notify Attack or ShipSelection when data changes.
+
+            Why it’s complex:
+
+            Requires understanding of loose coupling and event-driven architecture.
+
+            Implements decoupled update propagation to multiple observers.
+
+            Example:
+
+            for (Observer o : lob) {
+               o.notify(this);
+            }
+   </li>
+         <li> MVC (Model-View-Controller) Architecture
+            Where?
+
+            Model: CtrlRules, PowerManager, ShipOptions
+
+            View: Attack, ShipSelection, VictoryPanel
+
+            Controller: RulesFacade coordinates actions and game state
+
+            Why it’s complex:
+
+            Enforces separation of concerns, requiring structure and discipline.
+
+            Ensures testability, flexibility, and scalability.
+   </li>
+   <li>Serialization for Saving and Loading Game State
+      Where?
+
+      CtrlRules implements Serializable
+
+      SaveLoadManager uses ObjectOutputStream / ObjectInputStream
+
+      Why it’s complex:
+
+      Requires correct versioning, transient fields, and class compatibility.
+
+      Ensures full game state is stored/restored safely
+   </li>
+   </ol>
+
+## Experience
+
+On the workload distribution have worked Alexis, in fact he distributed work to the group and then we discussed weekly updates who did what and how the workload should be redistributed.
+Git was used only like a cloud repository to store the project without any usage of the coordination tools. The group faced some problems as removing directories after pivoting ideas.
+In the project there isn't third party librariers.
+
+<ul>
+   <li>
+       <b>Alexis<b>: My biggest challenge was designing the GUI from stratch and to incorporate the code written by other members of the group.
+   </li>
+   <li>
+       <b>Matteo<b>: My biggest challenge was to create the bots and make them work on different levels of difficulties.
+   </li>
+   <li>
+       <b>Marco<b>: My biggest challenge was when I was coding the savement of the multiplayers results, here I applied a more complex way of serialisation and desesrialisation that we saw in the class, because I need not to lose any previous information.
+   </li>
+</ul>

@@ -7,18 +7,21 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
-
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
+import main.battleship.BattleshipConfiguration;
+import main.battleship.BattleshipConfiguration.PHASE;
 import main.logic.attack.Attack;
 import main.logic.shippositioning.PositioningGrid;
-import main.battleship.BattleshipConfiguration.PHASE;
-import main.battleship.BattleshipConfiguration;
-import main.rules.designPatterns.RulesFacade;
 import main.logic.ships.Ship;
+import main.rules.designPatterns.RulesFacade;
 
-
+/**
+ * Grid represents the core grid structure of the Battleship game for a specific player or component.
+ * It manages cell instantiation, rendering of ship positions, and repainting based on game logic.
+ * 
+ * This class serves as a reusable base for player and enemy grids.
+ */
 @SuppressWarnings("serial")
 public class Cell extends JPanel implements MouseListener{
 	

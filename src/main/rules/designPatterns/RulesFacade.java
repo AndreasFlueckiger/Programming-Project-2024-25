@@ -1,20 +1,39 @@
 package main.rules.designPatterns;
 
 
-import main.logic.ships.Ship;
 import main.battleship.BattleshipConfiguration.PHASE;
 import main.logic.ships.Ship;
 import main.rules.CtrlRules;
 
+/**
+ * RulesFacade is a Singleton class that acts as a facade over the CtrlRules class.
+ * It provides a simplified, unified interface for accessing and controlling
+ * game logic related to both positioning and attack phases.
+ *
+ * This class follows the *Facade Pattern*, encapsulating interaction with the core controller,
+ * and the *Singleton Pattern*, ensuring only one shared instance of the game logic exists.
+ */
+
 public class RulesFacade {
-        CtrlRules ctrl;
+    // Reference to the core controller managing game logic
+    CtrlRules ctrl;
+    // Singleton instance
     static RulesFacade rulesFacade=null;
     
+    // Tracks the type of player 2 (e.g., Human, EasyBot, LearningBot)
     public static String player2Type = "Human";
     
+     /**
+     * Private constructor to prevent external instantiation.
+     */
     private RulesFacade() {
         ctrl=new CtrlRules();
     }
+
+     /**
+     * Returns the singleton instance of the RulesFacade.
+     * Instantiates it lazily on first use.
+     */
     public static RulesFacade getRules() {
         if(rulesFacade==null)
             rulesFacade=new RulesFacade();
@@ -22,10 +41,16 @@ public class RulesFacade {
         return rulesFacade;    
     }
     
+    /**
+     * Destroys the singleton instance (used when resetting the game).
+     */
     public void selfDestroy() {
     	rulesFacade = null;
     }
     
+    /**
+     * Replaces the current controller with one loaded from a save file.
+     */
     public void overrideCtrl(CtrlRules newCtrl) {
         if(newCtrl==null) {
         	return;
@@ -34,11 +59,14 @@ public class RulesFacade {
         ctrl = newCtrl;
     }
     
+     /**
+     * Resets the internal game controller.
+     */
 	public void resetGame() {
 		ctrl.resetGame();
 	}
 
-// Positioning in the boad
+    // Positioning on the board
 
       public void shipRotate() {
 		ctrl.shipRotate();
@@ -115,13 +143,23 @@ public class RulesFacade {
     
 // Save / Load
 	
+    /**
+     * Returns the controller (used for saving).
+     */
     public CtrlRules getCtrl() {
     	return ctrl;
     }
 
+    /**
+     * Returns Player 1's attack history (for LearningBot or analytics).
+     */
     public java.util.List<String> getPlayer1AttackCoords() {
         return ctrl.getPlayer1AttackCoords();
     }
+
+    /**
+     * Returns Player 2's attack history.
+     */
     public java.util.List<String> getPlayer2AttackCoords() {
         return ctrl.getPlayer2AttackCoords();
     }

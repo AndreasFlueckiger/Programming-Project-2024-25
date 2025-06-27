@@ -12,11 +12,15 @@ import main.rules.designPatterns.Observer;
 import main.logic.shippositioning.*;
 import main.bot.BotManager;
 
+<<<<<<< HEAD
 /**
  * Main controller class for the Battleship game logic.
  * Implements the Observable pattern to notify UI components of state changes.
  * Handles ship positioning, attacks, game state management, and player turns.
  */
+=======
+
+>>>>>>> b3ef850daa0546cdbd4350a0d048816bd6ae707c
 public class CtrlRules implements Observable, Serializable {
 
 	private static final long serialVersionUID = 1L;
