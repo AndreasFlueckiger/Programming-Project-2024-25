@@ -110,10 +110,8 @@ public class Cell extends JPanel implements MouseListener{
 			paintSelectedCells();
 			return;
 		}
-		// POWER USAGE (solo Player vs Player e solo in fase di ATTACK)
+		// POWER USAGE (in qualsiasi modalità, solo in fase di ATTACK)
 		if(RulesFacade.getRules().getPhase() == PHASE.ATTACK) {
-			String player2Type = main.rules.designPatterns.RulesFacade.player2Type;
-			boolean isHumanVsHuman = "Human".equals(player2Type);
 			String selectedPower = null;
 			boolean[][] powerUsed = null;
 			try {
@@ -126,8 +124,7 @@ public class Cell extends JPanel implements MouseListener{
 			int powerIdx = -1;
 			if ("AirAttack".equals(selectedPower)) powerIdx = 0;
 			else if ("ScatterBomb".equals(selectedPower)) powerIdx = 1;
-			else if ("Scanner".equals(selectedPower)) powerIdx = 2;
-			if(isHumanVsHuman && selectedPower != null && powerIdx != -1 && !powerUsed[idx][powerIdx]) {
+			if(selectedPower != null && powerIdx != -1 && !powerUsed[idx][powerIdx]) {
 				int gridX = x / BattleshipConfiguration.SQUARE_SIZE;
 				int gridY = y / BattleshipConfiguration.SQUARE_SIZE;
 				if(selectedPower.equals("AirAttack")) {
@@ -155,23 +152,6 @@ public class Cell extends JPanel implements MouseListener{
 					main.logic.attack.AttackUtilities.getAttackUtilites().markPowerUsed();
 					System.out.println("[POWER] ScatterBomb used at: " + (char)('A'+gridX)+(gridY+1));
 					main.rules.designPatterns.RulesFacade.getRules().nextPlayer();
-					return;
-				} else if(selectedPower.equals("Scanner")) {
-					StringBuilder scanResult = new StringBuilder("[POWER] Scanner result at: " + (char)('A'+gridX)+(gridY+1)+"\n");
-					for(int dx = -1; dx <= 1; dx++) {
-						for(int dy = -1; dy <= 1; dy++) {
-							int tx = gridX + dx;
-							int ty = gridY + dy;
-							if(tx >= 0 && tx < BattleshipConfiguration.SQUARE_COUNT && ty >= 0 && ty < BattleshipConfiguration.SQUARE_COUNT) {
-								Cell c = getCellAt(tx, ty);
-								if(c != null) c.highlightTemporarily(new Color(80, 180, 255));
-								String state = c.getCellStateString();
-								scanResult.append((char)('A'+tx)).append(ty+1).append(": ").append(state).append("\n");
-							}
-						}
-					}
-					System.out.print(scanResult.toString());
-					main.logic.attack.AttackUtilities.getAttackUtilites().markPowerUsed();
 					return;
 				}
 			}
