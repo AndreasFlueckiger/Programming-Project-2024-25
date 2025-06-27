@@ -12,6 +12,7 @@ import main.rules.designPatterns.Observer;
 import main.logic.shippositioning.*;
 import main.bot.BotManager;
 
+
 public class CtrlRules implements Observable, Serializable {
 
 	private static final long serialVersionUID = 1L;
