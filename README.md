@@ -79,23 +79,28 @@ Each power can be used once per game. Only one power can be used per turn.
 ## Project Structure
 
 src/
-├── main/
-│   ├── ui/
-│   │   ├── main/              # Launcher class
-│   │   └── initialScreen/     # Main menu, name form, screen layout
-│   ├── logic/
-│   │   ├── attack/            # Attack logic and utilities
-│   │   ├── board/             # Grid, cell, and board handling
-│   │   ├── powers/            # AirAttack, Scanner, ScatterBomb + manager
-│   │   ├── ships/             # Ship classes: Battleship, Submarine, etc.
-│   │   ├── shippositioning/   # Ship placement, selection, and validation
-│   │   └── victory/           # Victory screen and data serialization
-│   ├── bot/                   # AI classes (EasyBot, HardBot, LearningBot)
-│   ├── rules/
-│   │   ├── designPatterns/    # Observer, Observable
-│   │   └── CtrlRules.java     # Central rule controller
-│   ├── saveload/              # SaveLoadManager for reading/writing game state
-│   └── battleship/            # BattleshipConfiguration.java (constants, enums)
+└── main/
+├── ui/
+│ ├── main/ # Launcher class (Launcher.java)
+│ └── initialScreen/ # Main menu, name form, initial screen layout
+│
+├── logic/
+│ ├── attack/ # Attack logic and utilities
+│ ├── board/ # Grid, Cell, and Board management
+│ ├── powers/ # AirAttack, ScatterBomb, Scanner, PowerManager
+│ ├── ships/ # Ship classes: Battleship, Submarine, etc.
+│ ├── shippositioning/ # Ship placement, selection, validation
+│ └── victory/ # Victory screen, animations, result memory
+│
+├── bot/ # AI bots: EasyBot, HardBot, LearningBot
+│
+├── rules/
+│ ├── designPatterns/ # Observer, Observable
+│ └── CtrlRules.java # Central game rules and coordination
+│
+├── saveload/ # SaveLoadManager for serialization
+│
+└── battleship/ # BattleshipConfiguration (constants & enums)
 
 
 
