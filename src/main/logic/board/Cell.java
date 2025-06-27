@@ -138,6 +138,7 @@ public class Cell extends JPanel implements MouseListener{
 					}
 					main.logic.attack.AttackUtilities.getAttackUtilites().markPowerUsed();
 					System.out.println("[POWER] AirAttack used on column: " + (char)('A'+gridX));
+					main.rules.designPatterns.RulesFacade.getRules().nextPlayer();
 					return;
 				} else if(selectedPower.equals("ScatterBomb")) {
 					for(int dx = -1; dx <= 1; dx++) {
@@ -153,6 +154,7 @@ public class Cell extends JPanel implements MouseListener{
 					}
 					main.logic.attack.AttackUtilities.getAttackUtilites().markPowerUsed();
 					System.out.println("[POWER] ScatterBomb used at: " + (char)('A'+gridX)+(gridY+1));
+					main.rules.designPatterns.RulesFacade.getRules().nextPlayer();
 					return;
 				} else if(selectedPower.equals("Scanner")) {
 					StringBuilder scanResult = new StringBuilder("[POWER] Scanner result at: " + (char)('A'+gridX)+(gridY+1)+"\n");

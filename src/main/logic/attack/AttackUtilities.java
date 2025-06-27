@@ -89,6 +89,7 @@ public class AttackUtilities extends JPanel implements Observer{
 		add(bottomPanel, BorderLayout.SOUTH);
 
 		updatePowerButtonsState();
+		updateSaveButtonVisibility();
 
 		// (RI)AGGIUNGO ACTION LISTENER AI BOTTONI POWERS
 		airAttackBtn.addActionListener(e -> usePower("AirAttack"));
@@ -178,6 +179,7 @@ public class AttackUtilities extends JPanel implements Observer{
 		}
 
 		setMessages(newMessages, validation);
+		updateSaveButtonVisibility();
 	}
 	
 	// Restituisce l'indice del player di turno (0 o 1)
@@ -279,6 +281,12 @@ public class AttackUtilities extends JPanel implements Observer{
 		util.powerUsed[botIdx][powerIdx] = true;
 		util.updatePowerButtonsState();
 		util.onTurnOrPowerChange();
+	}
+
+	private void updateSaveButtonVisibility() {
+		String player2Type = main.rules.designPatterns.RulesFacade.player2Type;
+		boolean isBot = "EasyBot".equals(player2Type) || "HardBot".equals(player2Type) || "LearningBot".equals(player2Type);
+		saveBtn.setVisible(!isBot);
 	}
 }
 

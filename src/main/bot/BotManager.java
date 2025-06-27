@@ -128,14 +128,16 @@ public class BotManager {
                         boolean valid = true;
                         if (ship.equals("Seaplane")) {
                             int[][] deltas = new int[][]{
-                                {0,0, 1,-1, 0,-2}, // UP
-                                {0,0, 1,1, 2,0},   // RIGHT
-                                {0,0, -1,1, 0,2},  // DOWN
-                                {0,0, -1,-1, -2,0} // LEFT
+                                {0,0, 1,1, 1,-1},   // TOP: central, right-down, right-up
+                                {0,0, 1,-1, 2,0},   // RIGHT: central, right-up, right-right
+                                {0,0, 1,1, 0,2},    // DOWN: central, right-down, down-down
+                                {0,0, -1,1, -2,0}   // LEFT: central, left-up, left-left
                             };
                             int[] d = deltas[rand.nextInt(4)];
                             int[][] seaplaneCoords = new int[][]{
-                                {row, col}, {row+d[2], col+d[3]}, {row+d[4], col+d[5]}
+                                {row, col},
+                                {row + d[2], col + d[3]},
+                                {row + d[4], col + d[5]}
                             };
                             coords.clear();
                             for (int[] c : seaplaneCoords) coords.add(c);

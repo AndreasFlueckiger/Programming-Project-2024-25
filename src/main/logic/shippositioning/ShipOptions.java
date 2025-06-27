@@ -6,6 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import main.logic.ships.*;
+import main.logic.ships.SeaPlane;
 
 
 @SuppressWarnings("serial")
@@ -37,7 +38,7 @@ public class ShipOptions extends JPanel{
 	Cruiser cruiser;
 	Destroyer destroyer;
 	Submarine submarine;
-	//Seaplane seaplane;
+	SeaPlane seaplane;
 	
 	static ShipOptions shipOptions;
     
@@ -65,7 +66,7 @@ public class ShipOptions extends JPanel{
 		addCruisers();
 		addDestroyers();
 		addSubmarines();
-		//addSeaplanes();
+		addSeaplanes();
 		
 		paintLabels();
 	}
@@ -133,10 +134,10 @@ public class ShipOptions extends JPanel{
 		submarine = Submarine.getSubmarine();
 		add(submarine);
 	}
-	//public void addSeaplanes() {
-	//	seaplane = Seaplane.getSeaplane();
-	//	add(seaplane);
-	//}
+	public void addSeaplanes() {
+		seaplane = SeaPlane.getSeaplane();
+		add(seaplane);
+	}
 	
 	public void reduceShipCount(Ship ship) {
 		String shipName = ship.getClass().getName();
@@ -173,7 +174,7 @@ public class ShipOptions extends JPanel{
 				ship.setUnavailable();
 			}
 		}
-		else if(shipName.equals("main.logic.ships.Seaplane")) {
+		else if(shipName.equals("main.logic.ships.SeaPlane")) {
 			seaplane_count--;
 			
 			if(seaplane_count == 0) {
@@ -206,7 +207,7 @@ public class ShipOptions extends JPanel{
 		else if(shipName.equals("main.logic.ships.Submarine")) {
 			submarine_count++;
 		}
-		else if(shipName.equals("main.logic.ships.Seaplane")) {
+		else if(shipName.equals("main.logic.ships.SeaPlane")) {
 			seaplane_count++;
 		}
 		
@@ -229,7 +230,7 @@ public class ShipOptions extends JPanel{
 		cruiser.setAvailable();
 		destroyer.setAvailable();
 		submarine.setAvailable();
-		//seaplane.setAvailable();
+		seaplane.setAvailable();
 		
 		repaintLabels();
 	}
