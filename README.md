@@ -11,11 +11,13 @@ Leonardo Fabricio Reyna Salas (Superleoxx)
 <ul>
 <li> <b> GUI</b> Alexis</li>
 <li> <b> Powers</b> Marco</li>
-<li> <b> CtrlRules</b> Matteo</li>
+<li> <b> CtrlRules</b> Matteo and Alexis</li>
 <li> <b> Ships</b> Marco and Alexis</li>
 <li> <b> Attack logic</b> Matteo</li>
 <li> <b> Bots</b> Matteo</li>
 </ul>
+
+---
 
 **Language:** Java 17  
 **GUI:** Java Swing  
@@ -203,10 +205,9 @@ In the project there isn't third party librariers.
        <b>Alexis<b>: My biggest challenge was designing the GUI from stratch and to incorporate the code written by other members of the group.
    </li>
    <li>
-       <b>Matteo<b>: My biggest challenge was to explain
+       <b>Matteo<b>: My biggest challenge was to create the bots and make them work on different levels of difficulties.
    </li>
    <li>
-       <b>Marco<b>: My biggest challenge was when I was coding the savment of the multiplayers results, here I applied a more complex way
-       of serialisation and desesrialisation that we saw in the class, because I need not to lose any previous information.
+       <b>Marco<b>: My biggest challenge was when I was coding the savement of the multiplayers results, here I applied a more complex way of serialisation and desesrialisation that we saw in the class, because I need not to lose any previous information.
    </li>
 </ul>
