@@ -76,22 +76,45 @@ Each power can be used once per game. Only one power can be used per turn.
 
 ---
 
-## Main Classes and Responsibilities
+## Project Structure
 
 src/
 ├── main/
-│ ├── Main.java # Launcher
-│ ├── battleship/ # Configuration
-│ ├── logic/
-│ │ ├── attack/ # Attack phase & utilities
-│ │ ├── board/ # Board and Cell logic
-│ │ ├── powers/ # Power system (AirAttack, ScatterBomb)
-│ │ ├── shippositioning/ # Placement GUI and logic
-│ │ ├── ships/ # Ship types (Battleship, Cruiser, etc.)
-│ │ └── victory/ # Victory screen
-│ ├── rules/ # Core logic (CtrlRules, RulesFacade)
-│ ├── saveload/ # Save/Load functionality
-│ └── ui/initialScreen/ # Initial player name screen
+│   ├── ui/
+│   │   ├── main/              # Launcher class
+│   │   └── initialScreen/     # Main menu, name form, screen layout
+│   ├── logic/
+│   │   ├── attack/            # Attack logic and utilities
+│   │   ├── board/             # Grid, cell, and board handling
+│   │   ├── powers/            # AirAttack, Scanner, ScatterBomb + manager
+│   │   ├── ships/             # Ship classes: Battleship, Submarine, etc.
+│   │   ├── shippositioning/   # Ship placement, selection, and validation
+│   │   └── victory/           # Victory screen and data serialization
+│   ├── bot/                   # AI classes (EasyBot, HardBot, LearningBot)
+│   ├── rules/
+│   │   ├── designPatterns/    # Observer, Observable
+│   │   └── CtrlRules.java     # Central rule controller
+│   ├── saveload/              # SaveLoadManager for reading/writing game state
+│   └── battleship/            # BattleshipConfiguration.java (constants, enums)
+
+
+## Key Classes Overview
+
+| Class                         | Role                              |
+| ----------------------------- | --------------------------------- |
+| `Launcher.java`               | Starts the GUI                    |
+| `InitialScreen.java`          | Renders the main menu             |
+| `NameForm.java`               | Allows players to input names     |
+| `Board.java`, `Cell.java`     | Grid and cell management          |
+| `Attack.java`                 | Performs attack operations        |
+| `PowerManager.java`           | Activates and manages powers      |
+| `AirAttack.java`              | Power that attacks a full line    |
+| `ShipPlacementValidator.java` | Ensures valid placement           |
+| `VictoryPanel.java`           | Displays win screen and animation |
+| `LearningBot.java`            | Bot that improves from experience |
+| `SaveLoadManager.java`        | Handles saving/loading game data  |
+
+
 
 ---
 
