@@ -37,28 +37,9 @@ public class Victory extends JFrame {
     	victoryFrame = null;
     }
 
-<<<<<<< HEAD
-	private Victory(String winner, String looser) {
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		Dimension screenSize = tk.getScreenSize();
-		int sl = screenSize.width;
-		int sa = screenSize.height;
-		int x = sl/2-BattleshipConfiguration.LARG_DEFAULT/2;
-		int y = sa/2-BattleshipConfiguration.ALT_DEFAULT/2;
-		setBounds(x,y,BattleshipConfiguration.LARG_DEFAULT,BattleshipConfiguration.ALT_DEFAULT);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setResizable(false);
-		setLayout(null);
-		getContentPane().setBackground(new Color(250, 250, 250));
-		
-		getContentPane().add(new VictoryPanel(winner, looser));
-		
-		setTitle("VICTORY!");
-	}
-=======
     /**
      * Private constructor that initializes and centers the victory window,
-     * sets layout and background, and adds the victory content (currently broken).
+     * sets layout and background, and adds the victory content.
      *
      * @param winner the name of the winner
      * @param looser the name of the loser
@@ -71,7 +52,6 @@ public class Victory extends JFrame {
         int sa = screenSize.height;
         int x = sl / 2 - BattleshipConfiguration.LARG_DEFAULT / 2;
         int y = sa / 2 - BattleshipConfiguration.ALT_DEFAULT / 2;
->>>>>>> b3ef850daa0546cdbd4350a0d048816bd6ae707c
 
         setBounds(x, y, BattleshipConfiguration.LARG_DEFAULT, BattleshipConfiguration.ALT_DEFAULT);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -81,8 +61,8 @@ public class Victory extends JFrame {
         // Set the background color of the frame
         getContentPane().setBackground(new Color(250, 250, 250));
 
-        // ❌ Problematic line: causes infinite recursion by creating a new Victory inside the constructor
-        getContentPane().add(new Victory(winner, looser));
+        // Add the victory panel
+        getContentPane().add(new VictoryPanel(winner, looser));
 
         setTitle("VICTORY!");
     }
