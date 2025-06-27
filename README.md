@@ -16,7 +16,6 @@ Leonardo Fabricio Reyna Salas (Superleoxx)
 <li> <b> Attack logic</b> Matteo</li>
 <li> <b> Bots</b> Matteo</li>
 </ul>
-gui - Alexis, powers -you, ctrlRules - Matteo ships - you and me attack logic - matteo and I and the rest is me i guess
 
 **Language:** Java 17  
 **GUI:** Java Swing  
