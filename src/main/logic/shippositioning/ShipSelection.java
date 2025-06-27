@@ -5,10 +5,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
-
 import main.Title;
 import main.battleship.BattleshipConfiguration;
 import main.logic.powers.AirAttack;
@@ -17,25 +15,32 @@ import main.rules.designPatterns.Observable;
 import main.rules.designPatterns.Observer;
 import main.rules.designPatterns.RulesFacade;
 
+// GUI class for selecting and positioning ships.
+// Also handles selection and execution of power abilities (AirAttack, ScatterBomb).
 
 @SuppressWarnings("serial")
 public class ShipSelection extends JFrame implements KeyListener, Observer{
 	
+	// GUI title bar panel
 	Title titlePanel = new Title("");
 	
+	// Track current player information
 	private int currentPlayerNum;
 	private String currentPlayerName;
 
-
+	// Track power usage per player
 	private boolean airUsedP1 = false;
 	private boolean bombUsedP1 = false;
 	private boolean airUsedP2 = false;
 	private boolean bombUsedP2 = false;
 	
+	// Stores which power is selected ("air" or "bomb")
 	private final String[] selectedPower = {""};
  
+	// Singleton instance
 	static ShipSelection shipSelection;
     
+	// Return singleton instance
     public static ShipSelection getShipSelection() {
         if(shipSelection == null)
         	shipSelection = new ShipSelection();
@@ -44,13 +49,16 @@ public class ShipSelection extends JFrame implements KeyListener, Observer{
         
     }
     
+	// Destroy instance for garbage collection
 	public void selfDestroy() {
 		shipSelection = null;
 	}
 	
+	// Constructor initializes the GUI and logic
 	private ShipSelection() {
 		RulesFacade.getRules().register(this);
 		
+		// Window size and position
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		Dimension screenSize = tk.getScreenSize();
 		int sl = screenSize.width;
@@ -65,29 +73,34 @@ public class ShipSelection extends JFrame implements KeyListener, Observer{
 			
 		setFocusable(true);
 		
+		// Add GUI panels
 		getContentPane().add(titlePanel);
 		getContentPane().add(ShipOptions.getShipOptions());
 		getContentPane().add(new ShipPlacement());
 		getContentPane().add(SelectionUtilities.getSelectionUtilites());
 		
+		// Set window title
 		int currentPlayerNum = RulesFacade.getRules().getCurrentPlayer();
 		setTitle("Ship Selection - " + RulesFacade.getRules().getPlayerName(currentPlayerNum));
 		
-		// Se il player corrente è un bot, chiudi subito la schermata
+		// Skip screen if current player is a bot
 		String botType = main.rules.designPatterns.RulesFacade.player2Type;
 		boolean isBot = "EasyBot".equals(botType) || "HardBot".equals(botType) || "LearningBot".equals(botType);
 		if (currentPlayerNum == 2 && isBot) {
 			setVisible(false);
 		}
 		
+		// Create and place buttons for powers
 		JButton bomberButton = new JButton("Bomber plane");
 		bomberButton.setBounds(650,50,140,40);
 		getContentPane().add(bomberButton);
 
+		// Register button listeners
 		JButton bombdropButton = new JButton("Bomb Drop");
 		bombdropButton.setBounds(650, 100, 150, 40);
 		getContentPane().add(bombdropButton);
 
+		// Handle power usage on mouse click
 		bomberButton.addActionListener(e -> selectedPower[0] = "air");
 		bombdropButton.addActionListener(e -> selectedPower [0] = "bomb");
 
@@ -131,10 +144,12 @@ public class ShipSelection extends JFrame implements KeyListener, Observer{
 		addKeyListener(this);
 	}
 	
+	// Update GUI title
 	public void setTitle(String title) {
 		titlePanel.setText(title);
 	}
 	
+	// Unused key event methods (placeholders)
 	@Override
 	public void keyPressed(KeyEvent k) {
 		// TODO Auto-generated method stub
