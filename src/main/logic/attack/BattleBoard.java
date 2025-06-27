@@ -24,8 +24,7 @@ public class BattleBoard extends Board implements Observer{
 		
 		this.player = player;
 		
-		setLayout(null);
-		setBounds(0, 0, BOARD_SIZE, BOARD_SIZE);
+		setPreferredSize(new java.awt.Dimension(this.BOARD_SIZE, this.BOARD_SIZE));
 		setOpaque(false);
 				
 		battleGrid = new Grid(player);

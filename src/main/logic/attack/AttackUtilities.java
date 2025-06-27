@@ -15,6 +15,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 
 import main.battleship.BattleshipConfiguration;
 import main.rules.designPatterns.Observable;
@@ -36,6 +38,14 @@ public class AttackUtilities extends JPanel implements Observer{
 	JButton exitBtn = new JButton("Exit");
 	JButton saveBtn = new JButton("Save");
 	
+	// Stato per i powers
+	private String selectedPower = null; // "AirAttack", "ScatterBomb", "Scanner"
+	// powerUsed[player][power]: 0=AirAttack, 1=ScatterBomb, 2=Scanner
+	private boolean[][] powerUsed = new boolean[2][3];
+	private JButton airAttackBtn = new JButton("Air Attack");
+	private JButton scatterBombBtn = new JButton("Scatter Bomb");
+	private JButton scannerBtn = new JButton("Scanner");
+	
 	static AttackUtilities attackUtilities;
     
     public static AttackUtilities getAttackUtilites() {
@@ -50,117 +60,53 @@ public class AttackUtilities extends JPanel implements Observer{
 	}
 	
 	private AttackUtilities() {
-		
 		RulesFacade.getRules().register(this);
-		
-		setLayout(null);
-		
+		setLayout(new BorderLayout(0, 0));
 		setBounds(0, BattleshipConfiguration.ALT_DEFAULT - UTILITIES_HEIGHT, BattleshipConfiguration.LARG_DEFAULT, UTILITIES_HEIGHT);
-		setOpaque(false);
-		
-		Dimension btnDimension = new Dimension(150, 50);
-		
-		/* MIDDLE */
-		
-		JPanel middlePanel = new JPanel();
-		middlePanel.setBounds(BattleshipConfiguration.LARG_DEFAULT/2, 0, BattleshipConfiguration.LARG_DEFAULT/4, UTILITIES_HEIGHT);
-		middlePanel.setLayout(new GridBagLayout());
-		
-		JPanel nextContainer = new JPanel();
-			
-		nextBtn.setPreferredSize(btnDimension);
-		nextBtn.setMinimumSize(btnDimension);
-		nextBtn.setMaximumSize(btnDimension);
-		
-		nextContainer.add(nextBtn);
-		
-		nextBtn.setText("Start");
-		nextBtn.setBackground(new Color(0, 218, 60));
-		nextBtn.setForeground(new Color(0, 218, 60).darker());
-		nextBtn.setFont(new Font("SansSerif", Font.BOLD, 16));
-		nextBtn.setEnabled(false);
-		nextBtn.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-				main.rules.designPatterns.RulesFacade.getRules().nextPlayer();
-			  } 
-			} );
-		
-		middlePanel.add(nextContainer);
-		
-		/* RIGHT */
-		
-		JPanel rightPanel = new JPanel();
-		rightPanel.setLayout(null);
-		rightPanel.setBounds(3 * (BattleshipConfiguration.LARG_DEFAULT/4), 0, BattleshipConfiguration.LARG_DEFAULT/4, UTILITIES_HEIGHT);
-		
-		JPanel buttonsContainer = new JPanel();
-		buttonsContainer.setLayout(new BoxLayout(buttonsContainer, BoxLayout.Y_AXIS));
-		buttonsContainer.setBounds((BattleshipConfiguration.LARG_DEFAULT/4)-150-10, 10, 150, 305);
-		
-		exitBtn.setBackground(new Color(223, 21, 26));
-		exitBtn.setForeground(new Color(100, 5, 9));
-		exitBtn.setFont(new Font("SansSerif", Font.BOLD, 16));
-		exitBtn.setPreferredSize(btnDimension);
-		exitBtn.setMinimumSize(btnDimension);
-		exitBtn.setMaximumSize(btnDimension);
-		exitBtn.setAlignmentX( Component.CENTER_ALIGNMENT );
-		exitBtn.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-				  System.exit(0);
-			  } 
-			} );
-		
-		saveBtn.setBackground(new Color(0, 203, 231));
-		saveBtn.setForeground(new Color(0, 103, 131));
-		saveBtn.setFont(new Font("SansSerif", Font.BOLD, 16));
-		saveBtn.setPreferredSize(btnDimension);
-		saveBtn.setMinimumSize(btnDimension);
-		saveBtn.setMaximumSize(btnDimension);
-		saveBtn.setAlignmentX( Component.CENTER_ALIGNMENT );
-		saveBtn.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-				SaveLoadManager.get().Save();    
-			  } 
-			} );
-		
-		buttonsContainer.add(saveBtn);
-		buttonsContainer.add(Box.createRigidArea(new Dimension(0, 5)));
-		buttonsContainer.add(exitBtn);		
-		
-		rightPanel.add(buttonsContainer);
-		
-		/* LEFT */
-		
-		JPanel messagesPanel = new JPanel();
-		messagesPanel.setLayout(null);
-		messagesPanel.setBounds(0, 0, BattleshipConfiguration.LARG_DEFAULT/2, UTILITIES_HEIGHT);
-		
-		message1.setBounds(0, 60, BattleshipConfiguration.LARG_DEFAULT/2, 40);
-		message1.setFont(new Font("SansSerif", Font.BOLD, 18));
-		message1.setForeground(new Color(0, 203, 231));
-		message1.setHorizontalAlignment(SwingConstants.CENTER);
-		message1.setVerticalAlignment(SwingConstants.CENTER);
-		
-		message2.setBounds(0, 40, BattleshipConfiguration.LARG_DEFAULT/2, 30);
-		message2.setFont(new Font("SansSerif", Font.BOLD, 15));
+
+		// MESSAGGI (NORTH)
+		JPanel messagesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+		message1.setFont(new Font("SansSerif", Font.BOLD, 28));
+		message1.setForeground(Color.BLACK);
+		message2.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		message2.setForeground(Color.GRAY);
-		message2.setHorizontalAlignment(SwingConstants.CENTER);
-		message2.setVerticalAlignment(SwingConstants.CENTER);
-		
-		message3.setBounds(0, 20, BattleshipConfiguration.LARG_DEFAULT/2, 30);
-		message3.setFont(new Font("SansSerif", Font.BOLD, 10));
+		message3.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		message3.setForeground(Color.LIGHT_GRAY);
-		message3.setHorizontalAlignment(SwingConstants.CENTER);
-		message3.setVerticalAlignment(SwingConstants.CENTER);
-		
 		messagesPanel.add(message1);
 		messagesPanel.add(message2);
 		messagesPanel.add(message3);
-		
-		add(middlePanel);
-		add(messagesPanel);
-		add(rightPanel);
-		
+		add(messagesPanel, BorderLayout.NORTH);
+
+		// --- NUOVO PANNELLO UNICO IN BASSO ---
+		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
+		bottomPanel.setOpaque(false);
+		bottomPanel.add(nextBtn);
+		bottomPanel.add(airAttackBtn);
+		bottomPanel.add(scatterBombBtn);
+		bottomPanel.add(scannerBtn);
+		bottomPanel.add(saveBtn);
+		bottomPanel.add(exitBtn);
+		add(bottomPanel, BorderLayout.SOUTH);
+
+		updatePowerButtonsState();
+
+		// (RI)AGGIUNGO ACTION LISTENER AI BOTTONI POWERS
+		airAttackBtn.addActionListener(e -> usePower("AirAttack"));
+		scatterBombBtn.addActionListener(e -> usePower("ScatterBomb"));
+		scannerBtn.addActionListener(e -> usePower("Scanner"));
+
+		// ActionListener per Exit
+		exitBtn.addActionListener(e -> System.exit(0));
+		// ActionListener per Save (vero salvataggio)
+		saveBtn.addActionListener(e -> {
+			main.saveload.SaveLoadManager.get().Save();
+		});
+
+		// ActionListener per Next
+		nextBtn.addActionListener(e -> {
+			main.rules.designPatterns.RulesFacade.getRules().nextPlayer();
+			onTurnOrPowerChange();
+		});
 	}
 	
 	public void buttonEnable() {
@@ -234,6 +180,106 @@ public class AttackUtilities extends JPanel implements Observer{
 		setMessages(newMessages, validation);
 	}
 	
+	// Restituisce l'indice del player di turno (0 o 1)
+	public int getCurrentPlayerIndex() {
+		int currentPlayer = main.rules.designPatterns.RulesFacade.getRules().getCurrentPlayer();
+		return currentPlayer == 1 ? 0 : 1;
+	}
+
+	// Chiamato dopo l'uso di un power
+	public void markPowerUsed() {
+		int idx = getCurrentPlayerIndex();
+		int powerIdx = 0;
+		if ("AirAttack".equals(selectedPower)) powerIdx = 0;
+		else if ("ScatterBomb".equals(selectedPower)) powerIdx = 1;
+		else if ("Scanner".equals(selectedPower)) powerIdx = 2;
+		powerUsed[idx][powerIdx] = true;
+		selectedPower = null;
+		updatePowerButtonsState();
+		onTurnOrPowerChange();
+		revalidate();
+		repaint();
+	}
+
+	// Aggiorna abilitazione dei bottoni powers
+	public void updatePowerButtonsState() {
+		int idx = getCurrentPlayerIndex();
+		// 0: AirAttack, 1: ScatterBomb, 2: Scanner
+		airAttackBtn.setEnabled(!powerUsed[idx][0]);
+		scatterBombBtn.setEnabled(!powerUsed[idx][1]);
+		scannerBtn.setEnabled(!powerUsed[idx][2]);
+		revalidate();
+		repaint();
+	}
+
+	private void usePower(String power) {
+		selectedPower = power;
+		updatePowerButtonsState();
+		message1.setText("Select a cell/column for " + power + "!");
+	}
+
+	public String getSelectedPower() {
+		return selectedPower;
+	}
+	public void clearSelectedPower() {
+		selectedPower = null;
+		updatePowerButtonsState();
+	}
+	
+	// Da chiamare ogni volta che cambia il turno o lo stato dei powers
+	public void onTurnOrPowerChange() {
+		// Forzo il reset dei bottoni a ogni cambio turno
+		updatePowerButtonsState();
+		revalidate();
+		repaint();
+	}
+
+	// Metodo statico per far usare un power al bot (casuale tra quelli disponibili)
+	public static void botUsePower(int botIdx) {
+		AttackUtilities util = getAttackUtilites();
+		List<Integer> available = new ArrayList<>();
+		for (int i = 0; i < 3; i++) {
+			if (!util.powerUsed[botIdx][i]) available.add(i);
+		}
+		if (available.isEmpty()) return;
+		int powerIdx = available.get(new Random().nextInt(available.size()));
+		String powerName = powerIdx == 0 ? "AirAttack" : powerIdx == 1 ? "ScatterBomb" : "Scanner";
+		util.selectedPower = powerName;
+		// Simula la scelta di una cella/colonna casuale
+		int gridSize = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
+		int x = new Random().nextInt(gridSize);
+		int y = new Random().nextInt(gridSize);
+		if (powerIdx == 0) { // AirAttack su colonna x
+			for (int row = 0; row < gridSize; row++) {
+				main.rules.designPatterns.RulesFacade.getRules().attack(row, x);
+			}
+		} else if (powerIdx == 1) { // ScatterBomb su (x, y)
+			for (int dx = -1; dx <= 1; dx++) {
+				for (int dy = -1; dy <= 1; dy++) {
+					int tx = x + dx;
+					int ty = y + dy;
+					if (tx >= 0 && tx < gridSize && ty >= 0 && ty < gridSize) {
+						main.rules.designPatterns.RulesFacade.getRules().attack(ty, tx);
+					}
+				}
+			}
+		} else if (powerIdx == 2) { // Scanner (solo output console)
+			StringBuilder scanResult = new StringBuilder("[BOT POWER] Scanner result at: " + (char)('A'+x)+(y+1)+"\n");
+			for (int dx = -1; dx <= 1; dx++) {
+				for (int dy = -1; dy <= 1; dy++) {
+					int tx = x + dx;
+					int ty = y + dy;
+					if (tx >= 0 && tx < gridSize && ty >= 0 && ty < gridSize) {
+						scanResult.append((char)('A'+tx)).append(ty+1).append(": ?\n");
+					}
+				}
+			}
+			System.out.print(scanResult.toString());
+		}
+		util.powerUsed[botIdx][powerIdx] = true;
+		util.updatePowerButtonsState();
+		util.onTurnOrPowerChange();
+	}
 }
 
 

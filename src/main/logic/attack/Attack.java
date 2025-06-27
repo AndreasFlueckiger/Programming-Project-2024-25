@@ -5,6 +5,11 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 import main.Title;
 import main.rules.designPatterns.Observable;
@@ -46,19 +51,31 @@ public class Attack extends JFrame implements Observer{
 		setBounds(x,y,BattleshipConfiguration.LARG_DEFAULT, BattleshipConfiguration.ALT_DEFAULT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
-		setLayout(null);
+		setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(250, 250, 250));
 		
+		// Title in alto
+		getContentPane().add(titlePanel, BorderLayout.NORTH);
+		
+		// Pannello centrale con le due griglie
+		JPanel centerPanel = new JPanel(new GridBagLayout());
+		centerPanel.setOpaque(false);
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridy = 0;
+		gbc.insets = new Insets(0, 40, 0, 40); // spazio tra le griglie
+		
 		board1 = new BattleBoard(1);
-		board1.setBounds(8, 60, board1.BOARD_SIZE, board1.BOARD_SIZE);
-		
 		board2 = new BattleBoard(2);
-		board2.setBounds(8 + board2.BOARD_SIZE + 8, 60, board2.BOARD_SIZE, board2.BOARD_SIZE);
 		
-		getContentPane().add(AttackUtilities.getAttackUtilites());
-		getContentPane().add(titlePanel);
-		getContentPane().add(board1);
-		getContentPane().add(board2);
+		gbc.gridx = 0;
+		centerPanel.add(board1, gbc);
+		gbc.gridx = 1;
+		centerPanel.add(board2, gbc);
+		
+		getContentPane().add(centerPanel, BorderLayout.CENTER);
+		
+		// Utility panel in basso
+		getContentPane().add(AttackUtilities.getAttackUtilites(), BorderLayout.SOUTH);
 		
 		changeTitle("ATTACKING PHASE");
 		

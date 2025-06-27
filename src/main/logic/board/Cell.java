@@ -102,15 +102,77 @@ public class Cell extends JPanel implements MouseListener{
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		
 		if(SwingUtilities.isMiddleMouseButton(e)) {
 			return;
 		}
-		
 		if(SwingUtilities.isRightMouseButton(e)) {
 			RulesFacade.getRules().shipRotate();
 			paintSelectedCells();
 			return;
+		}
+		// POWER USAGE (solo Player vs Player e solo in fase di ATTACK)
+		if(RulesFacade.getRules().getPhase() == PHASE.ATTACK) {
+			String player2Type = main.rules.designPatterns.RulesFacade.player2Type;
+			boolean isHumanVsHuman = "Human".equals(player2Type);
+			String selectedPower = null;
+			boolean[][] powerUsed = null;
+			try {
+				selectedPower = main.logic.attack.AttackUtilities.getAttackUtilites().getSelectedPower();
+				java.lang.reflect.Field f = main.logic.attack.AttackUtilities.getAttackUtilites().getClass().getDeclaredField("powerUsed");
+				f.setAccessible(true);
+				powerUsed = (boolean[][]) f.get(main.logic.attack.AttackUtilities.getAttackUtilites());
+			} catch(Exception ex) {}
+			int idx = main.logic.attack.AttackUtilities.getAttackUtilites().getCurrentPlayerIndex();
+			int powerIdx = -1;
+			if ("AirAttack".equals(selectedPower)) powerIdx = 0;
+			else if ("ScatterBomb".equals(selectedPower)) powerIdx = 1;
+			else if ("Scanner".equals(selectedPower)) powerIdx = 2;
+			if(isHumanVsHuman && selectedPower != null && powerIdx != -1 && !powerUsed[idx][powerIdx]) {
+				int gridX = x / BattleshipConfiguration.SQUARE_SIZE;
+				int gridY = y / BattleshipConfiguration.SQUARE_SIZE;
+				if(selectedPower.equals("AirAttack")) {
+					for(int row = 0; row < BattleshipConfiguration.SQUARE_COUNT; row++) {
+						RulesFacade.getRules().attack(row, gridX);
+						Cell c = getCellAt(gridX, row);
+						if(c != null) c.highlightTemporarily(new Color(255, 100, 100));
+					}
+					main.logic.attack.AttackUtilities.getAttackUtilites().markPowerUsed();
+					System.out.println("[POWER] AirAttack used on column: " + (char)('A'+gridX));
+					return;
+				} else if(selectedPower.equals("ScatterBomb")) {
+					for(int dx = -1; dx <= 1; dx++) {
+						for(int dy = -1; dy <= 1; dy++) {
+							int tx = gridX + dx;
+							int ty = gridY + dy;
+							if(tx >= 0 && tx < BattleshipConfiguration.SQUARE_COUNT && ty >= 0 && ty < BattleshipConfiguration.SQUARE_COUNT) {
+								RulesFacade.getRules().attack(ty, tx);
+								Cell c = getCellAt(tx, ty);
+								if(c != null) c.highlightTemporarily(new Color(255, 180, 80));
+							}
+						}
+					}
+					main.logic.attack.AttackUtilities.getAttackUtilites().markPowerUsed();
+					System.out.println("[POWER] ScatterBomb used at: " + (char)('A'+gridX)+(gridY+1));
+					return;
+				} else if(selectedPower.equals("Scanner")) {
+					StringBuilder scanResult = new StringBuilder("[POWER] Scanner result at: " + (char)('A'+gridX)+(gridY+1)+"\n");
+					for(int dx = -1; dx <= 1; dx++) {
+						for(int dy = -1; dy <= 1; dy++) {
+							int tx = gridX + dx;
+							int ty = gridY + dy;
+							if(tx >= 0 && tx < BattleshipConfiguration.SQUARE_COUNT && ty >= 0 && ty < BattleshipConfiguration.SQUARE_COUNT) {
+								Cell c = getCellAt(tx, ty);
+								if(c != null) c.highlightTemporarily(new Color(80, 180, 255));
+								String state = c.getCellStateString();
+								scanResult.append((char)('A'+tx)).append(ty+1).append(": ").append(state).append("\n");
+							}
+						}
+					}
+					System.out.print(scanResult.toString());
+					main.logic.attack.AttackUtilities.getAttackUtilites().markPowerUsed();
+					return;
+				}
+			}
 		}
 		
 		if(RulesFacade.getRules().getPhase() == PHASE.POSITION) {
@@ -172,5 +234,34 @@ public class Cell extends JPanel implements MouseListener{
 	public void mouseClicked(MouseEvent e) {}
 	@Override
 	public void mouseReleased(MouseEvent e) {}
+
+	// Utility per ottenere la cella dalla griglia
+	private Cell getCellAt(int x, int y) {
+		try {
+			return (Cell) getParent().getComponent(y * BattleshipConfiguration.SQUARE_COUNT + x);
+		} catch(Exception e) { return null; }
+	}
+
+	// Highlight temporaneo per powers
+	public void highlightTemporarily(Color color) {
+		Color old = getBackground();
+		setBackground(color);
+		javax.swing.Timer timer = new javax.swing.Timer(1000, evt -> setBackground(old));
+		timer.setRepeats(false);
+		timer.start();
+	}
+
+	// Restituisce lo stato della cella come stringa
+	public String getCellStateString() {
+		// Se la cella è nera: nave colpita
+		if (cellColor != null && cellColor.equals(Color.BLACK)) return "hit";
+		// Se la cella è rossa: nave distrutta
+		if (cellColor != null && cellColor.equals(Color.RED)) return "destroyed";
+		// Se la cella è bianca: mancato
+		if (cellColor != null && cellColor.equals(Color.WHITE)) return "miss";
+		// Se la cella ha un colore nave
+		if (shipColor != null) return "ship";
+		return "empty";
+	}
 
 }

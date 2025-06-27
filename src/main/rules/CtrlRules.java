@@ -759,6 +759,10 @@ public class CtrlRules implements Observable, Serializable {
 		refreshBoard();
 		// Bot move logic: il bot attacca solo dopo che il player umano ha attaccato
 		if(currentPlayer == 2 && !"Human".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
+			// Fai usare un power al bot (HardBot o LearningBot) se disponibile
+			if ("HardBot".equals(main.rules.designPatterns.RulesFacade.player2Type) || "LearningBot".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
+				main.logic.attack.AttackUtilities.botUsePower(1); // 1 = bot (player 2)
+			}
 			int botAttacks = 0;
 			while (botAttacks < 3 && !result) {
 				String move = main.bot.BotManager.getBotMove(main.rules.designPatterns.RulesFacade.player2Type);

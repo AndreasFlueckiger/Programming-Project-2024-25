@@ -15,8 +15,8 @@ public class BattleshipConfiguration {
 	//
 
 
-	public static final int LARG_DEFAULT = 1024;
-	public static final int ALT_DEFAULT = 768;
+	public static final int LARG_DEFAULT = 1400;
+	public static final int ALT_DEFAULT = 950;
 
 	public static final int SQUARE_SIZE = 32;
 	public static final int SQUARE_COUNT = 15;
