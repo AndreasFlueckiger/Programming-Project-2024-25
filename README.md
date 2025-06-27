@@ -1,9 +1,10 @@
 # Battleship Programming Project
 
-## Team:
-Alexis Andreas Fleuckiger (AndreasFlueckiger)
-Matteo Fina (MatteoFindus)
-Marco Meneghetti (SirMarkusIT)
+## Team
+
+Alexis Andreas Fleuckiger (AndreasFlueckiger)<br>
+Matteo Fina (MatteoFindus)<br>
+Marco Meneghetti (SirMarkusIT)<br>
 Leonardo Fabricio Reyna Salas (Superleoxx)
 
 **Language:** Java 17  
@@ -13,7 +14,8 @@ Leonardo Fabricio Reyna Salas (Superleoxx)
 ---
 
 ## Instructions to run it
-On the virtual machine is required Java 17 or later to run it. 
+
+On the virtual machine is required Java 17 or later to run it.
 To start the program you need to compile the file Launcher.java that is memorized in src/main/ui/main.
 You need to go on the location of the file and you need put on the terminal this command:
 javac Launcher.java
@@ -25,17 +27,15 @@ This is a fully functional **2-player Battleship game** built using **Java Swing
 
 ---
 
-
-
 ## Overview
 
 This project is a digital implementation of the classic **Battleship** strategy game with two game modes:
 
 Players can choose between:
-- **Player vs Player (PvP)** 
-- **Player vs Bot (PvBot)**   
-  (Bot available in Easy, Hard and learning difficulties levels)
 
+- **Player vs Player (PvP)**
+- **Player vs Bot (PvBot)**
+  (Bot available in Easy, Hard and learning difficulties levels)
 
 ---
 
@@ -45,7 +45,6 @@ Each power can be used once per game. Only one power can be used per turn.
 
 - **Scatter Bomb**: Hits a 3×3 area centered on a selected cell. Ends your turn.
 - **Attacco Aereo**: Attacks all cells in a selected column. Ends your turn.
-
 
 ## Gameplay Flow
 
@@ -107,8 +106,6 @@ Each power can be used once per game. Only one power can be used per turn.
   - `saveload/` – `SaveLoadManager.java` for saving/loading progress
   - `battleship/` – `BattleshipConfiguration.java` with global constants and enums
 
-
-
 ## Key Classes Overview
 
 | Class                         | Role                              |
@@ -125,8 +122,6 @@ Each power can be used once per game. Only one power can be used per turn.
 | `LearningBot.java`            | Bot that improves from experience |
 | `SaveLoadManager.java`        | Handles saving/loading game data  |
 
-
-
 ---
 
 ## Game Concept
@@ -136,7 +131,8 @@ One grid is used to place the player's own fleet; the other is used to record at
 Players alternate turns by calling out grid coordinates (e.g., "B5"). The opponent responds with “hit” or “miss.” When all the tiles of a ship are hit, the ship is sunk. The first player to sink all of their opponent’s ships wins.
 
 ## Experience
-On the workload distribution have worked Alexis, in fact he distributed work to the group and then we discussed weekly updates who did what and how the workload should be redistributed. 
+
+On the workload distribution have worked Alexis, in fact he distributed work to the group and then we discussed weekly updates who did what and how the workload should be redistributed.
 Git was used only like a cloud repository to store the project without any usage of the coordination tools. The group faced some problems as removing directories after pivoting ideas.
 In the project there isn't third party librariers.
 
@@ -191,10 +187,10 @@ In the project there isn't third party librariers.
 
       Ensures full game state is stored/restored safely
    </li>
-   </ol> 
+   </ol>
    </li>
    <li>
-       <b>Matteo<b>: My biggest challenge was to explain 
+       <b>Matteo<b>: My biggest challenge was to explain
    </li>
    <li>
        <b>Marco<b>: My biggest challenge was when I was coding the savment of the multiplayers results, here I applied a more complex way
