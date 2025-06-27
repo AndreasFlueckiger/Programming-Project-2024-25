@@ -1,5 +1,4 @@
 # Battleship Programming Project
-# The ReadMe still Needs to be updated and Written properly in Markdown
 
 ## Team:
 Alexis Andreas Fleuckiger (AndreasFlueckiger)
@@ -21,9 +20,6 @@ javac Launcher.java
 java Launcher
 
 ---
-
----
-
 
 This is a fully functional **2-player Battleship game** built using **Java Swing**. It includes ship placement, attack phase, power abilities (Air Attack and Scatter Bomb), and game state saving/loading.
 
@@ -138,3 +134,70 @@ Each power can be used once per game. Only one power can be used per turn.
 Battleship is a turn-based strategy game played on two 10×10 grids per player.  
 One grid is used to place the player's own fleet; the other is used to record attacks on the opponent.  
 Players alternate turns by calling out grid coordinates (e.g., "B5"). The opponent responds with “hit” or “miss.” When all the tiles of a ship are hit, the ship is sunk. The first player to sink all of their opponent’s ships wins.
+
+## Experience
+On the workload distribution have worked Alexis, in fact he distributed work to the group and then we discussed weekly updates who did what and how the workload should be redistributed. 
+Git was used only like a cloud repository to store the project without any usage of the coordination tools. The group faced some problems as removing directories after pivoting ideas.
+In the project there isn't third party librariers.
+
+<ul>
+   <li>
+       <b>Alexis<b>: My biggest challenge was designing the GUI from stratch and to incorporate the code written by other members of the group.
+       <ol>
+         <li>Observer Pattern (Design Pattern)
+            Where?
+
+            Observable / Observer interfaces
+
+            Classes like CtrlRules notify Attack or ShipSelection when data changes.
+
+            Why it’s complex:
+
+            Requires understanding of loose coupling and event-driven architecture.
+
+            Implements decoupled update propagation to multiple observers.
+
+            Example:
+
+            for (Observer o : lob) {
+               o.notify(this);
+            }
+   </li>
+         <li> MVC (Model-View-Controller) Architecture
+            Where?
+
+            Model: CtrlRules, PowerManager, ShipOptions
+
+            View: Attack, ShipSelection, VictoryPanel
+
+            Controller: RulesFacade coordinates actions and game state
+
+            Why it’s complex:
+
+            Enforces separation of concerns, requiring structure and discipline.
+
+            Ensures testability, flexibility, and scalability.
+   </li>
+   <li>Serialization for Saving and Loading Game State
+      Where?
+
+      CtrlRules implements Serializable
+
+      SaveLoadManager uses ObjectOutputStream / ObjectInputStream
+
+      Why it’s complex:
+
+      Requires correct versioning, transient fields, and class compatibility.
+
+      Ensures full game state is stored/restored safely
+   </li>
+   </ol> 
+   </li>
+   <li>
+       <b>Matteo<b>: My biggest challenge was the coding of the bots
+   </li>
+   <li>
+       <b>Marco<b>: My biggest challenge was when I was coding the savment of the multiplayers results, here I applied a more complex way
+       of serialisation and desesrialisation that we saw in the class, because I need not to lose any previous information.
+   </li>
+</ul>
