@@ -194,7 +194,7 @@ In the project there isn't third party librariers.
    </ol> 
    </li>
    <li>
-       <b>Matteo<b>: My biggest challenge was the coding of the bots
+       <b>Matteo<b>: My biggest challenge was to explain 
    </li>
    <li>
        <b>Marco<b>: My biggest challenge was when I was coding the savment of the multiplayers results, here I applied a more complex way
