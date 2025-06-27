@@ -1,11 +1,26 @@
 # Battleship Programming Project
 # The ReadMe still Needs to be updated and Written properly in Markdown
 
-
+## Team:
+Alexis Andreas Fleuckiger (AndreasFlueckiger)
+Matteo Fina (MatteoFindus)
+Marco Meneghetti (SirMarkusIT)
+Leonardo Fabricio Reyna Salas (Superleoxx)
 
 **Language:** Java 17  
 **GUI:** Java Swing  
 **Grid Size:** 10 × 10
+
+---
+
+## Instructions to run it
+On the virtual machine is required Java 17 or later to run it. 
+To start the program you need to compile the file Launcher.java that is memorized in src/main/ui/main.
+You need to go on the location of the file and you need put on the terminal this command:
+javac Launcher.java
+java Launcher
+
+---
 
 ---
 

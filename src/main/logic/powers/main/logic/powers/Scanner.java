@@ -21,14 +21,14 @@ public class Scanner implements Power{
      * The input  must be the coordinate of the center of the 3x3 area
      * there is the necessity to control if the area is over the borders
      * of the game board.
-     * The coordinate that cannot be allowed is those who contains the letter A/L
-     * or the number 1/10
+     * The coordinate that cannot be allowed is those who contains the letter A/O
+     * or the number 1/15
      */
     private boolean AreaControl(String AreaCenter){
 
-        if(AreaCenter.contains("A") || AreaCenter.contains("L")){
+        if(AreaCenter.contains("A") || AreaCenter.contains("O")){
             return false;
-        } else if (AreaCenter.contains("1") || AreaCenter.contains("10")){
+        } else if (AreaCenter.contains("1") || AreaCenter.contains("15")){
             return false;
         } else {
             return true;

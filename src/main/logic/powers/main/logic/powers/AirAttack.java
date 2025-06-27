@@ -10,7 +10,7 @@ public abstract class AirAttack implements Power{
     /*
      * This method is the first method called by the use of the powers, it also controls if it is possible to use the before
      */
-    public Set<String> use(char column){        
+    public Set<String> use(int column){        
         if(this.usage > 0){
         	//there the decrease of the usage function so the player can't use the power multiple times
             this.usage--;
@@ -25,9 +25,11 @@ public abstract class AirAttack implements Power{
         String coordinate;
 
         Set<String> coordinates = new HashSet<>();
+        char row = 65;
 
-        for (int i = 1; i<=10; i++){
-            coordinate = AreaCenter.concat(String.valueOf(i));
+        for (int i = 1; i<=15; i++){
+        	row = (char) (row + i);
+            coordinate = AreaCenter.concat(Character.toString(row));
             coordinates.add(coordinate);
         }
 
