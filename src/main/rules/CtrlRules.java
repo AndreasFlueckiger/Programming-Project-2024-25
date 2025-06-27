@@ -788,6 +788,8 @@ public class CtrlRules implements Observable, Serializable {
 				main.logic.attack.AttackUtilities.getAttackUtilites().buttonDisable();
 				refreshBoard();
 			}
+
+			
 		} else if(currentPlayer == 1) {
 			botHasAttacked = false;
 			humanAttackCount = 0;
@@ -824,7 +826,8 @@ public class CtrlRules implements Observable, Serializable {
 		}
 
 		// Gestione attacchi multipli per player umano
-		if(currentPlayer == 1) {
+		if (currentPlayer == 1 ||
+		(currentPlayer == 2 && "Human".equals(main.rules.designPatterns.RulesFacade.player2Type)))  {
 			humanAttackCount++;
 			checkResult();
 			if(result) {

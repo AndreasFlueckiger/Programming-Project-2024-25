@@ -146,8 +146,12 @@ public class NameForm extends JFrame{
                 String player2Name = player2Txt.getText();
                 String player2Type = (String) player2TypeCombo.getSelectedItem();
 
-                // Caso 2 giocatori umani
-                if (!player1Name.isEmpty() && !player2Name.isEmpty() && player2Type.equals("Human")) {
+                // Caso 2 giocatori umani: entrambi i nomi obbligatori
+                if (player2Type.equals("Human")) {
+                    if (player1Name.isEmpty() || player1Name.equals("Player 1 name") || player2Name.isEmpty() || player2Name.equals("Player 2 name")) {
+                        javax.swing.JOptionPane.showMessageDialog(null, "Please enter both player names!");
+                        return;
+                    }
                     main.rules.designPatterns.RulesFacade.player2Type = "Human";
                     main.rules.designPatterns.RulesFacade.getRules().setPlayerName(1, player1Name);
                     main.rules.designPatterns.RulesFacade.getRules().setPlayerName(2, player2Name);
@@ -155,8 +159,12 @@ public class NameForm extends JFrame{
                     (InitialFrame.getInitialFrame()).setVisible(false);
                     setVisible(false);
                 }
-                // Caso single player contro bot
-                else if (!player1Name.isEmpty() && !player2Type.equals("Human")) {
+                // Caso single player contro bot: solo il nome del player 1 obbligatorio
+                else {
+                    if (player1Name.isEmpty() || player1Name.equals("Player 1 name")) {
+                        javax.swing.JOptionPane.showMessageDialog(null, "Please enter Player 1's name!");
+                        return;
+                    }
                     main.rules.designPatterns.RulesFacade.player2Type = player2Type;
                     main.rules.designPatterns.RulesFacade.getRules().setPlayerName(1, player1Name);
                     main.rules.designPatterns.RulesFacade.getRules().setPlayerName(2, player2Type); // nome automatico per il bot
@@ -165,8 +173,6 @@ public class NameForm extends JFrame{
                     (InitialFrame.getInitialFrame()).setVisible(false);
                     setVisible(false);
                     // Il resto (posizionamento bot e attacco) sarà gestito in SelectionUtilities
-                } else {
-                    javax.swing.JOptionPane.showMessageDialog(null, "Inserisci almeno il nome del Player 1 e scegli il tipo di avversario!");
                 }
             }
         });

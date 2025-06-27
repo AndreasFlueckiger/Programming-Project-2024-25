@@ -194,9 +194,7 @@ public class AttackUtilities extends JPanel implements Observer{
 	@SuppressWarnings("unchecked")
 	@Override
 	public void notify(Observable o) {
-		
 		Object lob[] = (Object []) o.get();
-		
 		List<String> newMessages = (List<String>) lob[BattleshipConfiguration.objectValues.MESSAGES.getValue()];
 		boolean validation = (boolean) lob[BattleshipConfiguration.objectValues.IS_VALID.getValue() ];
 		int currentPlayer = (int) lob[BattleshipConfiguration.objectValues.CURRENT_PLAYER.getValue()];
@@ -206,9 +204,12 @@ public class AttackUtilities extends JPanel implements Observer{
 			f.setAccessible(true);
 			humanAttackCount = f.getInt(main.rules.designPatterns.RulesFacade.getRules().getCtrl());
 		} catch(Exception e) {}
-		
-		if(currentPlayer == 1) {
-			if(humanAttackCount < 3) {
+
+		String player2Type = main.rules.designPatterns.RulesFacade.player2Type;
+		boolean isHumanVsHuman = "Human".equals(player2Type);
+
+		if (isHumanVsHuman) {
+			if (humanAttackCount < 3) {
 				buttonDisable();
 				Attack.getAttackFrame().blockCells = false;
 			} else {
@@ -216,12 +217,21 @@ public class AttackUtilities extends JPanel implements Observer{
 				Attack.getAttackFrame().blockCells = true;
 			}
 		} else {
-			buttonDisable();
-			Attack.getAttackFrame().blockCells = true;
+			if(currentPlayer == 1) {
+				if(humanAttackCount < 3) {
+					buttonDisable();
+					Attack.getAttackFrame().blockCells = false;
+				} else {
+					buttonEnable();
+					Attack.getAttackFrame().blockCells = true;
+				}
+			} else {
+				buttonDisable();
+				Attack.getAttackFrame().blockCells = true;
+			}
 		}
-		
+
 		setMessages(newMessages, validation);
-		
 	}
 	
 }

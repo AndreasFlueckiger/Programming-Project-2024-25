@@ -41,6 +41,8 @@ public class BotManager {
         for (int attempt = 0; attempt < maxRetries; attempt++) {
             Map<String, List<String>> placements = placeShipsInternal(botType);
             if (placements != null && !placements.isEmpty()) {
+                // DEBUG: Stampa la board dopo il posizionamento
+                debugPrintBoard(placements);
                 return placements;
             }
         }
@@ -50,6 +52,13 @@ public class BotManager {
     private static Map<String, List<String>> placeShipsInternal(String botType) {
         int size = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
         int[][] board = new int[size][size];
+        // Navi e quantità come per il player umano
+        Map<String, Integer> shipCounts = new LinkedHashMap<>();
+        shipCounts.put("Battleship", 1);
+        shipCounts.put("Cruiser", 2);
+        shipCounts.put("Destroyer", 3);
+        shipCounts.put("Submarine", 4);
+        shipCounts.put("Seaplane", 5);
         Map<String, Integer> shipSizes = new LinkedHashMap<>();
         shipSizes.put("Battleship", 5);
         shipSizes.put("Cruiser", 4);
@@ -60,22 +69,25 @@ public class BotManager {
         Random rand = new Random();
         int maxTries = 1000;
         int tries = 0;
-        // Miglioramento: mescola l'ordine delle navi
-        List<Map.Entry<String, Integer>> shipsToPlace = new ArrayList<>(shipSizes.entrySet());
-        Collections.shuffle(shipsToPlace, rand);
-        // Definisci zone: centro, bordo, angoli
-        List<String> zones = Arrays.asList("center", "edge", "corner");
+        // Prepara la lista di tutte le navi da posizionare (con quantità)
+        List<String> shipsToPlace = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : shipCounts.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
+                shipsToPlace.add(entry.getKey());
+            }
+        }
         while (tries < maxTries) {
             tries++;
             boolean failed = false;
             board = new int[size][size];
             placements.clear();
-            for (Map.Entry<String, Integer> entry : shipsToPlace) {
-                String ship = entry.getKey();
-                int shipLen = entry.getValue();
+            List<String> shuffledShips = new ArrayList<>(shipsToPlace);
+            Collections.shuffle(shuffledShips, rand);
+            for (String ship : shuffledShips) {
+                int shipLen = shipSizes.get(ship);
                 boolean placed = false;
                 int attempts = 0;
-                // Scegli una zona random per questa nave
+                List<String> zones = Arrays.asList("center", "edge", "corner");
                 List<String> shuffledZones = new ArrayList<>(zones);
                 Collections.shuffle(shuffledZones, rand);
                 for (String zone : shuffledZones) {
@@ -84,7 +96,6 @@ public class BotManager {
                         attempts++;
                         boolean horizontal = rand.nextBoolean();
                         int row, col;
-                        // Scegli coordinate in base alla zona
                         if (zone.equals("center")) {
                             int margin = size / 4;
                             row = margin + rand.nextInt(size / 2);
@@ -128,7 +139,11 @@ public class BotManager {
                                 for (int[] c : coords) {
                                     coordStrs.add(main.logic.shippositioning.ShipPlacementValidator.convertIndicesToCoordinate(c[0], c[1]));
                                 }
-                                placements.put(ship, coordStrs);
+                                // Per distinguere le seaplane, aggiungi un id
+                                String key = ship;
+                                int count = 1;
+                                while (placements.containsKey(key)) key = ship + (count++);
+                                placements.put(key, coordStrs);
                                 placed = true;
                             }
                         } else {
@@ -144,7 +159,11 @@ public class BotManager {
                                 for (int[] c : coords) {
                                     coordStrs.add(main.logic.shippositioning.ShipPlacementValidator.convertIndicesToCoordinate(c[0], c[1]));
                                 }
-                                placements.put(ship, coordStrs);
+                                // Per distinguere le navi multiple, aggiungi un id
+                                String key = ship;
+                                int count = 1;
+                                while (placements.containsKey(key)) key = ship + (count++);
+                                placements.put(key, coordStrs);
                                 placed = true;
                             }
                         }
@@ -153,11 +172,39 @@ public class BotManager {
                 }
                 if (!placed) { failed = true; break; }
             }
-            if (!failed && placements.size() == shipSizes.size()) {
+            if (!failed && placements.size() == shipsToPlace.size()) {
                 return placements;
             }
         }
         return new HashMap<>();
+    }
+
+    // DEBUG: Stampa la board con le navi posizionate
+    private static void debugPrintBoard(Map<String, List<String>> placements) {
+        int size = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
+        char[][] debugBoard = new char[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                debugBoard[i][j] = '.';
+            }
+        }
+        for (Map.Entry<String, List<String>> entry : placements.entrySet()) {
+            char symbol = entry.getKey().charAt(0);
+            for (String coord : entry.getValue()) {
+                int[] rc = main.logic.shippositioning.ShipPlacementValidator.convertCoordinateToIndices(coord);
+                if (rc != null) {
+                    debugBoard[rc[0]][rc[1]] = symbol;
+                }
+            }
+        }
+        System.out.println("[BOT DEBUG] Ship placement:");
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                System.out.print(debugBoard[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 
     public static LearningBot getLearningBot() {
