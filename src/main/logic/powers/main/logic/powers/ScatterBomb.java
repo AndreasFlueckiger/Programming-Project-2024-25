@@ -8,13 +8,12 @@ public abstract class ScatterBomb implements Power{
 
     private int usage = 1;
 
-    public boolean use(String AreaCenter){        //first control of power usage
+    public Set<String> use(String AreaCenter){
         if(this.usage > 0 && AreaControl(AreaCenter)){
-            //call of the attack function
             this.usage--;
-            return true;
+            return CoordinatesGenerator(AreaCenter);
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -70,6 +69,10 @@ public abstract class ScatterBomb implements Power{
         coordinates.add(coordinate);
 
         return coordinates;
+    }
+    
+    public int getUse(){
+    	return this.usage;
     }
 
     @Override

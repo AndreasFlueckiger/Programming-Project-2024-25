@@ -7,14 +7,13 @@ public class Scanner implements Power{
 
     private int usage = 1;
 
-
-    public boolean use(String AreaCenter){        //first control of power usage
+    //this method starts the use of the all class and returns the coordinates of the other cells
+    public Set<String> use(String AreaCenter){
         if(this.usage > 0 && AreaControl(AreaCenter)){
-                //call of the attack function
                 this.usage--;
-                return true;
+                return CoordinatesGenerator(AreaCenter);
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -25,7 +24,7 @@ public class Scanner implements Power{
      * The coordinate that cannot be allowed is those who contains the letter A/L
      * or the number 1/10
      */
-    public boolean AreaControl(String AreaCenter){
+    private boolean AreaControl(String AreaCenter){
 
         if(AreaCenter.contains("A") || AreaCenter.contains("L")){
             return false;
@@ -37,7 +36,7 @@ public class Scanner implements Power{
 
     }
 
-    public Set<String> CoordinatesGenerator(String AreaCenter){
+	public Set<String> CoordinatesGenerator(String AreaCenter){
         String coordinate = AreaCenter;
         char letter;
         int number;
@@ -70,6 +69,10 @@ public class Scanner implements Power{
         coordinates.add(coordinate);
 
         return coordinates;
+    }
+	
+	public int getUse(){
+    	return this.usage;
     }
 
     @Override
