@@ -9,28 +9,22 @@
 
 ---
 
-## Overview
 
-This project is a digital implementation of the classic **Battleship** strategy game with two main game modes:
-
-- **Classic Mode:** Follows traditional rules with a full fleet of ships.
-- **Modern Mode:** Uses a smaller fleet and includes special powers.
-
-Players can choose between:
-- **Player vs Player (PvP)** — Classic or Modern mode
-- **Player vs Bot (PvBot)** — Classic mode only  
-  (Bot available in Easy and Hard difficulty levels)
+This is a fully functional **2-player Battleship game** built using **Java Swing**. It includes ship placement, attack phase, power abilities (Air Attack and Scatter Bomb), and game state saving/loading.
 
 ---
 
-## Ship Types
 
-| Version  | Ships                                                                 |
-|----------|------------------------------------------------------------------------|
-| Classic  | 1 × Portaaerei (4 tiles), 2 × Torpediniere (3 tiles), 3 × Incrociatore (2 tiles), 4 × Sottomarino (1 tile) |
-| Modern   | 1 × Portaaerei (4), 1 × Torpediniere (3), 1 × Incrociatore (2), 1 × Sottomarino (1) |
 
-Ships can be placed horizontally or vertically, but not diagonally, and they cannot overlap.
+## Overview
+
+This project is a digital implementation of the classic **Battleship** strategy game with two game modes:
+
+Players can choose between:
+- **Player vs Player (PvP)** 
+- **Player vs Bot (PvBot)**   
+  (Bot available in Easy, Hard and learning difficulties levels)
+
 
 ---
 
@@ -39,38 +33,37 @@ Ships can be placed horizontally or vertically, but not diagonally, and they can
 Each power can be used once per game. Only one power can be used per turn.
 
 - **Scatter Bomb**: Hits a 3×3 area centered on a selected cell. Ends your turn.
-- **Scanner**: Reveals whether ships are present in a 3×3 area. Ends your turn.
 - **Attacco Aereo**: Attacks all cells in a selected column. Ends your turn.
 
----
-
-## Modern Mode Bomb Mechanic
-
-In modern mode, each board contains two hidden "bomb tiles."  
-If a player hits a bomb, two random shots are automatically fired at the opponent’s board.
-
----
 
 ## Gameplay Flow
 
 1. **Game Start**  
-   Choose between PvP or PvBot, then select either Classic or Modern mode.
+   Choose between PvP or PvBot.
 
-2. **Username Input (PvP only)**  
+2. **Username Input**  
    Usernames are entered for history tracking.
 
 3. **Ship Placement**  
    - Player 1 places their fleet.
    - Screen prompts for Player 2 to place ships (to avoid cheating).
    - Ships are placed by clicking on the grid, with a button to toggle orientation.
+   - Left Click: Place ship
+   - Right Click: Rotate ship
+   - R: Reset board
+   - Esc: Unselect ship
 
-4. **Game Loop**  
+4. **Save/Load**
+   - Saves game state to .ser file using Java's ObjectOutputStream
+   - Load the game from file using the "Load Game" option on the home/main screen
+
+5. **Game Loop**  
    - Players take turns guessing coordinates.
    - The opponent confirms each hit or miss.
    - The tracking grid shows hits (O) and misses (X).
    - Powers can be used in Modern mode.
 
-5. **Winning the Game**  
+6. **Winning the Game**  
    The first player to sink all opponent ships wins.
 
 ---
@@ -78,22 +71,27 @@ If a player hits a bomb, two random shots are automatically fired at the opponen
 ## Bot Difficulty
 
 - **Easy:** Bot picks random untried coordinates.
-- **Hard:** Bot uses probability logic to guess likely ship positions.
+- **Hard:** Bot picks random untried coordinates and can use powers.
+- **Learning:** Bot ..............
 
 ---
 
 ## Main Classes and Responsibilities
 
-| Class               | Description                                | Authors               |
-|---------------------|--------------------------------------------|------------------------|
-| `Main.java`         | Launches the application                   | Alexis                 |
-| `GameModeSelector`  | Handles mode and difficulty selection       | Alexis                 |
-| `GameFrame`         | Main game window with grids and controls    | Alexis                 |
-| `BoardPanel`        | Visual component for each player’s grid     | Alexis, Theo           |
-| `Powers.java`       | Contains power logic implementation         | Marco, Theo            |
-| `GameController`    | Core game logic and state management        | Leo, Marco, Alexis     |
-| `Ship.java`         | Ship data structure and methods             | Marco                  |
-| `GameHistory`       | Tracks and saves player win/loss stats      | Marco, Theo            |
+src/
+├── main/
+│ ├── Main.java # Launcher
+│ ├── battleship/ # Configuration
+│ ├── logic/
+│ │ ├── attack/ # Attack phase & utilities
+│ │ ├── board/ # Board and Cell logic
+│ │ ├── powers/ # Power system (AirAttack, ScatterBomb)
+│ │ ├── shippositioning/ # Placement GUI and logic
+│ │ ├── ships/ # Ship types (Battleship, Cruiser, etc.)
+│ │ └── victory/ # Victory screen
+│ ├── rules/ # Core logic (CtrlRules, RulesFacade)
+│ ├── saveload/ # Save/Load functionality
+│ └── ui/initialScreen/ # Initial player name screen
 
 ---
 
