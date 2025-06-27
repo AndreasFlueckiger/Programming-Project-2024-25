@@ -9,6 +9,10 @@ public class BotManager {
     private static LearningBot learningBot = new LearningBot();
     // Add HardBot when implemented
 
+    // BotManager handles the creation, move selection, and ship placement for all bot types (Easy, Hard, Learning).
+    // It also provides utility methods for resetting bots and debugging ship placement.
+
+    // Returns the next move for the specified bot type.
     public static String getBotMove(String botType) {
         switch (botType) {
             case "EasyBot":
@@ -24,6 +28,7 @@ public class BotManager {
         }
     }
 
+    // Resets all bots for a new game (clears state and learning data if needed).
     public static void resetBotsForNewGame() {
         easyBot = new EasyBot();
         hardBot = new HardBot();
@@ -31,11 +36,12 @@ public class BotManager {
         // Reset other bots as needed
     }
 
+    // Notifies the HardBot of a hit result, so it can update its targeting logic.
     public static void notifyHitForHardBot(String coord, boolean hit) {
         hardBot.notifyHit(coord, hit);
     }
 
-    // Ship placement for bots (returns a map of ship type to list of coordinates)
+    // Places ships for the specified bot type, using the same rules and counts as the human player.
     public static Map<String, List<String>> placeShips(String botType) {
         int maxRetries = 10;
         for (int attempt = 0; attempt < maxRetries; attempt++) {
@@ -49,6 +55,7 @@ public class BotManager {
         throw new RuntimeException("Impossibile posizionare le navi del bot dopo molti tentativi.");
     }
 
+    // Internal helper for ship placement. Tries to place all ships randomly, respecting adjacency rules.
     private static Map<String, List<String>> placeShipsInternal(String botType) {
         int size = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
         int[][] board = new int[size][size];
@@ -179,7 +186,7 @@ public class BotManager {
         return new HashMap<>();
     }
 
-    // DEBUG: Stampa la board con le navi posizionate
+    // Prints a debug representation of the bot's ship placement to the console.
     private static void debugPrintBoard(Map<String, List<String>> placements) {
         int size = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
         char[][] debugBoard = new char[size][size];
@@ -207,6 +214,7 @@ public class BotManager {
         System.out.println();
     }
 
+    // Returns the singleton instance of the LearningBot (for learning data updates).
     public static LearningBot getLearningBot() {
         return learningBot;
     }

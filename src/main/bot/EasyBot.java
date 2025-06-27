@@ -9,6 +9,7 @@ import main.logic.shippositioning.ShipPlacementValidator;
 import main.battleship.BattleshipConfiguration;
 
 // The EasyBot generates random valid moves and avoids repeating them
+// EasyBot: selects random valid moves and avoids repeating them. No advanced strategy.
 public class EasyBot {
     private static final List<String> ALL_COORDS_15x15 = new ArrayList<>();
     static {
@@ -27,6 +28,7 @@ public class EasyBot {
         currentIndex = 0;
     }
 
+    // Returns the next available move (randomized order, no repeats).
     public String Move() {
         if (currentIndex >= allCoords.size()) return null;
         String coord = allCoords.get(currentIndex);

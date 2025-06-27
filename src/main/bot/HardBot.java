@@ -28,7 +28,8 @@ public class HardBot {
         currentIndex = 0;
     }
 
-    // Chiamare questo metodo dopo ogni colpo: se hit==true, aggiunge le celle adiacenti come target
+    // HardBot: uses a basic targeting strategy. If it hits a ship, it targets adjacent cells next.
+    // Call this after each attack to inform the bot if it hit a ship. If so, it will target adjacent cells.
     public void notifyHit(String coord, boolean hit) {
         if (hit) {
             lastHit = coord;
@@ -40,6 +41,7 @@ public class HardBot {
         }
     }
 
+    // Returns the next move for the bot. Prioritizes target queue if there was a recent hit.
     public String Move() {
         String coordinate = null;
         if (!targetQueue.isEmpty()) {
@@ -63,6 +65,7 @@ public class HardBot {
         return coordinate;
     }
 
+    // Returns a list of adjacent coordinates to the given cell (for targeting after a hit).
     private List<String> getAdjacentCoords(String coord) {
         List<String> adj = new ArrayList<>();
         int size = BattleshipConfiguration.SQUARE_COUNT;

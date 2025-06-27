@@ -36,7 +36,7 @@ public class LearningBot implements Serializable {
         currentIndex = 0;
     }
 
-    // Suggest a move based on learned player patterns
+    // Suggests the next move based on learned player patterns and previous hits.
     public String suggestMove() {
         String coordinate = null;
         if (!targetQueue.isEmpty()) {
@@ -60,7 +60,7 @@ public class LearningBot implements Serializable {
         return coordinate;
     }
 
-    // Update learning data after a game
+    // Updates the learning data after a game, recording player ship and attack locations.
     public void learnFromGame(List<String> playerShipCoords, List<String> playerAttackCoords) {
         for (String coord : playerShipCoords) {
             int[] xy = fromCoordinate(coord);
@@ -73,12 +73,12 @@ public class LearningBot implements Serializable {
         saveLearningData();
     }
 
-    // Reset moves for a new game
+    // Resets the bot's move history for a new game.
     public void resetForNewGame() {
         movesMade.clear();
     }
 
-    // --- Persistence ---
+    // Saves the learning data to disk.
     private void saveLearningData() {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
             out.writeObject(shipPlacementHeatmap);
@@ -88,6 +88,7 @@ public class LearningBot implements Serializable {
         }
     }
 
+    // Loads the learning data from disk.
     private void loadLearningData() {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(DATA_FILE))) {
             shipPlacementHeatmap = (int[][]) in.readObject();
@@ -97,7 +98,7 @@ public class LearningBot implements Serializable {
         }
     }
 
-    // --- Helpers ---
+    // Returns a random available move (not used in main logic, but available for fallback).
     private String randomMove() {
         int size = BattleshipConfiguration.SQUARE_COUNT;
         List<String> available = new ArrayList<>();
@@ -113,10 +114,12 @@ public class LearningBot implements Serializable {
         return available.get((int)(Math.random() * available.size()));
     }
 
+    // Converts a coordinate string (e.g., "A5") to board indices.
     private int[] fromCoordinate(String coord) {
         return ShipPlacementValidator.convertCoordinateToIndices(coord);
     }
 
+    // Notifies the bot of a hit result, so it can target adjacent cells next.
     public void notifyHit(String coord, boolean hit) {
         if (hit) {
             lastHit = coord;
@@ -128,6 +131,7 @@ public class LearningBot implements Serializable {
         }
     }
 
+    // Returns a list of adjacent coordinates to the given cell (for targeting after a hit).
     private List<String> getAdjacentCoords(String coord) {
         List<String> adj = new ArrayList<>();
         int size = BattleshipConfiguration.SQUARE_COUNT;
