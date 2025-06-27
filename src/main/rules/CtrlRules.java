@@ -883,7 +883,7 @@ public class CtrlRules implements Observable, Serializable {
 				break;
 		}
 				
-		if(currentPlayerPoints == 38) {
+		if(currentPlayerPoints == 23) {
 			result = true;
 		}
 		
