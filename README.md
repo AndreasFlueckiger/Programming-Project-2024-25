@@ -98,6 +98,7 @@ src/
 │   └── battleship/            # BattleshipConfiguration.java (constants, enums)
 
 
+
 ## Key Classes Overview
 
 | Class                         | Role                              |
