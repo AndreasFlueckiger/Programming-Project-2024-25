@@ -27,7 +27,7 @@ public class Attack extends JFrame implements Observer{
 	BattleBoard board1;
 	BattleBoard board2;
 	
-	public boolean blockCells = true;
+	public boolean blockCells = false;
 	
 	static Attack attackFrame;
     
@@ -82,18 +82,6 @@ public class Attack extends JFrame implements Observer{
 		RulesFacade.getRules().startGame();
 	}
 	
-	public void showBoard(int player) {
-		System.out.println("[DEBUG] SHOWING BOARD " + Integer.toString(player));
-		if(player == 1) {
-			board2.hideHiddenCells();
-		} else {
-			board1.showHiddenCells();
-		}
-		changeTitle("ATTACKING PLAYER - " + currentPlayerName);
-		AttackUtilities.getAttackUtilites().buttonDisable();
-		blockCells = false;
-	}
-	
 	public void changeTitle(String title) {
 		titlePanel.setText(title);
 	}
@@ -112,6 +100,10 @@ public class Attack extends JFrame implements Observer{
 			currentPlayerName = (String) lob[ BattleshipConfiguration.objectValues.PLAYER_1_NAME.getValue() ];
 		else
 			currentPlayerName = (String) lob[ BattleshipConfiguration.objectValues.PLAYER_2_NAME.getValue() ];
+		
+		// Always update the title with current player
+		changeTitle("ATTACKING PLAYER - " + currentPlayerName);
+		
 		if(isHumanVsHuman) {
 			java.util.List<String> player1AttackCoords = main.rules.designPatterns.RulesFacade.getRules().getPlayer1AttackCoords();
 			java.util.List<String> player2AttackCoords = main.rules.designPatterns.RulesFacade.getRules().getPlayer2AttackCoords();
@@ -119,18 +111,43 @@ public class Attack extends JFrame implements Observer{
 				// Player 1 attacca su board2, vede le sue navi su board1
 				board2.setAttackCoords(player1AttackCoords);
 				board2.setEnabled(true);
-				board1.showHiddenCells();
+				board1.showHiddenCells(); // Show Player 1's ships
 				board1.setEnabled(false);
+				board2.hideHiddenCells(); // Hide Player 2's ships
 			} else {
 				// Player 2 attacca su board1, vede le sue navi su board2
 				board1.setAttackCoords(player2AttackCoords);
 				board1.setEnabled(true);
-				board2.showHiddenCells();
+				board2.showHiddenCells(); // Show Player 2's ships
 				board2.setEnabled(false);
+				board1.hideHiddenCells(); // Hide Player 1's ships
 			}
 			getContentPane().repaint();
 			getContentPane().revalidate();
+		} else {
+			// Human vs Bot: Player 1 always attacks on board2, sees ships on board1
+			if(currentPlayer == 1) {
+				board2.setEnabled(true);
+				board1.showHiddenCells(); // Show Player 1's ships
+				board1.setEnabled(false);
+				board2.hideHiddenCells(); // Hide bot's ships
+			} else {
+				// Bot's turn - disable human interaction
+				board1.setEnabled(false);
+				board2.setEnabled(false);
+			}
 		}
+	}
+	
+	public void showBoard(int player) {
+		System.out.println("[DEBUG] SHOWING BOARD " + Integer.toString(player));
+		if(player == 1) {
+			board2.hideHiddenCells();
+		} else {
+			board1.showHiddenCells();
+		}
+		changeTitle("ATTACKING PLAYER - " + currentPlayerName);
+		AttackUtilities.getAttackUtilites().buttonDisable();
 	}
 	
 }

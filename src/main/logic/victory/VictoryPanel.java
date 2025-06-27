@@ -1,4 +1,4 @@
-/*package main.logic.victory;
+package main.logic.victory;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import javax.swing.Timer;
 
+import main.battleship.BattleshipConfiguration;
 import main.logic.attack.Attack;
 import main.logic.attack.AttackUtilities;
 import main.ui.initialScreen.InitialFrame;
@@ -20,7 +21,7 @@ import main.logic.shippositioning.ShipOptions;
 import main.logic.ships.Battleship;
 import main.logic.ships.Cruiser;
 import main.logic.ships.Destroyer;
-import main.logic.ships.Seaplane;
+// import main.logic.ships.Seaplane;
 import main.logic.ships.Submarine;
 
 import javax.swing.BoxLayout;
@@ -97,24 +98,14 @@ public class VictoryPanel extends JPanel{
 		resetBtn.setText("Reset");
 		resetBtn.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) {
+				  // Reset the game
 				  RulesFacade.getRules().resetGame();
 				  
-				  ShipSelection.getShipSelection().selfDestroy();
-				  Attack.getAttackFrame().selfDestroy();
-				  AttackUtilities.getAttackUtilites().selfDestroy();
-				  InitialFrame.getInitialFrame().selfDestroy();
-				  PositioningGrid.getGrid().selfDestroy();
-				  SelectionUtilities.getSelectionUtilites().selfDestroy();
-				  ShipOptions.getShipOptions().selfDestroy();
-				  RulesFacade.getRules().selfDestroy();
-				  Battleship.getBattleship().selfDestroy();
-				  Cruiser.getCruiser().selfDestroy();
-				  Destroyer.getDestroyer().selfDestroy();
-				  Seaplane.getSeaplane().selfDestroy();
-				  Submarine.getSubmarine().selfDestroy();
+				  // Destroy victory frame
+				  Victory.getVictoryFrame("", "").selfDestroy();
 				  
+				  // Show initial frame
 				  InitialFrame.getInitialFrame().setVisible(true);
-				  Victory.getVictoryFrame("", "").setVisible(false);
 			  } 
 			} );
 		
@@ -151,8 +142,8 @@ public class VictoryPanel extends JPanel{
 		
 		// LearningBot learning hook
 		if ("LearningBot".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
-			java.util.List<String> playerShipCoords = main.rules.designPatterns.RulesFacade.getRules().getCtrl().getPlayer1ShipCoords();
-			java.util.List<String> playerAttackCoords = main.rules.designPatterns.RulesFacade.getRules().getCtrl().getPlayer1AttackCoords();
+			java.util.List<String> playerShipCoords = main.rules.designPatterns.RulesFacade.getRules().getPlayer1ShipCoords();
+			java.util.List<String> playerAttackCoords = main.rules.designPatterns.RulesFacade.getRules().getPlayer1AttackCoords();
 			main.bot.BotManager.getLearningBot().learnFromGame(playerShipCoords, playerAttackCoords);
 		}
 	}
@@ -167,4 +158,3 @@ public class VictoryPanel extends JPanel{
     }
 	
 }
-*/

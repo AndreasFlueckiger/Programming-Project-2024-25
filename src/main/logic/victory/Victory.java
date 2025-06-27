@@ -22,6 +22,10 @@ public class Victory extends JFrame{
         return victoryFrame;
         
     }
+    
+    public void selfDestroy() {
+    	victoryFrame = null;
+    }
 
 	private Victory(String winner, String looser) {
 		Toolkit tk = Toolkit.getDefaultToolkit();
@@ -36,7 +40,7 @@ public class Victory extends JFrame{
 		setLayout(null);
 		getContentPane().setBackground(new Color(250, 250, 250));
 		
-		getContentPane().add(new Victory(winner, looser));
+		getContentPane().add(new VictoryPanel(winner, looser));
 		
 		setTitle("VICTORY!");
 	}

@@ -43,10 +43,10 @@ public class BattleshipConfiguration {
 		D_DESTROYER(-2),
 		SUBMARINE(1),
 		D_SUBMARINE(-1),
-		SEAPLANE(3),
-		D_SEAPLANE(-3),
+		// SEAPLANE(3),
+		// D_SEAPLANE(-3),
 		WATER(0),
-		D_WATER(10);
+		D_WATER(100);
 		
 		private final int value;
 
@@ -137,12 +137,11 @@ public class BattleshipConfiguration {
 		if(size < 0) size = -size;
 		
 		switch(size) {
-		case 1: return "Submarine"; //Cyan
-		case 2: return "Destroyer"; //Green
-		case 3: return "Seaplane"; //Yellow
-		case 4: return "Cruiser"; //DarkBlue
-		case 5: return "Battleship"; //Pink
-	}
-	return "";
+		case 1: return "Submarine"; //Green
+		case 2: return "Destroyer"; //Blue
+		case 3: return "Cruiser"; //Purple
+		case 4: return "Battleship"; //Red
+		default: return "Unknown";
+		}
 	}
 }

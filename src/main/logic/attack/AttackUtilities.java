@@ -34,7 +34,7 @@ public class AttackUtilities extends JPanel implements Observer{
 	JLabel message2 = new JLabel("");
 	JLabel message3 = new JLabel("");
 	
-	JButton nextBtn = new JButton();
+	JButton nextBtn = new JButton("Next");
 	JButton exitBtn = new JButton("Exit");
 	JButton saveBtn = new JButton("Save");
 	
@@ -79,6 +79,11 @@ public class AttackUtilities extends JPanel implements Observer{
 		// --- NUOVO PANNELLO UNICO IN BASSO ---
 		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
 		bottomPanel.setOpaque(false);
+		
+		// Initialize Next button
+		nextBtn.setFont(new Font("SansSerif", Font.BOLD, 16));
+		buttonDisable(); // Start with disabled state
+		
 		bottomPanel.add(nextBtn);
 		bottomPanel.add(airAttackBtn);
 		bottomPanel.add(scatterBombBtn);

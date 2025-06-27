@@ -65,13 +65,11 @@ public class BotManager {
         shipCounts.put("Cruiser", 2);
         shipCounts.put("Destroyer", 3);
         shipCounts.put("Submarine", 4);
-        shipCounts.put("Seaplane", 5);
         Map<String, Integer> shipSizes = new LinkedHashMap<>();
-        shipSizes.put("Battleship", 5);
-        shipSizes.put("Cruiser", 4);
-        shipSizes.put("Destroyer", 3);
-        shipSizes.put("Submarine", 2);
-        shipSizes.put("Seaplane", 3);
+        shipSizes.put("Battleship", 4);
+        shipSizes.put("Cruiser", 3);
+        shipSizes.put("Destroyer", 2);
+        shipSizes.put("Submarine", 1);
         Map<String, List<String>> placements = new HashMap<>();
         Random rand = new Random();
         int maxTries = 1000;
@@ -126,55 +124,43 @@ public class BotManager {
                         }
                         List<int[]> coords = new ArrayList<>();
                         boolean valid = true;
-                        if (ship.equals("Seaplane")) {
-                            int[][] deltas = new int[][]{
-                                {0,0, 1,1, 1,-1},   // TOP: central, right-down, right-up
-                                {0,0, 1,-1, 2,0},   // RIGHT: central, right-up, right-right
-                                {0,0, 1,1, 0,2},    // DOWN: central, right-down, down-down
-                                {0,0, -1,1, -2,0}   // LEFT: central, left-up, left-left
-                            };
-                            int[] d = deltas[rand.nextInt(4)];
-                            int[][] seaplaneCoords = new int[][]{
-                                {row, col},
-                                {row + d[2], col + d[3]},
-                                {row + d[4], col + d[5]}
-                            };
-                            coords.clear();
-                            for (int[] c : seaplaneCoords) coords.add(c);
-                            valid = main.logic.shippositioning.ShipPlacementValidator.isValidPlacement(board, coords);
-                            if (valid) {
-                                for (int[] c : coords) board[c[0]][c[1]] = 1;
-                                List<String> coordStrs = new ArrayList<>();
-                                for (int[] c : coords) {
-                                    coordStrs.add(main.logic.shippositioning.ShipPlacementValidator.convertIndicesToCoordinate(c[0], c[1]));
-                                }
-                                // Per distinguere le seaplane, aggiungi un id
-                                String key = ship;
-                                int count = 1;
-                                while (placements.containsKey(key)) key = ship + (count++);
-                                placements.put(key, coordStrs);
-                                placed = true;
-                            }
-                        } else {
+                        if (ship.equals("Battleship")) {
+                            coords.add(new int[]{0,0});
+                            coords.add(new int[]{0,1});
+                            coords.add(new int[]{0,2});
+                            coords.add(new int[]{0,3});
+                        } else if (ship.equals("Cruiser")) {
                             for (int i = 0; i < shipLen; i++) {
                                 int ri = row + (horizontal ? 0 : i);
                                 int ci = col + (horizontal ? i : 0);
                                 coords.add(new int[]{ri, ci});
                             }
-                            valid = main.logic.shippositioning.ShipPlacementValidator.isValidPlacement(board, coords);
-                            if (valid) {
-                                for (int[] c : coords) board[c[0]][c[1]] = 1;
-                                List<String> coordStrs = new ArrayList<>();
-                                for (int[] c : coords) {
-                                    coordStrs.add(main.logic.shippositioning.ShipPlacementValidator.convertIndicesToCoordinate(c[0], c[1]));
-                                }
-                                // Per distinguere le navi multiple, aggiungi un id
-                                String key = ship;
-                                int count = 1;
-                                while (placements.containsKey(key)) key = ship + (count++);
-                                placements.put(key, coordStrs);
-                                placed = true;
+                        } else if (ship.equals("Destroyer")) {
+                            for (int i = 0; i < shipLen; i++) {
+                                int ri = row + (horizontal ? 0 : i);
+                                int ci = col + (horizontal ? i : 0);
+                                coords.add(new int[]{ri, ci});
                             }
+                        } else if (ship.equals("Submarine")) {
+                            for (int i = 0; i < shipLen; i++) {
+                                int ri = row + (horizontal ? 0 : i);
+                                int ci = col + (horizontal ? i : 0);
+                                coords.add(new int[]{ri, ci});
+                            }
+                        }
+                        valid = main.logic.shippositioning.ShipPlacementValidator.isValidPlacement(board, coords);
+                        if (valid) {
+                            for (int[] c : coords) board[c[0]][c[1]] = 1;
+                            List<String> coordStrs = new ArrayList<>();
+                            for (int[] c : coords) {
+                                coordStrs.add(main.logic.shippositioning.ShipPlacementValidator.convertIndicesToCoordinate(c[0], c[1]));
+                            }
+                            // Per distinguere le navi multiple, aggiungi un id
+                            String key = ship;
+                            int count = 1;
+                            while (placements.containsKey(key)) key = ship + (count++);
+                            placements.put(key, coordStrs);
+                            placed = true;
                         }
                     }
                     if (placed) break;

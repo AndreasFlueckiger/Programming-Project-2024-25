@@ -6,19 +6,26 @@ import main.logic.victory.*;
 import main.rules.designPatterns.*;
 import main.battleship.BattleshipConfiguration;
 
-
-
+/**
+ * BattleBoard represents the game board during the attack phase.
+ * It extends Board and implements Observer to receive game state updates.
+ * Handles the display of ships, hits, misses, and attack coordinates.
+ */
 @SuppressWarnings("serial")
 public class BattleBoard extends Board implements Observer{
 	
-	private int player;
-	public Grid battleGrid;
+	private int player; // Player number (1 or 2)
+	public Grid battleGrid; // The grid containing the cells
 	
-	private int[][] shownCells;
-	private int[][] hiddenCells;
+	private int[][] shownCells; // Cells to show to the player
+	private int[][] hiddenCells; // Complete board state (hidden from opponent)
 	
-	private java.util.List<String> attackCoords = null;
+	private java.util.List<String> attackCoords = null; // Attack coordinates for display
 
+	/**
+	 * Constructor for BattleBoard
+	 * @param player Player number (1 or 2)
+	 */
 	public BattleBoard(int player) {
 		RulesFacade.getRules().register(this);
 		
@@ -41,33 +48,51 @@ public class BattleBoard extends Board implements Observer{
 		}
 	}
 	
+	/**
+	 * Hides the opponent's ships and shows only hits/misses
+	 */
 	public void hideHiddenCells() {
 		getShownCells();
 		battleGrid.repaintCells(shownCells);
 	}
 	
+	/**
+	 * Shows all ships (for the player's own board)
+	 */
 	public void showHiddenCells(){
 		battleGrid.repaintCells(hiddenCells);
 	}
 	
+	/**
+	 * Determines which cells to show to the player
+	 * Only shows hits (negative values) and misses (D_WATER), not live ships
+	 */
 	private void getShownCells() {
 		for(int i = 0; i < BattleshipConfiguration.SQUARE_COUNT; i++)
 		{
 			for(int j = 0; j < BattleshipConfiguration.SQUARE_COUNT; j++)
 			{
-				if(hiddenCells[j][i] < 0 || hiddenCells[j][i] == 10) {
+				// Show hits (negative values) and destroyed ships (values < -10)
+				if(hiddenCells[j][i] < 0 || hiddenCells[j][i] == BattleshipConfiguration.SHIPS.D_WATER.getValue()) {
 					shownCells[j][i] = hiddenCells[j][i];
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Resets the board to initial state
+	 */
 	public void resetBoard() {
 		shownCells = BattleshipConfiguration.createEmptyGrid();
 		hiddenCells = BattleshipConfiguration.createEmptyGrid();
 		repaint();
 	}
 	
+	/**
+	 * Receives game state updates and updates the board display accordingly
+	 * @param o Observable object containing game state
+	 */
 	@Override
 	public void notify(Observable o) {
 		Object lob[] = (Object []) o.get();
@@ -89,22 +114,27 @@ public class BattleBoard extends Board implements Observer{
 			player2Name = (String) lob[BattleshipConfiguration.objectValues.PLAYER_1_NAME.getValue()];
 		}
 		
-		// Controlla se è Human vs Human
+		// Check if it's Human vs Human
 		String player2Type = main.rules.designPatterns.RulesFacade.player2Type;
 		boolean isHumanVsHuman = "Human".equals(player2Type);
 		
 		if(isHumanVsHuman) {
-			// In Human vs Human, ogni player vede sempre le sue navi quando è il suo turno
+			// In Human vs Human, each player always sees their ships when it's their turn
 			if(player == currentPlayer) {
-				showHiddenCells(); // Mostra le navi del player di turno
+				showHiddenCells(); // Show the current player's ships
 			} else {
-				hideHiddenCells(); // Nasconde le navi dell'avversario
+				hideHiddenCells(); // Hide the opponent's ships
 			}
 		} else {
-			// Logica originale per Human vs Bot
+			// Original logic for Human vs Bot
 			if(player != currentPlayer) {
 				hideHiddenCells();
 			}
+		}
+		
+		// Always update visualization to show hits
+		if(player != currentPlayer) {
+			hideHiddenCells();
 		}
 		
 		if (player == 2 && currentPlayer == 1) {
@@ -112,7 +142,7 @@ public class BattleBoard extends Board implements Observer{
 		}
 		
 		if(result && currentPlayer == player) {
-			System.out.println("\n**********\nVITORIA\n**********\n");
+			System.out.println("\n**********\nVICTORY\n**********\n");
 			(Victory.getVictoryFrame(player1Name, player2Name)).setVisible(true);
 			(Attack.getAttackFrame()).setVisible(false);
 			return;
@@ -120,6 +150,10 @@ public class BattleBoard extends Board implements Observer{
 		
 	}	
 
+	/**
+	 * Enables or disables the board for interaction
+	 * @param enabled true to enable, false to disable
+	 */
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		if (battleGrid != null) {
@@ -134,11 +168,18 @@ public class BattleBoard extends Board implements Observer{
 		}
 	}
 
+	/**
+	 * Sets the attack coordinates to display on the board
+	 * @param coords List of attack coordinates
+	 */
 	public void setAttackCoords(java.util.List<String> coords) {
 		this.attackCoords = coords;
 		repaintAttackCoords();
 	}
 
+	/**
+	 * Repaints the attack coordinates on the board
+	 */
 	private void repaintAttackCoords() {
 		if (attackCoords == null) return;
 		int size = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
@@ -146,7 +187,7 @@ public class BattleBoard extends Board implements Observer{
 		for (String coord : attackCoords) {
 			int[] xy = main.logic.shippositioning.ShipPlacementValidator.convertCoordinateToIndices(coord);
 			if (xy != null) {
-				temp[xy[0]][xy[1]] = 99; // 99 = colpo fatto
+				temp[xy[0]][xy[1]] = 99; // 99 = shot made
 			}
 		}
 		battleGrid.repaintCells(temp);

@@ -138,13 +138,14 @@ public class SelectionUtilities extends JPanel implements Observer{
 					return;
 				}
 				// Caso normale: Player 2 umano
-				else if (RulesFacade.getRules().getCurrentPlayer() == 2) {
+				else if (RulesFacade.getRules().getCurrentPlayer() == 1) {
+					// Player 1 ha finito, passa al Player 2
+					RulesFacade.getRules().nextPlayer();
+				} else if (RulesFacade.getRules().getCurrentPlayer() == 2) {
+					// Player 2 ha finito, inizia la fase di attacco
 					Attack.getAttackFrame().setVisible(true);
 					main.logic.shippositioning.ShipSelection.getShipSelection().setVisible(false);
-				} else {
-					RulesFacade.getRules().resetGrid();
 				}
-				RulesFacade.getRules().nextPlayer();
 			}
 		});
 		
