@@ -130,16 +130,9 @@ Battleship is a turn-based strategy game played on two 10×10 grids per player.
 One grid is used to place the player's own fleet; the other is used to record attacks on the opponent.  
 Players alternate turns by calling out grid coordinates (e.g., "B5"). The opponent responds with “hit” or “miss.” When all the tiles of a ship are hit, the ship is sunk. The first player to sink all of their opponent’s ships wins.
 
-## Experience
+## Different (high-level) components and interfaces between components
 
-On the workload distribution have worked Alexis, in fact he distributed work to the group and then we discussed weekly updates who did what and how the workload should be redistributed.
-Git was used only like a cloud repository to store the project without any usage of the coordination tools. The group faced some problems as removing directories after pivoting ideas.
-In the project there isn't third party librariers.
-
-<ul>
-   <li>
-       <b>Alexis<b>: My biggest challenge was designing the GUI from stratch and to incorporate the code written by other members of the group.
-       <ol>
+<ol>
          <li>Observer Pattern (Design Pattern)
             Where?
 
@@ -188,6 +181,16 @@ In the project there isn't third party librariers.
       Ensures full game state is stored/restored safely
    </li>
    </ol>
+
+## Experience
+
+On the workload distribution have worked Alexis, in fact he distributed work to the group and then we discussed weekly updates who did what and how the workload should be redistributed.
+Git was used only like a cloud repository to store the project without any usage of the coordination tools. The group faced some problems as removing directories after pivoting ideas.
+In the project there isn't third party librariers.
+
+<ul>
+   <li>
+       <b>Alexis<b>: My biggest challenge was designing the GUI from stratch and to incorporate the code written by other members of the group.
    </li>
    <li>
        <b>Matteo<b>: My biggest challenge was to explain
