@@ -7,6 +7,17 @@ Matteo Fina (MatteoFindus)<br>
 Marco Meneghetti (SirMarkusIT)<br>
 Leonardo Fabricio Reyna Salas (Superleoxx)
 
+## Distribution of the workload
+<ul>
+<li> <b> GUI</b> Alexis</li>
+<li> <b> Powers</b> Marco</li>
+<li> <b> CtrlRules</b> Matteo</li>
+<li> <b> Ships</b> Marco and Alexis</li>
+<li> <b> Attack logic</b> Matteo</li>
+<li> <b> Bots</b> Matteo</li>
+</ul>
+gui - Alexis, powers -you, ctrlRules - Matteo ships - you and me attack logic - matteo and I and the rest is me i guess
+
 **Language:** Java 17  
 **GUI:** Java Swing  
 **Grid Size:** 10 × 10
