@@ -49,11 +49,11 @@ public class BattleshipConfiguration {
 		D_DESTROYER(-2),
 		SUBMARINE(1),
 		D_SUBMARINE(-1),
-		SEAPLANE(3),
-		D_SEAPLANE(-3),
+		// SEAPLANE(3),
+		// D_SEAPLANE(-3),
 		WATER(0),
 		D_WATER(10);
-
+		
 		private final int value;
 
 		// Constructor for enum
@@ -166,14 +166,15 @@ public class BattleshipConfiguration {
 
 	// Returns the name of the ship based on its size
 	public static String getShipNameBySize(int size) {
-		if (size < 0) size = -size; // Convert destroyed value to positive
-		switch (size) {
-			case 1: return "Submarine";
-			case 2: return "Destroyer";
-			case 3: return "Seaplane";
-			case 4: return "Cruiser";
-			case 5: return "Battleship";
+		if(size < 0) size = -size;
+		
+		switch(size) {
+		case 1: return "Submarine";
+		case 2: return "Destroyer";
+		case 3: return "Seaplane";
+		case 4: return "Cruiser";
+		case 5: return "Battleship";
+		default: return "Unknown";
 		}
-		return "";
 	}
 }

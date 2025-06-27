@@ -32,10 +32,14 @@ public class Victory extends JFrame {
             victoryFrame = new Victory(winner, looser);
         return victoryFrame;
     }
+    
+    public void selfDestroy() {
+    	victoryFrame = null;
+    }
 
     /**
      * Private constructor that initializes and centers the victory window,
-     * sets layout and background, and adds the victory content (currently broken).
+     * sets layout and background, and adds the victory content.
      *
      * @param winner the name of the winner
      * @param looser the name of the loser
@@ -57,8 +61,8 @@ public class Victory extends JFrame {
         // Set the background color of the frame
         getContentPane().setBackground(new Color(250, 250, 250));
 
-        // ❌ Problematic line: causes infinite recursion by creating a new Victory inside the constructor
-        getContentPane().add(new Victory(winner, looser));
+        // Add the victory panel
+        getContentPane().add(new VictoryPanel(winner, looser));
 
         setTitle("VICTORY!");
     }

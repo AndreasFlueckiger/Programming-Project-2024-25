@@ -87,17 +87,21 @@ public class Grid extends JPanel{
 					continue;
 				}
 				
-				if(cellsToPaint[j][i] == 10) {
+				// Miss (acqua colpita)
+				if(cellsToPaint[j][i] == BattleshipConfiguration.SHIPS.D_WATER.getValue()) {
 					cell.setShipColor(Color.WHITE);
 					cell.setUnclickable(true);
 				}
+				// Navi distrutte (valori < -10)
 				else if(cellsToPaint[j][i] < -BattleshipConfiguration.DESTROYED_SHIP_LIMIT) {
 					cell.setShipColor(Color.RED);
 				}
+				// Hit (valori negativi ma > -10)
 				else if(cellsToPaint[j][i] < 0) {
 					cell.setShipColor(Color.BLACK);
 					cell.setUnclickable(true);
 				}
+				// Navi vive (valori positivi)
 				else {
 					cell.setShipColor(BattleshipConfiguration.getShipColorBySize(cellsToPaint[j][i]));
 				}

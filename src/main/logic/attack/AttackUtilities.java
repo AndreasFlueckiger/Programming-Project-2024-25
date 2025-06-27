@@ -34,17 +34,16 @@ public class AttackUtilities extends JPanel implements Observer{
 	JLabel message2 = new JLabel("");
 	JLabel message3 = new JLabel("");
 	
-	JButton nextBtn = new JButton();
+	JButton nextBtn = new JButton("Next");
 	JButton exitBtn = new JButton("Exit");
 	JButton saveBtn = new JButton("Save");
 	
 	// Stato per i powers
-	private String selectedPower = null; // "AirAttack", "ScatterBomb", "Scanner"
-	// powerUsed[player][power]: 0=AirAttack, 1=ScatterBomb, 2=Scanner
-	private boolean[][] powerUsed = new boolean[2][3];
+	private String selectedPower = null; // "AirAttack", "ScatterBomb"
+	// powerUsed[player][power]: 0=AirAttack, 1=ScatterBomb
+	private boolean[][] powerUsed = new boolean[2][2];
 	private JButton airAttackBtn = new JButton("Air Attack");
 	private JButton scatterBombBtn = new JButton("Scatter Bomb");
-	private JButton scannerBtn = new JButton("Scanner");
 	
 	static AttackUtilities attackUtilities;
     
@@ -80,10 +79,14 @@ public class AttackUtilities extends JPanel implements Observer{
 		// --- NUOVO PANNELLO UNICO IN BASSO ---
 		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
 		bottomPanel.setOpaque(false);
+		
+		// Initialize Next button
+		nextBtn.setFont(new Font("SansSerif", Font.BOLD, 16));
+		buttonDisable(); // Start with disabled state
+		
 		bottomPanel.add(nextBtn);
 		bottomPanel.add(airAttackBtn);
 		bottomPanel.add(scatterBombBtn);
-		bottomPanel.add(scannerBtn);
 		bottomPanel.add(saveBtn);
 		bottomPanel.add(exitBtn);
 		add(bottomPanel, BorderLayout.SOUTH);
@@ -94,7 +97,6 @@ public class AttackUtilities extends JPanel implements Observer{
 		// (RI)AGGIUNGO ACTION LISTENER AI BOTTONI POWERS
 		airAttackBtn.addActionListener(e -> usePower("AirAttack"));
 		scatterBombBtn.addActionListener(e -> usePower("ScatterBomb"));
-		scannerBtn.addActionListener(e -> usePower("Scanner"));
 
 		// ActionListener per Exit
 		exitBtn.addActionListener(e -> System.exit(0));
@@ -194,7 +196,6 @@ public class AttackUtilities extends JPanel implements Observer{
 		int powerIdx = 0;
 		if ("AirAttack".equals(selectedPower)) powerIdx = 0;
 		else if ("ScatterBomb".equals(selectedPower)) powerIdx = 1;
-		else if ("Scanner".equals(selectedPower)) powerIdx = 2;
 		powerUsed[idx][powerIdx] = true;
 		selectedPower = null;
 		updatePowerButtonsState();
@@ -206,10 +207,9 @@ public class AttackUtilities extends JPanel implements Observer{
 	// Aggiorna abilitazione dei bottoni powers
 	public void updatePowerButtonsState() {
 		int idx = getCurrentPlayerIndex();
-		// 0: AirAttack, 1: ScatterBomb, 2: Scanner
+		// 0: AirAttack, 1: ScatterBomb
 		airAttackBtn.setEnabled(!powerUsed[idx][0]);
 		scatterBombBtn.setEnabled(!powerUsed[idx][1]);
-		scannerBtn.setEnabled(!powerUsed[idx][2]);
 		revalidate();
 		repaint();
 	}
@@ -230,6 +230,8 @@ public class AttackUtilities extends JPanel implements Observer{
 	
 	// Da chiamare ogni volta che cambia il turno o lo stato dei powers
 	public void onTurnOrPowerChange() {
+		// Reset del potere selezionato quando cambia il turno
+		selectedPower = null;
 		// Forzo il reset dei bottoni a ogni cambio turno
 		updatePowerButtonsState();
 		revalidate();
@@ -240,12 +242,12 @@ public class AttackUtilities extends JPanel implements Observer{
 	public static void botUsePower(int botIdx) {
 		AttackUtilities util = getAttackUtilites();
 		List<Integer> available = new ArrayList<>();
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 2; i++) { // Solo 2 powers ora
 			if (!util.powerUsed[botIdx][i]) available.add(i);
 		}
 		if (available.isEmpty()) return;
 		int powerIdx = available.get(new Random().nextInt(available.size()));
-		String powerName = powerIdx == 0 ? "AirAttack" : powerIdx == 1 ? "ScatterBomb" : "Scanner";
+		String powerName = powerIdx == 0 ? "AirAttack" : "ScatterBomb";
 		util.selectedPower = powerName;
 		// Simula la scelta di una cella/colonna casuale
 		int gridSize = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
@@ -265,18 +267,6 @@ public class AttackUtilities extends JPanel implements Observer{
 					}
 				}
 			}
-		} else if (powerIdx == 2) { // Scanner (solo output console)
-			StringBuilder scanResult = new StringBuilder("[BOT POWER] Scanner result at: " + (char)('A'+x)+(y+1)+"\n");
-			for (int dx = -1; dx <= 1; dx++) {
-				for (int dy = -1; dy <= 1; dy++) {
-					int tx = x + dx;
-					int ty = y + dy;
-					if (tx >= 0 && tx < gridSize && ty >= 0 && ty < gridSize) {
-						scanResult.append((char)('A'+tx)).append(ty+1).append(": ?\n");
-					}
-				}
-			}
-			System.out.print(scanResult.toString());
 		}
 		util.powerUsed[botIdx][powerIdx] = true;
 		util.updatePowerButtonsState();

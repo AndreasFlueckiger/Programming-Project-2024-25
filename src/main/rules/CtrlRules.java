@@ -17,48 +17,48 @@ public class CtrlRules implements Observable, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	// Observer Attributes
-	private int board1[][];
-	private int board2[][];
-	private int currentPlayer;
-	private boolean result = false;
-	private boolean isValid;
-	private int cellsToPaint[][];
-	private String player1;
-	private String player2;
-	List<String> messages = new ArrayList<String>();
+	// Observer Attributes - Game state data
+	private int board1[][]; // Player 1's board
+	private int board2[][]; // Player 2's board
+	private int currentPlayer; // Current player (1 or 2)
+	private boolean result = false; // Game result (true if game is over)
+	private boolean isValid; // Validation state for ship positioning
+	private int cellsToPaint[][]; // Temporary cells to paint during positioning
+	private String player1; // Player 1 name
+	private String player2; // Player 2 name
+	List<String> messages = new ArrayList<String>(); // Game messages
 
-	// List of Observers
-	
+	// List of Observers - UI components to notify
 	List<Observer> lob = new ArrayList<Observer>();
 
-	
-	// Non-Observer Attributes
-	
-	private PHASE phase;
-	private Ship selectedShip;
-	private int pointsPlayer1 = 0;
-	private int pointsPlayer2 = 0;
-	private int currentAttackCount = 1;
+	// Non-Observer Attributes - Game logic state
+	private PHASE phase; // Current game phase (POSITION or ATTACK)
+	private Ship selectedShip; // Currently selected ship for positioning
+	private int pointsPlayer1 = 0; // Player 1's score
+	private int pointsPlayer2 = 0; // Player 2's score
+	private int currentAttackCount = 1; // Current attack count for multi-attack powers
 
 	// Track player 1's ship placements and attack moves for LearningBot
 	private java.util.List<String> player1ShipCoords = new java.util.ArrayList<>();
 	private java.util.List<String> player1AttackCoords = new java.util.ArrayList<>();
 	private java.util.List<String> player2AttackCoords = new java.util.ArrayList<>();
 
-	// Flag per evitare attacchi multipli del bot nello stesso ciclo
+	// Flag to prevent multiple bot attacks in the same cycle
 	private boolean botHasAttacked = false;
 
-	// Contatore attacchi per il player umano
+	// Attack counter for human player
 	private int humanAttackCount = 0;
 
-	
-	// Constructor
-	
+	/**
+	 * Constructor - initializes a new game
+	 */
 	public CtrlRules() {
 		newGame();
 	}
 
+	/**
+	 * Initializes a new game with default settings
+	 */
 	public void newGame() {
 		phase = PHASE.POSITION;
 		board1 = BattleshipConfiguration.createEmptyGrid();
@@ -67,6 +67,9 @@ public class CtrlRules implements Observable, Serializable {
 		refreshBoard();
 	}
 
+	/**
+	 * Resets the game to initial state
+	 */
 	public void resetGame() {
 		board1 = BattleshipConfiguration.createEmptyGrid();
 		board2 = BattleshipConfiguration.createEmptyGrid();
@@ -90,13 +93,23 @@ public class CtrlRules implements Observable, Serializable {
 		refreshBoard();
 	}
 
-	// Public Functions for postioning on the board
+	// Public Functions for positioning on the board
 
+	/**
+	 * Rotates the currently selected ship
+	 */
 	public void shipRotate() {
 		if(selectedShip == null) return;
 		selectedShip.rotate();
 		refreshBoard();
 	}
+
+	/**
+	 * Attempts to position a ship at the given coordinates
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param definedCells Current board state
+	 */
 	public void positionShip(int x, int y, int[][] definedCells) {
 		if(selectedShip == null) {
 			setIsValid(false);
@@ -116,7 +129,7 @@ public class CtrlRules implements Observable, Serializable {
 		PositioningGrid.getGrid().paintCells(cellsToPaint);
 		ShipOptions.getShipOptions().reduceShipCount(selectedShip);
 		
-		// Track player 1 ship placement
+		// Track player 1 ship placement for LearningBot
 		if (currentPlayer == 1) {
 			// Find all cells for the selected ship and add to the list
 			for (int i = 0; i < definedCells.length; i++) {
@@ -141,10 +154,15 @@ public class CtrlRules implements Observable, Serializable {
 		
 		cellsToPaint = BattleshipConfiguration.createEmptyGrid();
 		refreshBoard();
-		
 	}
+
+	/**
+	 * Repositions a ship by removing it from the current position and allowing repositioning
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param definedCells Current board state
+	 */
 	public void repositionShip(int x, int y, int[][] definedCells) {
-		
 		isValid = true;
 		addMessage("Repositioning Ship");
 		
@@ -156,44 +174,43 @@ public class CtrlRules implements Observable, Serializable {
 		PositioningGrid.getGrid().repositionRepaint(cellsToRemove);
 		ShipOptions.getShipOptions().increaseShipCount(selectedShip);		
 	}
+
+	/**
+	 * Resets the positioning grid to initial state
+	 */
 	public void resetGrid() {
 		setIsValid(true);
-		
-		addMessage("Reseting Grid");
-		
 		PositioningGrid.getGrid().reset();
-		
 		ShipOptions.getShipOptions().resetShipCount();
-		
 		unsetSelectedShip();
 	}
+
+	/**
+	 * Checks if a position is valid for the selected ship
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param definedCells Current board state
+	 */
 	public void checkPos(int x, int y, int[][] definedCells) {
-		
 		if(selectedShip == null) {
 			return;
 		}
 				
-		if(selectedShip.getClass().getName() == "main.logic.ships.Seaplane") {
-			checkPosSeaplane(x, y, definedCells);
-		}
-		else{
-			checkPosShip(x, y, definedCells);
-		}
+		checkPosShip(x, y, definedCells);
 		
 		refreshBoard();
 	}
-	
-
-//////////////////////////////////////
 
 	// Private Functions for the position of the board
 
-
+	/**
+	 * Removes a ship from the board at the given coordinates
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param cellsToRemove Board to remove ship from
+	 * @return Updated board with ship removed
+	 */
 	private int[][] removeShip(int x, int y, int[][] cellsToRemove){
-		
-		if(cellsToRemove[x][y] == SHIPS.SEAPLANE.getValue()) {
-			return removeSeaplane(x, y, cellsToRemove);
-		}
 		
 		if(cellsToRemove[x][y] == SHIPS.SUBMARINE.getValue()) {
 			cellsToRemove[x][y] = 100;
@@ -291,137 +308,33 @@ public class CtrlRules implements Observable, Serializable {
 		
 		return null;
 	}
-	private int[][] removeSeaplane(int x, int y, int[][] cellsToRemove) {
-		try {
-			if(cellsToRemove[x+1][y+1] == SHIPS.SEAPLANE.getValue()) {
-				try {
-					if(cellsToRemove[x+1][y-1] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x+1][y+1] = 100;
-						cellsToRemove[x+1][y-1] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(cellsToRemove[x][y+2] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x+1][y+1] = 100;
-						cellsToRemove[x][y+2] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(cellsToRemove[x+2][y] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x+1][y+1] = 100;
-						cellsToRemove[x+2][y] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-			}
-		}catch(ArrayIndexOutOfBoundsException e) {}
-		try {
-			if(cellsToRemove[x+1][y-1] == SHIPS.SEAPLANE.getValue()) {
-				try {
-					if(cellsToRemove[x-1][y-1] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x+1][y-1] = 100;
-						cellsToRemove[x-1][y-1] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(cellsToRemove[x+2][y] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x+1][y-1] = 100;
-						cellsToRemove[x+2][y] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(cellsToRemove[x][y-2] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x+1][y-1] = 100;
-						cellsToRemove[x][y-2] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-			}
-		}catch(ArrayIndexOutOfBoundsException e) {}
-		try {
-			if(cellsToRemove[x-1][y-1] == SHIPS.SEAPLANE.getValue()) {
-				try {
-					if(cellsToRemove[x-1][y+1] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x-1][y-1] = 100;
-						cellsToRemove[x-1][y+1] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(cellsToRemove[x][y-2] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x-1][y-1] = 100;
-						cellsToRemove[x][y-2] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(cellsToRemove[x-2][y] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x-1][y-1] = 100;
-						cellsToRemove[x-2][y] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-			}
-		}catch(ArrayIndexOutOfBoundsException e) {}
-		try {
-			if(cellsToRemove[x-1][y+1] == SHIPS.SEAPLANE.getValue()) {
-				try {
-					if(cellsToRemove[x+1][y+1] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x-1][y+1] = 100;
-						cellsToRemove[x+1][y+1] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(cellsToRemove[x-2][y] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x-1][y+1] = 100;
-						cellsToRemove[x-2][y] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(cellsToRemove[x][y+2] == SHIPS.SEAPLANE.getValue()) {
-						cellsToRemove[x][y] = 100;
-						cellsToRemove[x-1][y+1] = 100;
-						cellsToRemove[x][y+2] = 100;
-						return cellsToRemove;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-			}
-		}catch(ArrayIndexOutOfBoundsException e) {}
-		return cellsToRemove;
-	}
+
+	/**
+	 * Sets the selected ship based on ship size
+	 * @param shipSize Size of the ship to select
+	 */
 	private void setSelectedShipBySize(int shipSize) {
 		if(shipSize == 1) {
-			setSelectedShip(Submarine.getSubmarine());
+			selectedShip = Submarine.getSubmarine();
 		}
 		else if(shipSize == 2) {
-			setSelectedShip(Destroyer.getDestroyer());
+			selectedShip = Destroyer.getDestroyer();
+		}
+		else if(shipSize == 3) {
+			selectedShip = Cruiser.getCruiser();
 		}
 		else if(shipSize == 4) {
-			setSelectedShip(Cruiser.getCruiser());
-		}
-		else if(shipSize == 5) {
-			setSelectedShip(Battleship.getBattleship());
+			selectedShip = Battleship.getBattleship();
 		}
 	}
+
+	/**
+	 * Checks if a position is valid for ship placement
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param definedCells Current board state
+	 */
 	private void checkPosShip(int x, int y, int[][] definedCells){
-		
 		cellsToPaint = BattleshipConfiguration.createEmptyGrid();
 		setIsValid(true);
 		
@@ -478,66 +391,15 @@ public class CtrlRules implements Observable, Serializable {
 		if(isValid) {
 			setIsValid( checkSurroundingsShip(x, y, definedCells) );
 		}
-						
 	}
-	private void checkPosSeaplane(int x, int y, int [][] definedCells){
-		cellsToPaint = BattleshipConfiguration.createEmptyGrid();
-		setIsValid(true);
-		if(!selectedShip.getAvailability()) {
-			setIsValid(false);
-			return;
-		}
-		if(definedCells[x][y] != 0) {
-			setIsValid(false);
-		}
-		if(selectedShip.orientation == ORIENTATION.TOP) {
-			cellsToPaint[x][y] = selectedShip.shipSize;
-			try {
-				if(definedCells[x-1][y-1] != 0) setIsValid(false);
-				cellsToPaint[x-1][y-1] = selectedShip.shipSize;
-			}catch (ArrayIndexOutOfBoundsException e){ setIsValid(false); }
-			try {
-				if(definedCells[x][y-2] != 0) setIsValid(false);
-				cellsToPaint[x][y-2] = selectedShip.shipSize;
-			}catch (ArrayIndexOutOfBoundsException e){ setIsValid(false); }
-		}
-		else if(selectedShip.orientation == ORIENTATION.RIGHT) {
-			cellsToPaint[x][y] = selectedShip.shipSize;
-			try {
-				if(definedCells[x+1][y-1] != 0) setIsValid(false);
-				cellsToPaint[x+1][y-1] = selectedShip.shipSize;
-			}catch (ArrayIndexOutOfBoundsException e){ setIsValid(false); }
-			try {
-				if(definedCells[x+2][y] != 0) setIsValid(false);
-				cellsToPaint[x+2][y] = selectedShip.shipSize;
-			}catch (ArrayIndexOutOfBoundsException e){ setIsValid(false); }
-		}
-		else if(selectedShip.orientation == ORIENTATION.DOWN) {
-			cellsToPaint[x][y] = selectedShip.shipSize;
-			try {
-				if(definedCells[x+1][y+1] != 0) setIsValid(false);
-				cellsToPaint[x+1][y+1] = selectedShip.shipSize;
-			}catch (ArrayIndexOutOfBoundsException e){ setIsValid(false); }
-			try {
-				if(definedCells[x][y+2] != 0) setIsValid(false);
-				cellsToPaint[x][y+2] = selectedShip.shipSize;
-			}catch (ArrayIndexOutOfBoundsException e){ setIsValid(false); }
-		}
-		else if(selectedShip.orientation == ORIENTATION.LEFT) {
-			cellsToPaint[x][y] = selectedShip.shipSize;
-			try {
-				if(definedCells[x-1][y+1] != 0) setIsValid(false);
-				cellsToPaint[x-1][y+1] = selectedShip.shipSize;
-			}catch (ArrayIndexOutOfBoundsException e){ setIsValid(false); }
-			try {
-				if(definedCells[x-2][y] != 0) setIsValid(false);
-				cellsToPaint[x-2][y] = selectedShip.shipSize;
-			}catch (ArrayIndexOutOfBoundsException e){ setIsValid(false); }
-		}
-		if(isValid) {
-			setIsValid( checkSurroundingsSeaplane(x, y, definedCells) );
-		}
-	}
+
+	/**
+	 * Checks if the surroundings of a position are valid for ship placement
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param definedCells Current board state
+	 * @return true if surroundings are valid, false otherwise
+	 */
 	private boolean checkSurroundingsShip(int x, int y, int[][] definedCells) {
 		
 		if(selectedShip.orientation == ORIENTATION.TOP) {
@@ -591,28 +453,19 @@ public class CtrlRules implements Observable, Serializable {
 		
 		return true;
 	}
-	private boolean checkSurroundingsSeaplane(int x, int y, int[][] definedCells) {
-		try { if(definedCells[x+1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
-		try { if(definedCells[x][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
-		try { if(definedCells[x-1][y] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
-		try { if(definedCells[x][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
-		try { if(definedCells[x+1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
-		try { if(definedCells[x-1][y+1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
-		try { if(definedCells[x+1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
-		try { if(definedCells[x-1][y-1] != 0) return false; } catch(ArrayIndexOutOfBoundsException e) {}
-		return true;
-	}
 
+	// Public Functions for the attacking phase
 
-
-//////////////////////////////////////////////////////////////////////
-
-
-// Public Functions for the attacking phase
-
-		public void startGame() {
+	/**
+	 * Starts the attack phase of the game
+	 */
+	public void startGame() {
 		phase = PHASE.ATTACK;
 	}
+
+	/**
+	 * Switches to the next player and handles bot moves
+	 */
 	public void nextPlayer() {
 		checkResult();
 		if(result) {
@@ -620,11 +473,26 @@ public class CtrlRules implements Observable, Serializable {
 			refreshBoard();
 			return;
 		}
+		
+		// Handle positioning phase
+		if(phase == PHASE.POSITION) {
+			currentPlayer = getNextPlayer();
+			// Reset grid and ship options for the next player
+			if(currentPlayer == 2) {
+				resetGrid();
+				// Reset ship counts for Player 2
+				ShipOptions.getShipOptions().resetShipCount();
+			}
+			refreshBoard();
+			return;
+		}
+		
+		// Handle attack phase
 		currentPlayer = getNextPlayer();
 		refreshBoard();
-		// Bot move logic: il bot attacca solo dopo che il player umano ha attaccato
+		// Bot move logic: bot attacks only after human player has attacked
 		if(currentPlayer == 2 && !"Human".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
-			// Fai usare un power al bot (HardBot o LearningBot) se disponibile
+			// Make bot use a power (only HardBot or LearningBot)
 			if ("HardBot".equals(main.rules.designPatterns.RulesFacade.player2Type) || "LearningBot".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
 				main.logic.attack.AttackUtilities.botUsePower(1); // 1 = bot (player 2)
 			}
@@ -652,23 +520,34 @@ public class CtrlRules implements Observable, Serializable {
 			botHasAttacked = true;
 			if (!result) {
 				currentPlayer = getNextPlayer();
-				// Sblocca la board per il player umano
+				// Unlock board for human player
 				main.logic.attack.Attack.getAttackFrame().blockCells = false;
 				main.logic.attack.AttackUtilities.getAttackUtilites().buttonDisable();
 				refreshBoard();
 			}
-
-			
-		} else if(currentPlayer == 1) {
+		} else {
 			botHasAttacked = false;
 			humanAttackCount = 0;
-			// Sblocca la board per il player umano e aggiorna la UI
+			// Unlock board for human player and update UI
 			main.logic.attack.Attack.getAttackFrame().blockCells = false;
 			main.logic.attack.AttackUtilities.getAttackUtilites().buttonDisable();
 			refreshBoard();
 		}
 	}
+
+	/**
+	 * Handles an attack at the given coordinates
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 */
 	public void attack(int x, int y) {
+		// Early check: if cells are blocked, don't allow attack
+		if(main.logic.attack.Attack.getAttackFrame().blockCells) {
+			addMessage("Cells are blocked! Click Next to switch turns.");
+			refreshBoard();
+			return;
+		}
+		
 		// Track player 1 and player 2 attack moves
 		if (currentPlayer == 1) {
 			char col = (char) ('A' + y);
@@ -683,6 +562,7 @@ public class CtrlRules implements Observable, Serializable {
 		}
 		if(getOppositeBoard(currentPlayer)[x][y] == SHIPS.D_WATER.getValue() || getOppositeBoard(currentPlayer)[x][y] < 0) {
 			addMessage("This cell was already clicked!");
+			refreshBoard(); // Update board immediately
 			return;
 		}
 		else if(getOppositeBoard(currentPlayer)[x][y] > 0 && getOppositeBoard(currentPlayer)[x][y] < SHIPS.D_WATER.getValue()) {
@@ -694,35 +574,56 @@ public class CtrlRules implements Observable, Serializable {
 			attackShip(x, y);
 		}
 
-		// Gestione attacchi multipli per player umano
-		if (currentPlayer == 1 ||
-		(currentPlayer == 2 && "Human".equals(main.rules.designPatterns.RulesFacade.player2Type)))  {
+		// Check if this attack was triggered by a power usage
+		boolean isPowerAttack = false;
+		try {
+			String selectedPower = main.logic.attack.AttackUtilities.getAttackUtilites().getSelectedPower();
+			isPowerAttack = selectedPower != null;
+		} catch(Exception ex) {}
+
+		// Handle multiple attacks for human player (only for regular attacks, not power attacks)
+		if (!isPowerAttack && (currentPlayer == 1 ||
+		(currentPlayer == 2 && "Human".equals(main.rules.designPatterns.RulesFacade.player2Type))))  {
 			humanAttackCount++;
 			checkResult();
 			if(result) {
+				refreshBoard(); // Update board immediately
 				return;
 			}
 			if(humanAttackCount == 3) {
 				humanAttackCount = 0;
 				main.logic.attack.Attack.getAttackFrame().blockCells = true;
 				main.logic.attack.AttackUtilities.getAttackUtilites().buttonEnable();
+				refreshBoard(); // Update board immediately
+				// Auto-click Next button after 3 attacks
+				nextPlayer();
 				return;
 			} else {
 				main.logic.attack.Attack.getAttackFrame().blockCells = false;
 				main.logic.attack.AttackUtilities.getAttackUtilites().buttonDisable();
-				refreshBoard();
+				refreshBoard(); // Update board immediately
 			}
 		} else {
 			checkResult();
-			if(result) return;
-			refreshBoard();
+			if(result) {
+				refreshBoard(); // Update board immediately
+				return;
+			}
+			refreshBoard(); // Update board immediately
 		}
+		
+		// Always update board at the end to show hits immediately
+		refreshBoard();
 	}
-
 
 	// Private Functions for the attacking phase
 
-		private void attackShip(int x, int y) {
+	/**
+	 * Processes the attack on a ship at the given coordinates
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 */
+	private void attackShip(int x, int y) {
 		int[][] currentBoard = getOppositeBoard(currentPlayer);
 		int currentPlayerPoints = 0;
 		
@@ -733,12 +634,7 @@ public class CtrlRules implements Observable, Serializable {
 			currentPlayerPoints += 1;
 			currentBoard[x][y] = -currentBoard[x][y];
 			
-			if(currentBoard[x][y] == SHIPS.D_SEAPLANE.getValue()) {
-				if(checkAndDestroySeaplane(x, y)) {
-					addMessage(getPlayerName(currentPlayer) + " sinked a Seaplane !");
-				}
-			}
-			else if(checkIfShipDestroyed(x, y)) {
+			if(checkIfShipDestroyed(x, y)) {
 				destroyShip(x, y);
 			}
 		}
@@ -752,6 +648,13 @@ public class CtrlRules implements Observable, Serializable {
 				break;
 		}
 	}
+
+	/**
+	 * Checks if a ship at the given coordinates is completely destroyed
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @return true if ship is destroyed, false otherwise
+	 */
 	private boolean checkIfShipDestroyed(int x, int y) {
 		
 		int[][] currentBoard = getOppositeBoard(currentPlayer);
@@ -844,7 +747,7 @@ public class CtrlRules implements Observable, Serializable {
 				//Reached end => sum 1 to y to get back to ship
 				y += 1;
 
-				//Beginning bottom to top check
+				//Beginning the bottom to top check
 				try {
 					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
 						if(currentBoard[x][y] < 0) {
@@ -858,6 +761,12 @@ public class CtrlRules implements Observable, Serializable {
 		
 		return shipSize == destroyedCellsNum;
 	}
+
+	/**
+	 * Destroys a ship at the given coordinates
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 */
 	private void destroyShip(int x, int y) {
 		int[][] currentBoard = getOppositeBoard(currentPlayer);
 
@@ -946,7 +855,7 @@ public class CtrlRules implements Observable, Serializable {
 				//Reached end => sum 1 to y to get back to ship
 				y += 1;
 
-				//Beginning bottom to top removal
+				//Beginning the bottom to top removal
 				try {
 					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
 						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
@@ -957,122 +866,10 @@ public class CtrlRules implements Observable, Serializable {
 			}; 
 		} catch(ArrayIndexOutOfBoundsException e) {}
 	}
-	private boolean checkAndDestroySeaplane(int x, int y) {
-		int[][] currentBoard = getOppositeBoard(currentPlayer);
-		try {
-			if(currentBoard[x+1][y+1] == SHIPS.D_SEAPLANE.getValue()) {
-				try {
-					if(currentBoard[x+1][y-1] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x+1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x+1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(currentBoard[x][y+2] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x+1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x][y+2] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(currentBoard[x+2][y] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x+1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x+2][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-			}
-		}catch(ArrayIndexOutOfBoundsException e) {}
-		try {
-			if(currentBoard[x+1][y-1] == SHIPS.D_SEAPLANE.getValue()) {
-				try {
-					if(currentBoard[x-1][y-1] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x+1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x-1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(currentBoard[x+2][y] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x+1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x+2][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(currentBoard[x][y-2] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x+1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x][y-2] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-			}
-		}catch(ArrayIndexOutOfBoundsException e) {}
-		try {
-			if(currentBoard[x-1][y-1] == SHIPS.D_SEAPLANE.getValue()) {
-				try {
-					if(currentBoard[x-1][y+1] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x-1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x-1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(currentBoard[x][y-2] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x-1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x][y-2] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(currentBoard[x-2][y] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x-1][y-1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x-2][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-			}
-		}catch(ArrayIndexOutOfBoundsException e) {}
-		try {
-			if(currentBoard[x-1][y+1] == SHIPS.D_SEAPLANE.getValue()) {
-				try {
-					if(currentBoard[x+1][y+1] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x-1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x+1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(currentBoard[x-2][y] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x-1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x-2][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-				try {
-					if(currentBoard[x][y+2] == SHIPS.D_SEAPLANE.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x-1][y+1] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						currentBoard[x][y+2] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						return true;
-					}
-				}catch(ArrayIndexOutOfBoundsException e) {}
-			}
-		}catch(ArrayIndexOutOfBoundsException e) {}
-		return false;
-	}
+
+	/**
+	 * Checks if the game has ended and determines the winner
+	 */
 	private void checkResult() {
 		
 		int currentPlayerPoints = 0;
@@ -1093,29 +890,45 @@ public class CtrlRules implements Observable, Serializable {
 		refreshBoard();
 	}
 	
-//////////////////////////////////////
+	// List of messages
 
-// list of messages:
-
-
+	/**
+	 * Adds a message to the game message list
+	 * @param message Message to add
+	 */
 	public void addMessage(String message) {
 		messages.add(message);
 		refreshBoard();
 	}
+
+	/**
+	 * Clears the message list
+	 */
 	public void emptyMessagesList() {
 		messages.clear();
 	}
 
-////////////////////////////////////////////////////////////////////
+	// Methods "get" and "set"
 
-// methods "get" and "set"
-
+	/**
+	 * Gets the current game phase
+	 * @return Current phase (POSITION or ATTACK)
+	 */
 	public PHASE getPhase() {
 		return phase;
 	}
+
+	/**
+	 * Sets the selected ship for positioning
+	 * @param ship Ship to select
+	 */
 	public void setSelectedShip(Ship ship) {
 		selectedShip = ship;
     }
+
+	/**
+	 * Unsets the currently selected ship
+	 */
 	public void unsetSelectedShip() {
 		if(selectedShip == null) return;
     	selectedShip.unselectPreviousShip();
@@ -1124,9 +937,19 @@ public class CtrlRules implements Observable, Serializable {
 		cellsToPaint = BattleshipConfiguration.createEmptyGrid();
 		refreshBoard();
     }
+
+	/**
+	 * Gets the current player number
+	 * @return Current player (1 or 2)
+	 */
 	public int getCurrentPlayer() {
 		return currentPlayer;
 	}
+
+	/**
+	 * Gets the next player number
+	 * @return Next player (1 or 2)
+	 */
 	public int getNextPlayer() {
 		if(currentPlayer == 1) {
 			return 2;
@@ -1135,12 +958,23 @@ public class CtrlRules implements Observable, Serializable {
 			return 1;
 		}
 	}
+
+	/**
+	 * Sets the board for the specified player
+	 * @param playerNum Player number (1 or 2)
+	 */
 	public void setBoard(int playerNum) {
 		switch(playerNum) {
 			case 1: board1 = PositioningGrid.getGrid().getFinalGrid();
 			case 2: board2 = PositioningGrid.getGrid().getFinalGrid();
 		}
 	}
+
+	/**
+	 * Gets the name of the specified player
+	 * @param playerNum Player number (1 or 2)
+	 * @return Player name
+	 */
 	public String getPlayerName(int playerNum) {
 		switch(playerNum) {
 			case 1: return player1;
@@ -1148,19 +982,40 @@ public class CtrlRules implements Observable, Serializable {
 		}
 		return null;
 	}
+
+	/**
+	 * Sets the name of the specified player
+	 * @param playerNum Player number (1 or 2)
+	 * @param playerName Player name
+	 */
 	public void setPlayerName(int playerNum, String playerName) {
 		switch(playerNum) {
 		case 1: player1 = playerName;
 		case 2: player2 = playerName;
 		}
 	}
+
+	/**
+	 * Gets the currently selected ship
+	 * @return Selected ship or null
+	 */
 	public Ship getSelectedShip() {
 		return selectedShip;
 	}
 	
+	/**
+	 * Sets the validation state
+	 * @param validation Validation state
+	 */
 	private void setIsValid(boolean validation) {
 		isValid = validation;
 	}
+
+	/**
+	 * Gets the opposite player's board
+	 * @param playerNum Current player number
+	 * @return Opposite player's board
+	 */
 	private int[][] getOppositeBoard(int playerNum) {
 		switch(playerNum) {
 			case 1: return board2;
@@ -1169,9 +1024,12 @@ public class CtrlRules implements Observable, Serializable {
 		return null;
 	}
 
-//////////////////////////////////////////////////////
-	
 	// Observer Functions
+	
+	/**
+	 * Adds an observer to the notification list
+	 * @param o Observer to add
+	 */
 	@Override
 	public void addObserver(Observer o) {
 		for (Observer ob : lob)
@@ -1180,11 +1038,19 @@ public class CtrlRules implements Observable, Serializable {
 		lob.add(o);
 	}
 
+	/**
+	 * Removes an observer from the notification list
+	 * @param o Observer to remove
+	 */
 	@Override
 	public void removeObserver(Observer o) {
 		lob.remove(o);
 	}
 
+	/**
+	 * Gets the current game state for observers
+	 * @return Object array containing game state data
+	 */
 	@Override
 	public Object get() {
 		Object[] dice = new Object[BattleshipConfiguration.objectValues.values().length];
@@ -1202,27 +1068,32 @@ public class CtrlRules implements Observable, Serializable {
 		return dice;
 	}
 
+	/**
+	 * Notifies all observers of state changes
+	 */
 	public void refreshBoard() {
 		for (Observer o : lob)
 			o.notify(this);
 	}
 
-	// Place bot ships on the board for the given player
+	/**
+	 * Places bot ships on the board for the given player
+	 * @param playerNum Player number (1 or 2)
+	 * @param placements Map of ship placements
+	 */
 	public void placeBotShips(int playerNum, Map<String, List<String>> placements) {
 		int[][] board = (playerNum == 1) ? board1 : board2;
 		// Ship sizes mapping (should match BattleshipConfiguration)
 		Map<String, Integer> shipSizes = new HashMap<>();
-		shipSizes.put("Battleship", 5);
-		shipSizes.put("Cruiser", 4);
-		shipSizes.put("Destroyer", 3);
-		shipSizes.put("Submarine", 2);
-		shipSizes.put("Seaplane", 3);
+		shipSizes.put("Battleship", 4);
+		shipSizes.put("Cruiser", 3);
+		shipSizes.put("Destroyer", 2);
+		shipSizes.put("Submarine", 1);
 		Map<String, Integer> shipCodes = new HashMap<>();
 		shipCodes.put("Battleship", BattleshipConfiguration.SHIPS.BATTLESHIP.getValue());
 		shipCodes.put("Cruiser", BattleshipConfiguration.SHIPS.CRUISER.getValue());
 		shipCodes.put("Destroyer", BattleshipConfiguration.SHIPS.DESTROYER.getValue());
 		shipCodes.put("Submarine", BattleshipConfiguration.SHIPS.SUBMARINE.getValue());
-		shipCodes.put("Seaplane", BattleshipConfiguration.SHIPS.SEAPLANE.getValue());
 		for (Map.Entry<String, List<String>> entry : placements.entrySet()) {
 			String ship = entry.getKey();
 			int code = shipCodes.getOrDefault(ship, 0);
@@ -1247,12 +1118,27 @@ public class CtrlRules implements Observable, Serializable {
 	}
 
 	// Getters for LearningBot
+	
+	/**
+	 * Gets player 1's ship coordinates
+	 * @return List of ship coordinates
+	 */
 	public java.util.List<String> getPlayer1ShipCoords() {
 		return player1ShipCoords;
 	}
+
+	/**
+	 * Gets player 1's attack coordinates
+	 * @return List of attack coordinates
+	 */
 	public java.util.List<String> getPlayer1AttackCoords() {
 		return player1AttackCoords;
 	}
+
+	/**
+	 * Gets player 2's attack coordinates
+	 * @return List of attack coordinates
+	 */
 	public java.util.List<String> getPlayer2AttackCoords() {
 		return player2AttackCoords;
 	}

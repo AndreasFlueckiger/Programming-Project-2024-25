@@ -66,6 +66,7 @@ public class SeaPlane extends Ship {
 		squares[0] = new Rectangle2D.Double(0, BattleshipConfiguration.SQUARE_SIZE, BattleshipConfiguration.SQUARE_SIZE, BattleshipConfiguration.SQUARE_SIZE);
 		squares[1] = new Rectangle2D.Double(BattleshipConfiguration.SQUARE_SIZE, 0, BattleshipConfiguration.SQUARE_SIZE, BattleshipConfiguration.SQUARE_SIZE);
 		squares[2] = new Rectangle2D.Double(2*BattleshipConfiguration.SQUARE_SIZE, BattleshipConfiguration.SQUARE_SIZE, BattleshipConfiguration.SQUARE_SIZE, BattleshipConfiguration.SQUARE_SIZE);
+
 		shipSize = squares.length;
 		setColor(getOriginalColor());
 		setBorderColor(getOriginalColor().darker());

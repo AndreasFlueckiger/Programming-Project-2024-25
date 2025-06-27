@@ -163,5 +163,8 @@ public class RulesFacade {
     public java.util.List<String> getPlayer2AttackCoords() {
         return ctrl.getPlayer2AttackCoords();
     }
+    public java.util.List<String> getPlayer1ShipCoords() {
+        return ctrl.getPlayer1ShipCoords();
+    }
 
 }
