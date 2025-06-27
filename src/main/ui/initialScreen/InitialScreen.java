@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -80,7 +81,12 @@ public class InitialScreen extends JPanel {
 		containerPnl.add(loadBtn);
 		containerPnl.add(Box.createRigidArea(new Dimension(0, 15)));
 		containerPnl.add(exitBtn);
-		add(containerPnl);
+		GridBagConstraints gbc = new GridBagConstraints();
+		
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.anchor = GridBagConstraints.CENTER;
+		add(containerPnl, gbc);
 	}
 
 }
