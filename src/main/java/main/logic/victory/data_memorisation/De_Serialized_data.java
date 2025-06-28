@@ -1,3 +1,5 @@
+package main.logic.victory.data_memorisation;
+
 import java.io.*;
 import java.util.List;
 
@@ -51,6 +53,7 @@ public class De_Serialized_data implements Serializable{
     }
 
     //deserialisation of the object list
+    @SuppressWarnings("unchecked")
     public static List<De_Serialized_data> DataDeserialisation() {
         try (FileInputStream fileIn = new FileInputStream("results_list.ser");
              ObjectInputStream in = new ObjectInputStream(fileIn)) {
@@ -63,6 +66,7 @@ public class De_Serialized_data implements Serializable{
 
     //method create for only test purpose
     @Override
+    @SuppressWarnings("unchecked")
     public String toString() {
         List<De_Serialized_data> results;
 
