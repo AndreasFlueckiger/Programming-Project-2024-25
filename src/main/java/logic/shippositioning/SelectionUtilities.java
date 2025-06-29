@@ -125,7 +125,7 @@ public class SelectionUtilities extends JPanel implements Observer{
 				RulesFacade.getRules().setBoard(RulesFacade.getRules().getCurrentPlayer());
 
 				String botType = main.rules.designPatterns.RulesFacade.player2Type;
-				boolean isBot = "EasyBot".equals(botType) || "HardBot".equals(botType) || "LearningBot".equals(botType);
+				boolean isBot = "EasyBot".equals(botType) || "HardBot".equals(botType);
 
 				// Se il player 2 è un bot, posiziona automaticamente le sue navi e passa direttamente all'attacco
 				if (isBot) {

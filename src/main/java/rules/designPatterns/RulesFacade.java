@@ -20,7 +20,7 @@ public class RulesFacade {
     // Singleton instance
     static RulesFacade rulesFacade=null;
     
-    // Tracks the type of player 2 (e.g., Human, EasyBot, LearningBot)
+    // Tracks the type of player 2 (e.g., Human, EasyBot, HardBot)
     public static String player2Type = "Human";
     
      /**
@@ -151,7 +151,8 @@ public class RulesFacade {
     }
 
     /**
-     * Returns Player 1's attack history (for LearningBot or analytics).
+     * Returns Player 1's attack history (for analytics).
+     * @return List of attack coordinates
      */
     public java.util.List<String> getPlayer1AttackCoords() {
         return ctrl.getPlayer1AttackCoords();
