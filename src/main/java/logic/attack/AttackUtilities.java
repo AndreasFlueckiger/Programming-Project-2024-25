@@ -175,8 +175,9 @@ public class AttackUtilities extends JPanel implements Observer{
 					Attack.getAttackFrame().blockCells = true;
 				}
 			} else {
+				// Bot's turn - don't block cells to allow visualization of bot attacks
 				buttonDisable();
-				Attack.getAttackFrame().blockCells = true;
+				Attack.getAttackFrame().blockCells = false;
 			}
 		}
 
@@ -226,6 +227,12 @@ public class AttackUtilities extends JPanel implements Observer{
 	public void clearSelectedPower() {
 		selectedPower = null;
 		updatePowerButtonsState();
+	}
+	
+	// Metodo pubblico per impostare un messaggio di errore
+	public void setErrorMessage(String message) {
+		message1.setText(message);
+		repaint();
 	}
 	
 	// Da chiamare ogni volta che cambia il turno o lo stato dei powers
