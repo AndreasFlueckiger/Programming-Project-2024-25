@@ -109,7 +109,7 @@ Players can choose between:
 Each power can be used once per game. Only one power can be used per turn.
 
 - **Scatter Bomb**: Hits a 3×3 area centered on a selected cell. Ends your turn.
-- **Attacco Aereo**: Attacks all cells in a selected column. Ends your turn.
+- **Air Attack**: Attacks all cells in a selected column. Ends your turn.
 
 ## Gameplay Flow
 
@@ -147,7 +147,6 @@ Each power can be used once per game. Only one power can be used per turn.
 
 - **Easy:** Bot picks random untried coordinates.
 - **Hard:** Bot picks random untried coordinates and can use powers.
-- **Learning:** Bot tries to understand the pattern of the ship and uses the powers.
 
 ---
 
