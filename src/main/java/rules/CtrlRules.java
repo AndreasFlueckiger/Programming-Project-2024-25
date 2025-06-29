@@ -513,6 +513,14 @@ public class CtrlRules implements Observable, Serializable {
 						attack(y, x);
 						checkResult();
 						botAttacks++;
+						// Forza l'aggiornamento della board per mostrare l'attacco del bot
+						refreshBoard();
+						// Piccola pausa per rendere visibili gli attacchi del bot
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+						}
 						if(result) break;
 					}
 				}
@@ -523,6 +531,7 @@ public class CtrlRules implements Observable, Serializable {
 				// Unlock board for human player
 				main.logic.attack.Attack.getAttackFrame().blockCells = false;
 				main.logic.attack.AttackUtilities.getAttackUtilites().buttonDisable();
+				// Forza l'aggiornamento finale della board
 				refreshBoard();
 			}
 		} else {
