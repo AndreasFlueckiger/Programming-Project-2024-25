@@ -127,7 +127,19 @@ public class Cell extends JPanel implements MouseListener{
 			int powerIdx = -1;
 			if ("AirAttack".equals(selectedPower)) powerIdx = 0;
 			else if ("ScatterBomb".equals(selectedPower)) powerIdx = 1;
-			if(selectedPower != null && powerIdx != -1 && !powerUsed[idx][powerIdx]) {
+			
+			// Controllo se un power è selezionato
+			if(selectedPower != null && powerIdx != -1) {
+				// Controllo se il power è già stato usato
+				if(powerUsed[idx][powerIdx]) {
+					// Power già usato - fornisci feedback e resetta la selezione
+					System.out.println("[POWER] " + selectedPower + " already used by player " + (idx + 1) + "!");
+					main.logic.attack.AttackUtilities.getAttackUtilites().clearSelectedPower();
+					main.logic.attack.AttackUtilities.getAttackUtilites().setErrorMessage(selectedPower + " already used! Select another power or make a regular attack.");
+					return;
+				}
+				
+				// Power disponibile - esegui l'attacco
 				int gridX = x / BattleshipConfiguration.SQUARE_SIZE;
 				int gridY = y / BattleshipConfiguration.SQUARE_SIZE;
 				if(selectedPower.equals("AirAttack")) {
