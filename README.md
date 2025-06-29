@@ -147,7 +147,16 @@ Each power can be used once per game. Only one power can be used per turn.
 
 - **Easy:** Bot picks random untried coordinates.
 - **Hard:** Bot picks random untried coordinates and can use powers.
-- **Learning:** Bot ..............
+- **Learning:** Bot tries to understand the pattern of the ship and uses the powers.
+
+---
+
+## Powers
+
+- **Air Attack:** works on the row and despite the user coordinate the program choose a random row.
+- **Scatter bomb:** this power has an effect on a 3x3 area, but like the Air Attack despite the input of the player choose the area of hitting randomly.
+
+There is a bug for the use of the powers in a player vs player match, if the first player uses a power the next player to use the same needs to click another power than he/she can use the power that previously doesn't work properly.
 
 ---
 
