@@ -89,7 +89,7 @@ public class VictoryPanel extends JPanel{
 			  } 
 			} );
 		
-		JButton resetBtn = new JButton();
+		/*JButton resetBtn = new JButton();
 
 		resetBtn.setBounds(BattleshipConfiguration.LARG_DEFAULT/2 + 10, 680, 150, 50);
 		resetBtn.setBackground(new Color(0, 203, 231));
@@ -109,10 +109,11 @@ public class VictoryPanel extends JPanel{
 			  } 
 			} );
 		
-		add(resetBtn);
+		add(resetBtn);*/
+		
 		add(exitBtn);
 	
-		URL url = this.getClass().getResource("fireworks_gif.gif");
+		URL url = this.getClass().getClassLoader().getResource("fireworks_gif.gif");
 		Icon myImgIcon = new ImageIcon(url);
 		JLabel imageLbl = new JLabel(myImgIcon);
 		imageLbl.setBounds(0,768-620,1024,500);
@@ -140,12 +141,6 @@ public class VictoryPanel extends JPanel{
         timer = new Timer(100, action);
         timer.start();
 		
-		// LearningBot learning hook
-		if ("LearningBot".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
-			java.util.List<String> playerShipCoords = main.rules.designPatterns.RulesFacade.getRules().getPlayer1ShipCoords();
-			java.util.List<String> playerAttackCoords = main.rules.designPatterns.RulesFacade.getRules().getPlayer1AttackCoords();
-			main.bot.BotManager.getLearningBot().learnFromGame(playerShipCoords, playerAttackCoords);
-		}
 	}
 	
 	@Override

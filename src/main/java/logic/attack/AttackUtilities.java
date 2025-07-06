@@ -282,7 +282,7 @@ public class AttackUtilities extends JPanel implements Observer{
 
 	private void updateSaveButtonVisibility() {
 		String player2Type = main.rules.designPatterns.RulesFacade.player2Type;
-		boolean isBot = "EasyBot".equals(player2Type) || "HardBot".equals(player2Type) || "LearningBot".equals(player2Type);
+		boolean isBot = "EasyBot".equals(player2Type) || "HardBot".equals(player2Type);
 		saveBtn.setVisible(!isBot);
 	}
 }

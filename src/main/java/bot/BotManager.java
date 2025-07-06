@@ -6,10 +6,8 @@ import main.logic.shippositioning.ShipPlacementValidator;
 public class BotManager {
     private static EasyBot easyBot = new EasyBot();
     private static HardBot hardBot = new HardBot();
-    private static LearningBot learningBot = new LearningBot();
-    // Add HardBot when implemented
 
-    // BotManager handles the creation, move selection, and ship placement for all bot types (Easy, Hard, Learning).
+    // BotManager handles the creation, move selection, and ship placement for all bot types (Easy, Hard).
     // It also provides utility methods for resetting bots and debugging ship placement.
 
     // Returns the next move for the specified bot type.
@@ -19,10 +17,6 @@ public class BotManager {
                 return easyBot.Move();
             case "HardBot":
                 return hardBot.Move();
-            case "LearningBot":
-                return learningBot.suggestMove();
-            // case "HardBot":
-            //     return hardBot.move();
             default:
                 return null;
         }
@@ -32,7 +26,6 @@ public class BotManager {
     public static void resetBotsForNewGame() {
         easyBot = new EasyBot();
         hardBot = new HardBot();
-        learningBot.resetForNewGame();
         // Reset other bots as needed
     }
 
@@ -200,10 +193,5 @@ public class BotManager {
             System.out.println();
         }
         System.out.println();
-    }
-
-    // Returns the singleton instance of the LearningBot (for learning data updates).
-    public static LearningBot getLearningBot() {
-        return learningBot;
     }
 }

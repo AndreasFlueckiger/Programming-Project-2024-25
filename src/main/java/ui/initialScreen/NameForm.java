@@ -29,7 +29,7 @@ public class NameForm extends JFrame {
 
     // Dropdown to choose between Human or Bot for Player 2
     private JComboBox<String> player2TypeCombo = new JComboBox<>(
-        new String[]{"Human", "EasyBot", "HardBot", "LearningBot"}
+        new String[]{"Human", "EasyBot", "HardBot"}
     );
 
     // Start button to begin the game

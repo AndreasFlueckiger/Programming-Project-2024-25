@@ -38,7 +38,7 @@ public class CtrlRules implements Observable, Serializable {
 	private int pointsPlayer2 = 0; // Player 2's score
 	private int currentAttackCount = 1; // Current attack count for multi-attack powers
 
-	// Track player 1's ship placements and attack moves for LearningBot
+	// Track player 1's ship placements and attack moves
 	private java.util.List<String> player1ShipCoords = new java.util.ArrayList<>();
 	private java.util.List<String> player1AttackCoords = new java.util.ArrayList<>();
 	private java.util.List<String> player2AttackCoords = new java.util.ArrayList<>();
@@ -492,8 +492,8 @@ public class CtrlRules implements Observable, Serializable {
 		refreshBoard();
 		// Bot move logic: bot attacks only after human player has attacked
 		if(currentPlayer == 2 && !"Human".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
-			// Make bot use a power (only HardBot or LearningBot)
-			if ("HardBot".equals(main.rules.designPatterns.RulesFacade.player2Type) || "LearningBot".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
+			// Make bot use a power (only HardBot)
+			if ("HardBot".equals(main.rules.designPatterns.RulesFacade.player2Type)) {
 				main.logic.attack.AttackUtilities.botUsePower(1); // 1 = bot (player 2)
 			}
 			int botAttacks = 0;
@@ -778,103 +778,56 @@ public class CtrlRules implements Observable, Serializable {
 	 */
 	private void destroyShip(int x, int y) {
 		int[][] currentBoard = getOppositeBoard(currentPlayer);
+		int originalX = x;
+		int originalY = y;
 
-		addMessage(getPlayerName(currentPlayer) + " sinked a " + BattleshipConfiguration.getShipNameBySize(getOppositeBoard(currentPlayer)[x][y]) + "!");
+		addMessage(getPlayerName(currentPlayer) + " sinked a " + BattleshipConfiguration.getShipNameBySize(Math.abs(currentBoard[x][y])) + "!");
 		
+		// Handle submarine (single cell ship)
 		if(currentBoard[x][y] == SHIPS.D_SUBMARINE.getValue()) {
 			currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
 			return;
 		}	
 
-		try { 
-			//LEFT-RIGHT -> Reach the left end and delete
-			if(currentBoard[x+1][y] != 0 && currentBoard[x+1][y] != SHIPS.D_WATER.getValue()) {
-				try {
-					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
-						x--;
-					}
-				} catch(ArrayIndexOutOfBoundsException e) {}
-
-				//Reached end => sum 1 to x to get back to ship
-				x += 1;
-
-				//Beginning left to right removal
-				try {
-					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						x++;
-					}
-					return;
-				} catch(ArrayIndexOutOfBoundsException e) {}
-			}; 
-		} catch(ArrayIndexOutOfBoundsException e) {}
-		try { 
-			//LEFT-RIGHT -> Reach the left end and delete
-			if(currentBoard[x-1][y] != 0 && currentBoard[x-1][y] != SHIPS.D_WATER.getValue()) {
-				try {
-					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
-						x--;
-					}
-				} catch(ArrayIndexOutOfBoundsException e) {}
-
-				//Reached end => sum 1 to x to get back to ship
-				x += 1;
-
-				//Beginning left to right removal
-				try {
-					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						x++;
-					}
-					return;
-				} catch(ArrayIndexOutOfBoundsException e) {}
-			}; 
-		} catch(ArrayIndexOutOfBoundsException e) {}
-		try { 
-			//BOTTOM-TOP -> Reach bottom end and delete
-			if(currentBoard[x][y+1] != 0 && currentBoard[x][y+1] != SHIPS.D_WATER.getValue()) {
-				try {
-					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
-						y--;
-					}
-				} catch(ArrayIndexOutOfBoundsException e) {}
-
-				//Reached end => sum 1 to y to get back to ship
-				y += 1;
-
-				//Beginning bottom to top removal
-				try {
-					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						y++;
-					}
-					return;
-				} catch(ArrayIndexOutOfBoundsException e) {}
-			}; 
-		} catch(ArrayIndexOutOfBoundsException e) {}	
-		try { 
-			//BOTTOM-TOP -> Reach bottom end and delete
-			if(currentBoard[x][y-1] != 0 && currentBoard[x][y-1] != SHIPS.D_WATER.getValue()) {
-				try {
-					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
-						y--;
-					}
-				} catch(ArrayIndexOutOfBoundsException e) {}
-
-				//Reached end => sum 1 to y to get back to ship
-				y += 1;
-
-				//Beginning the bottom to top removal
-				try {
-					while(currentBoard[x][y] != 0 && currentBoard[x][y] != SHIPS.D_WATER.getValue()) {
-						currentBoard[x][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
-						y++;
-					}
-					return;
-				} catch(ArrayIndexOutOfBoundsException e) {}
-			}; 
-		} catch(ArrayIndexOutOfBoundsException e) {}
-	}
+		// Find all cells of the ship and mark them as destroyed
+		// First, find the ship boundaries
+		int startX = x, endX = x, startY = y, endY = y;
+		
+		// Find left boundary
+		while(startX > 0 && currentBoard[startX-1][y] != 0 && currentBoard[startX-1][y] != SHIPS.D_WATER.getValue()) {
+			startX--;
+		}
+		// Find right boundary
+		while(endX < BattleshipConfiguration.SQUARE_COUNT-1 && currentBoard[endX+1][y] != 0 && currentBoard[endX+1][y] != SHIPS.D_WATER.getValue()) {
+			endX++;
+		}
+		// Find top boundary
+		while(startY > 0 && currentBoard[x][startY-1] != 0 && currentBoard[x][startY-1] != SHIPS.D_WATER.getValue()) {
+			startY--;
+		}
+		// Find bottom boundary
+		while(endY < BattleshipConfiguration.SQUARE_COUNT-1 && currentBoard[x][endY+1] != 0 && currentBoard[x][endY+1] != SHIPS.D_WATER.getValue()) {
+			endY++;
+		}
+		
+		// Determine if ship is horizontal or vertical
+		boolean isHorizontal = (endX - startX) > (endY - startY);
+		
+		if(isHorizontal) {
+			// Destroy horizontal ship
+			for(int i = startX; i <= endX; i++) {
+				if(currentBoard[i][y] != 0 && currentBoard[i][y] != SHIPS.D_WATER.getValue()) {
+					currentBoard[i][y] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+				}
+			}
+		} else {
+			// Destroy vertical ship
+			for(int j = startY; j <= endY; j++) {
+				if(currentBoard[x][j] != 0 && currentBoard[x][j] != SHIPS.D_WATER.getValue()) {
+					currentBoard[x][j] -= BattleshipConfiguration.DESTROYED_SHIP_LIMIT;
+				}
+			}}
+		}
 
 	/**
 	 * Checks if the game has ended and determines the winner
@@ -1116,7 +1069,7 @@ public class CtrlRules implements Observable, Serializable {
 				} catch (NumberFormatException e) {
 					continue;
 				}
-				if (x >= 0 && x < 10 && y >= 0 && y < 10) {
+				if (x >= 0 && x < BattleshipConfiguration.SQUARE_COUNT && y >= 0 && y < BattleshipConfiguration.SQUARE_COUNT) {
 					board[y][x] = code;
 				}
 			}
@@ -1126,7 +1079,7 @@ public class CtrlRules implements Observable, Serializable {
 		refreshBoard();
 	}
 
-	// Getters for LearningBot
+	// Getters for player data
 	
 	/**
 	 * Gets player 1's ship coordinates

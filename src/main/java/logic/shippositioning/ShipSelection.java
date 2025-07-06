@@ -85,7 +85,7 @@ public class ShipSelection extends JFrame implements KeyListener, Observer{
 		
 		// Skip screen if current player is a bot
 		String botType = main.rules.designPatterns.RulesFacade.player2Type;
-		boolean isBot = "EasyBot".equals(botType) || "HardBot".equals(botType) || "LearningBot".equals(botType);
+		boolean isBot = "EasyBot".equals(botType) || "HardBot".equals(botType);
 		if (currentPlayerNum == 2 && isBot) {
 			setVisible(false);
 		}

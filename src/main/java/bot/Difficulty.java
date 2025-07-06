@@ -3,8 +3,7 @@ package main.bot;
 // Difficulty: represents the available bot difficulty levels and provides a helper for parsing from string.
 public enum Difficulty {
     EASY,
-    HARD,
-    LEARNING;
+    HARD;
 
     // Converts a string (e.g., "EasyBot") to the corresponding Difficulty enum value.
     public static Difficulty fromString(String name) {
@@ -13,8 +12,6 @@ public enum Difficulty {
                 return EASY;
             case "HARDBOT":
                 return HARD;
-            case "LEARNINGBOT":
-                return LEARNING;
             default:
                 return EASY;
         }
