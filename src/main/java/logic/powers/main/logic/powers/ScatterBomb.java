@@ -1,4 +1,4 @@
-package main.logic.powers;
+package logic.powers;
 
 
 import java.util.HashSet;
