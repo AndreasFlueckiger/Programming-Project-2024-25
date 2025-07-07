@@ -1,28 +1,19 @@
-package main.logic.attack;
+package logic.attack;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
-import main.battleship.BattleshipConfiguration;
-import main.rules.designPatterns.Observable;
-import main.rules.designPatterns.Observer;
-import main.rules.designPatterns.RulesFacade;
-import main.saveload.SaveLoadManager;
+import battleship.main.battleship.*;
+import rules.designPatterns.Observable;
+import rules.designPatterns.Observer;
+import rules.designPatterns.RulesFacade;
 
 @SuppressWarnings("serial")
 public class AttackUtilities extends JPanel implements Observer{
@@ -102,12 +93,12 @@ public class AttackUtilities extends JPanel implements Observer{
 		exitBtn.addActionListener(e -> System.exit(0));
 		// ActionListener per Save (vero salvataggio)
 		saveBtn.addActionListener(e -> {
-			main.saveload.SaveLoadManager.get().Save();
+			saveload.SaveLoadManager.get().Save();
 		});
 
 		// ActionListener per Next
 		nextBtn.addActionListener(e -> {
-			main.rules.designPatterns.RulesFacade.getRules().nextPlayer();
+			rules.designPatterns.RulesFacade.getRules().nextPlayer();
 			onTurnOrPowerChange();
 		});
 	}
@@ -149,12 +140,12 @@ public class AttackUtilities extends JPanel implements Observer{
 		int currentPlayer = (int) lob[BattleshipConfiguration.objectValues.CURRENT_PLAYER.getValue()];
 		int humanAttackCount = 0;
 		try {
-			java.lang.reflect.Field f = main.rules.CtrlRules.class.getDeclaredField("humanAttackCount");
+			java.lang.reflect.Field f = rules.CtrlRules.class.getDeclaredField("humanAttackCount");
 			f.setAccessible(true);
-			humanAttackCount = f.getInt(main.rules.designPatterns.RulesFacade.getRules().getCtrl());
+			humanAttackCount = f.getInt(rules.designPatterns.RulesFacade.getRules().getCtrl());
 		} catch(Exception e) {}
 
-		String player2Type = main.rules.designPatterns.RulesFacade.player2Type;
+		String player2Type = rules.designPatterns.RulesFacade.player2Type;
 		boolean isHumanVsHuman = "Human".equals(player2Type);
 
 		if (isHumanVsHuman) {
@@ -187,7 +178,7 @@ public class AttackUtilities extends JPanel implements Observer{
 	
 	// Restituisce l'indice del player di turno (0 o 1)
 	public int getCurrentPlayerIndex() {
-		int currentPlayer = main.rules.designPatterns.RulesFacade.getRules().getCurrentPlayer();
+		int currentPlayer = rules.designPatterns.RulesFacade.getRules().getCurrentPlayer();
 		return currentPlayer == 1 ? 0 : 1;
 	}
 
@@ -257,12 +248,12 @@ public class AttackUtilities extends JPanel implements Observer{
 		String powerName = powerIdx == 0 ? "AirAttack" : "ScatterBomb";
 		util.selectedPower = powerName;
 		// Simula la scelta di una cella/colonna casuale
-		int gridSize = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
+		int gridSize = battleship.main.battleship.BattleshipConfiguration.SQUARE_COUNT;
 		int x = new Random().nextInt(gridSize);
 		int y = new Random().nextInt(gridSize);
 		if (powerIdx == 0) { // AirAttack su colonna x
 			for (int row = 0; row < gridSize; row++) {
-				main.rules.designPatterns.RulesFacade.getRules().attack(row, x);
+				rules.designPatterns.RulesFacade.getRules().attack(row, x);
 			}
 		} else if (powerIdx == 1) { // ScatterBomb su (x, y)
 			for (int dx = -1; dx <= 1; dx++) {
@@ -270,7 +261,7 @@ public class AttackUtilities extends JPanel implements Observer{
 					int tx = x + dx;
 					int ty = y + dy;
 					if (tx >= 0 && tx < gridSize && ty >= 0 && ty < gridSize) {
-						main.rules.designPatterns.RulesFacade.getRules().attack(ty, tx);
+						rules.designPatterns.RulesFacade.getRules().attack(ty, tx);
 					}
 				}
 			}
@@ -281,7 +272,7 @@ public class AttackUtilities extends JPanel implements Observer{
 	}
 
 	private void updateSaveButtonVisibility() {
-		String player2Type = main.rules.designPatterns.RulesFacade.player2Type;
+		String player2Type = rules.designPatterns.RulesFacade.player2Type;
 		boolean isBot = "EasyBot".equals(player2Type) || "HardBot".equals(player2Type);
 		saveBtn.setVisible(!isBot);
 	}

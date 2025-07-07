@@ -1,7 +1,6 @@
-package main.bot;
+package bot;
 
 import java.util.*;
-import main.logic.shippositioning.ShipPlacementValidator;
 
 public class BotManager {
     private static EasyBot easyBot = new EasyBot();
@@ -50,7 +49,7 @@ public class BotManager {
 
     // Internal helper for ship placement. Tries to place all ships randomly, respecting adjacency rules.
     private static Map<String, List<String>> placeShipsInternal(String botType) {
-        int size = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
+        int size = battleship.main.battleship.BattleshipConfiguration.SQUARE_COUNT;
         int[][] board = new int[size][size];
         // Navi e quantità come per il player umano
         Map<String, Integer> shipCounts = new LinkedHashMap<>();
@@ -141,12 +140,12 @@ public class BotManager {
                                 coords.add(new int[]{ri, ci});
                             }
                         }
-                        valid = main.logic.shippositioning.ShipPlacementValidator.isValidPlacement(board, coords);
+                        valid = logic.shippositioning.ShipPlacementValidator.isValidPlacement(board, coords);
                         if (valid) {
                             for (int[] c : coords) board[c[0]][c[1]] = 1;
                             List<String> coordStrs = new ArrayList<>();
                             for (int[] c : coords) {
-                                coordStrs.add(main.logic.shippositioning.ShipPlacementValidator.convertIndicesToCoordinate(c[0], c[1]));
+                                coordStrs.add(logic.shippositioning.ShipPlacementValidator.convertIndicesToCoordinate(c[0], c[1]));
                             }
                             // Per distinguere le navi multiple, aggiungi un id
                             String key = ship;
@@ -169,7 +168,7 @@ public class BotManager {
 
     // Prints a debug representation of the bot's ship placement to the console.
     private static void debugPrintBoard(Map<String, List<String>> placements) {
-        int size = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
+        int size = battleship.main.battleship.BattleshipConfiguration.SQUARE_COUNT;
         char[][] debugBoard = new char[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -179,7 +178,7 @@ public class BotManager {
         for (Map.Entry<String, List<String>> entry : placements.entrySet()) {
             char symbol = entry.getKey().charAt(0);
             for (String coord : entry.getValue()) {
-                int[] rc = main.logic.shippositioning.ShipPlacementValidator.convertCoordinateToIndices(coord);
+                int[] rc = logic.shippositioning.ShipPlacementValidator.convertCoordinateToIndices(coord);
                 if (rc != null) {
                     debugBoard[rc[0]][rc[1]] = symbol;
                 }

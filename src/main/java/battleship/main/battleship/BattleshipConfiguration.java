@@ -1,6 +1,6 @@
-package main.battleship;
+package battleship.main.battleship;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * This class holds all static configuration values, enums, 

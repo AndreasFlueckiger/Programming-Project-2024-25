@@ -1,15 +1,15 @@
-package main.logic.shippositioning;
+package logic.shippositioning;
 
 import java.awt.Font;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import main.logic.ships.*;
-// import main.logic.ships.SeaPlane;
-
-import javax.swing.*;
-import java.awt.*;
+import logic.ships.Battleship;
+import logic.ships.Cruiser;
+import logic.ships.Destroyer;
+import logic.ships.Ship;
+import logic.ships.Submarine;
 
 @SuppressWarnings("serial")
 public class ShipOptions extends JPanel {
@@ -121,58 +121,95 @@ public class ShipOptions extends JPanel {
 	
 	public void reduceShipCount(Ship ship) {
 		String shipName = ship.getClass().getName();
-		if(!ship.getAvailability()) {
-			return;
-		}
+		
+		// Check if we can reduce the count for this ship type
+		boolean canReduce = false;
 		if(shipName.equals("main.logic.ships.Battleship")) {
-			battleship_count--;
-			if(battleship_count == 0) {
-				ship.setUnavailable();
+			if(battleship_count > 0) {
+				battleship_count--;
+				canReduce = true;
+				if(battleship_count == 0) {
+					battleship.setUnavailable();
+				}
 			}
 		}
 		else if(shipName.equals("main.logic.ships.Cruiser")) {
-			cruiser_count--;
-			if(cruiser_count == 0) {
-				ship.setUnavailable();
+			if(cruiser_count > 0) {
+				cruiser_count--;
+				canReduce = true;
+				if(cruiser_count == 0) {
+					cruiser.setUnavailable();
+				}
 			}
 		}
 		else if(shipName.equals("main.logic.ships.Destroyer")) {
-			destroyer_count--;
-			if(destroyer_count == 0) {
-				ship.setUnavailable();
+			if(destroyer_count > 0) {
+				destroyer_count--;
+				canReduce = true;
+				if(destroyer_count == 0) {
+					destroyer.setUnavailable();
+				}
 			}
 		}
 		else if(shipName.equals("main.logic.ships.Submarine")) {
-			submarine_count--;
-			if(submarine_count == 0) {
-				ship.setUnavailable();
+			if(submarine_count > 0) {
+				submarine_count--;
+				canReduce = true;
+				if(submarine_count == 0) {
+					submarine.setUnavailable();
+				}
 			}
 		}
-		ship_count--;
-		System.out.println("[DEBUG] Ship count after placement: " + ship_count);
-		repaintLabels();
-		if(ship_count == 0) { // Abilita Next quando tutte le 10 navi sono posizionate (1+2+3+4=10)
-			System.out.println("[DEBUG] (TEMP) Calling buttonEnable() in SelectionUtilities con ship_count == 0");
-			SelectionUtilities.getSelectionUtilites().buttonEnable();
+		
+		// Only reduce total ship count if we actually reduced a specific ship count
+		if(canReduce) {
+			ship_count--;
+			System.out.println("[DEBUG] Ship count after placement: " + ship_count);
+			repaintLabels();
+			if(ship_count == 0) { // Abilita Next quando tutte le 10 navi sono posizionate (1+2+3+4=10)
+				System.out.println("[DEBUG] (TEMP) Calling buttonEnable() in SelectionUtilities con ship_count == 0");
+				SelectionUtilities.getSelectionUtilites().buttonEnable();
+			}
 		}
 	}
 	
 	public void increaseShipCount(Ship ship) {
 		String shipName = ship.getClass().getName();
+		boolean canIncrease = false;
+		
 		if(shipName.equals("main.logic.ships.Battleship")) {
 			battleship_count++;
+			canIncrease = true;
+			if(battleship_count == 1) {
+				battleship.setAvailable();
+			}
 		}
 		else if(shipName.equals("main.logic.ships.Cruiser")) {
 			cruiser_count++;
+			canIncrease = true;
+			if(cruiser_count == 1) {
+				cruiser.setAvailable();
+			}
 		}
 		else if(shipName.equals("main.logic.ships.Destroyer")) {
 			destroyer_count++;
+			canIncrease = true;
+			if(destroyer_count == 1) {
+				destroyer.setAvailable();
+			}
 		}
 		else if(shipName.equals("main.logic.ships.Submarine")) {
 			submarine_count++;
+			canIncrease = true;
+			if(submarine_count == 1) {
+				submarine.setAvailable();
+			}
 		}
-		ship_count++;
-		repaintLabels();
+		
+		if(canIncrease) {
+			ship_count++;
+			repaintLabels();
+		}
 	}
 	
 	

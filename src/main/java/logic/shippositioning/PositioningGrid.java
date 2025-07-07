@@ -1,12 +1,12 @@
-package main.logic.shippositioning;
+package logic.shippositioning;
 
 import java.awt.Color;
-import main.battleship.BattleshipConfiguration;
-import main.logic.board.Cell;
-import main.logic.board.Grid;
-import main.rules.designPatterns.Observable;
-import main.rules.designPatterns.Observer;
-import main.rules.designPatterns.RulesFacade;
+import battleship.main.battleship.*;
+import logic.board.Cell;
+import logic.board.Grid;
+import rules.designPatterns.Observable;
+import rules.designPatterns.Observer;
+import rules.designPatterns.RulesFacade;
 
 /**
  * PositioningGrid is a singleton class responsible for displaying and managing

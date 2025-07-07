@@ -1,4 +1,4 @@
-package main;
+package ui.main;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import main.battleship.BattleshipConfiguration;
+import battleship.main.battleship.*;
 
 @SuppressWarnings("serial")
 public class Title extends JPanel{

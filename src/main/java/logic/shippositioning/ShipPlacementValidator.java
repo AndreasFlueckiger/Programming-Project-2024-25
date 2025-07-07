@@ -1,4 +1,4 @@
-package main.logic.shippositioning;
+package logic.shippositioning;
 
 import java.util.List;
 
@@ -39,13 +39,13 @@ public class ShipPlacementValidator {
         } catch (NumberFormatException e) {
             return null;
         }
-        int size = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
+        int size = battleship.main.battleship.BattleshipConfiguration.SQUARE_COUNT;
         if (col < 0 || col >= size || row < 0 || row >= size) return null;
         return new int[]{row, col};
     }
 
     public static String convertIndicesToCoordinate(int row, int col) {
-        int size = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
+        int size = battleship.main.battleship.BattleshipConfiguration.SQUARE_COUNT;
         if (row < 0 || row >= size || col < 0 || col >= size) return null;
         char colChar = (char) ('A' + col);
         int rowNum = row + 1;

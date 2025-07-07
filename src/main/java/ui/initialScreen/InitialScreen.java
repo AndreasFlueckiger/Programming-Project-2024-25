@@ -1,4 +1,4 @@
-package main.ui.initialScreen;
+package ui.initialScreen;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import main.saveload.SaveLoadManager;
+import saveload.*;
 
 /**
  * The InitialScreen class defines the game's main menu interface.
@@ -52,7 +52,7 @@ public class InitialScreen extends JPanel {
         startBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Open name input form to start a new game
-                new NameForm().setVisible(true);
+                new ui.initialScreen.NameForm().setVisible(true);
             }
         });
 

@@ -1,4 +1,4 @@
-package main.logic.shippositioning;
+package logic.shippositioning;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,12 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import main.logic.attack.Attack;
-import main.battleship.BattleshipConfiguration;
-import main.rules.designPatterns.Observable;
-import main.rules.designPatterns.Observer;
-import main.rules.designPatterns.RulesFacade;
-import main.bot.BotManager;
+import logic.attack.Attack;
+import battleship.main.battleship.*;
+import rules.designPatterns.Observable;
+import rules.designPatterns.Observer;
+import rules.designPatterns.RulesFacade;
 
 
 
@@ -124,16 +123,16 @@ public class SelectionUtilities extends JPanel implements Observer{
 				RulesFacade.getRules().unsetSelectedShip();
 				RulesFacade.getRules().setBoard(RulesFacade.getRules().getCurrentPlayer());
 
-				String botType = main.rules.designPatterns.RulesFacade.player2Type;
+				String botType = rules.designPatterns.RulesFacade.player2Type;
 				boolean isBot = "EasyBot".equals(botType) || "HardBot".equals(botType);
 
 				// Se il player 2 è un bot, posiziona automaticamente le sue navi e passa direttamente all'attacco
 				if (isBot) {
 					// Siamo alla fine del posizionamento del player umano
-					java.util.Map<String, java.util.List<String>> placements = main.bot.BotManager.placeShips(botType);
+					java.util.Map<String, java.util.List<String>> placements = bot.BotManager.placeShips(botType);
 					RulesFacade.getRules().getCtrl().placeBotShips(2, placements);
 					Attack.getAttackFrame().setVisible(true);
-					main.logic.shippositioning.ShipSelection.getShipSelection().setVisible(false);
+					logic.shippositioning.ShipSelection.getShipSelection().setVisible(false);
 					Attack.getAttackFrame().showBoard(1); // Sblocca subito la board per il player umano
 					return;
 				}
@@ -144,7 +143,7 @@ public class SelectionUtilities extends JPanel implements Observer{
 				} else if (RulesFacade.getRules().getCurrentPlayer() == 2) {
 					// Player 2 ha finito, inizia la fase di attacco
 					Attack.getAttackFrame().setVisible(true);
-					main.logic.shippositioning.ShipSelection.getShipSelection().setVisible(false);
+					logic.shippositioning.ShipSelection.getShipSelection().setVisible(false);
 				}
 			}
 		});

@@ -1,4 +1,4 @@
-package main.rules.designPatterns;
+package rules.designPatterns;
 
 public interface Observable {
 

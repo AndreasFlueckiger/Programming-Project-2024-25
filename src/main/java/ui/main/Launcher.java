@@ -1,7 +1,7 @@
-package main.ui.main;
+package ui.main;
 import javax.swing.UIManager;
 
-import main.ui.initialScreen.InitialFrame;
+import ui.initialScreen.InitialFrame;
 
 public class Launcher {
   	public static void main(String[] args) {

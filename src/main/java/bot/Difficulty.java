@@ -1,4 +1,4 @@
-package main.bot;
+package bot;
 
 // Difficulty: represents the available bot difficulty levels and provides a helper for parsing from string.
 public enum Difficulty {

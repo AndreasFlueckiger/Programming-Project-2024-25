@@ -1,8 +1,8 @@
-package main.bot;
+package bot;
 
 import java.util.*;
-import main.logic.shippositioning.ShipPlacementValidator;
-import main.battleship.BattleshipConfiguration;
+import logic.shippositioning.ShipPlacementValidator;
+import battleship.main.battleship.*;
 
 public class HardBot {
     private Set<String> moveSet;

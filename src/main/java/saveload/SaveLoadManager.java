@@ -1,13 +1,13 @@
-package main.saveload;
+package saveload;
 
 import java.awt.FileDialog;
 import java.io.*;
 
-import main.logic.attack.Attack;
-import main.logic.attack.AttackUtilities;
-import main.ui.initialScreen.InitialFrame;
-import main.rules.CtrlRules;
-import main.rules.designPatterns.RulesFacade;
+import logic.attack.Attack;
+import logic.attack.AttackUtilities;
+import ui.initialScreen.InitialFrame;
+import rules.*;
+import rules.designPatterns.*;
 
 /**
  * Singleton class responsible for managing save and load operations

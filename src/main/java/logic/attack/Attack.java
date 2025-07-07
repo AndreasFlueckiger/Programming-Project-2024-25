@@ -1,4 +1,4 @@
-package main.logic.attack;
+package logic.attack;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,11 +11,11 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
-import main.Title;
-import main.rules.designPatterns.Observable;
-import main.rules.designPatterns.Observer;
-import main.rules.designPatterns.RulesFacade;
-import main.battleship.BattleshipConfiguration;
+import ui.main.Title;
+import rules.designPatterns.Observable;
+import rules.designPatterns.Observer;
+import rules.designPatterns.RulesFacade;
+import battleship.main.battleship.*;
 
 @SuppressWarnings("serial")
 public class Attack extends JFrame implements Observer{
@@ -54,7 +54,7 @@ public class Attack extends JFrame implements Observer{
 		setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(250, 250, 250));
 		
-		// Title in alto
+		// ui.main.Title in alto
 		getContentPane().add(titlePanel, BorderLayout.NORTH);
 		
 		// Pannello centrale con le due griglie
@@ -94,7 +94,7 @@ public class Attack extends JFrame implements Observer{
 	public void notify(Observable o) {
 		Object lob[] = (Object []) o.get();
 		int currentPlayer = (int) lob[BattleshipConfiguration.objectValues.CURRENT_PLAYER.getValue()];
-		String player2Type = main.rules.designPatterns.RulesFacade.player2Type;
+		String player2Type = rules.designPatterns.RulesFacade.player2Type;
 		boolean isHumanVsHuman = "Human".equals(player2Type);
 		if(currentPlayer == 1)
 			currentPlayerName = (String) lob[ BattleshipConfiguration.objectValues.PLAYER_1_NAME.getValue() ];
@@ -105,8 +105,8 @@ public class Attack extends JFrame implements Observer{
 		changeTitle("ATTACKING PLAYER - " + currentPlayerName);
 		
 		if(isHumanVsHuman) {
-			java.util.List<String> player1AttackCoords = main.rules.designPatterns.RulesFacade.getRules().getPlayer1AttackCoords();
-			java.util.List<String> player2AttackCoords = main.rules.designPatterns.RulesFacade.getRules().getPlayer2AttackCoords();
+			java.util.List<String> player1AttackCoords = rules.designPatterns.RulesFacade.getRules().getPlayer1AttackCoords();
+			java.util.List<String> player2AttackCoords = rules.designPatterns.RulesFacade.getRules().getPlayer2AttackCoords();
 			if(currentPlayer == 1) {
 				// Player 1 attacca su board2, vede le sue navi su board1
 				board2.setAttackCoords(player1AttackCoords);

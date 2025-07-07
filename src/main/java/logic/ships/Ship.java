@@ -1,4 +1,4 @@
-package main.logic.ships;
+package logic.ships;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -8,9 +8,8 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
-import main.battleship.BattleshipConfiguration;
-import main.battleship.BattleshipConfiguration.ORIENTATION;
-import main.rules.designPatterns.RulesFacade;
+import battleship.main.battleship.*;
+import rules.designPatterns.RulesFacade;
 
 /**
  * Abstract Ship class represents a visual and interactive ship component.
@@ -33,7 +32,7 @@ public abstract class Ship extends JComponent implements MouseListener {
 
     // Ship attributes
     public int shipSize;
-    public ORIENTATION orientation = ORIENTATION.RIGHT;
+    public BattleshipConfiguration.ORIENTATION orientation = BattleshipConfiguration.ORIENTATION.RIGHT;
     private boolean available = true;
 
     /**
@@ -155,7 +154,7 @@ public abstract class Ship extends JComponent implements MouseListener {
         selectedShip.setColor(selectedShip.getOriginalColor());
         selectedShip.setBorderColor(selectedShip.getOriginalColor().darker());
         selectedShip.repaint();
-        selectedShip.orientation = ORIENTATION.RIGHT;
+        selectedShip.orientation = BattleshipConfiguration.ORIENTATION.RIGHT;
     }
 
     // === Mouse Interaction ===

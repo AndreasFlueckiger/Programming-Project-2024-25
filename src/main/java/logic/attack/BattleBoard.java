@@ -1,10 +1,10 @@
-package main.logic.attack;
+package logic.attack;
 
-import main.logic.board.Board;
-import main.logic.board.Grid;
-import main.logic.victory.*;
-import main.rules.designPatterns.*;
-import main.battleship.BattleshipConfiguration;
+import logic.board.Board;
+import logic.board.Grid;
+import logic.victory.*;
+import rules.designPatterns.*;
+import battleship.main.battleship.*;
 
 /**
  * BattleBoard represents the game board during the attack phase.
@@ -115,7 +115,7 @@ public class BattleBoard extends Board implements Observer{
 		}
 		
 		// Check if it's Human vs Human
-		String player2Type = main.rules.designPatterns.RulesFacade.player2Type;
+		String player2Type = rules.designPatterns.RulesFacade.player2Type;
 		boolean isHumanVsHuman = "Human".equals(player2Type);
 		
 		if(isHumanVsHuman) {
@@ -182,10 +182,10 @@ public class BattleBoard extends Board implements Observer{
 	 */
 	private void repaintAttackCoords() {
 		if (attackCoords == null) return;
-		int size = main.battleship.BattleshipConfiguration.SQUARE_COUNT;
+		int size = battleship.main.battleship.BattleshipConfiguration.SQUARE_COUNT;
 		int[][] temp = new int[size][size];
 		for (String coord : attackCoords) {
-			int[] xy = main.logic.shippositioning.ShipPlacementValidator.convertCoordinateToIndices(coord);
+			int[] xy = logic.shippositioning.ShipPlacementValidator.convertCoordinateToIndices(coord);
 			if (xy != null) {
 				temp[xy[0]][xy[1]] = 99; // 99 = shot made
 			}

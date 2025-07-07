@@ -1,10 +1,10 @@
-package main.logic.board;
+package logic.board;
 
 import java.awt.Color;
 
 import javax.swing.JPanel;
 
-import main.battleship.BattleshipConfiguration;
+import battleship.main.battleship.*;
 
 
 @SuppressWarnings("serial")

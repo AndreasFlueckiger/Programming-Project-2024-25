@@ -1,4 +1,4 @@
-package main.logic.board;
+package logic.board;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -9,12 +9,11 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import main.battleship.BattleshipConfiguration;
-import main.battleship.BattleshipConfiguration.PHASE;
-import main.logic.attack.Attack;
-import main.logic.shippositioning.PositioningGrid;
-import main.logic.ships.Ship;
-import main.rules.designPatterns.RulesFacade;
+import battleship.main.battleship.*;
+import logic.attack.Attack;
+import logic.shippositioning.PositioningGrid;
+import logic.ships.Ship;
+import rules.designPatterns.RulesFacade;
 
 /**
  * Grid represents the core grid structure of the Battleship game for a specific player or component.
@@ -114,16 +113,16 @@ public class Cell extends JPanel implements MouseListener{
 			return;
 		}
 		// POWER USAGE (in qualsiasi modalità, solo in fase di ATTACK)
-		if(RulesFacade.getRules().getPhase() == PHASE.ATTACK) {
+		if(RulesFacade.getRules().getPhase() == BattleshipConfiguration.PHASE.ATTACK) {
 			String selectedPower = null;
 			boolean[][] powerUsed = null;
 			try {
-				selectedPower = main.logic.attack.AttackUtilities.getAttackUtilites().getSelectedPower();
-				java.lang.reflect.Field f = main.logic.attack.AttackUtilities.getAttackUtilites().getClass().getDeclaredField("powerUsed");
+				selectedPower = logic.attack.AttackUtilities.getAttackUtilites().getSelectedPower();
+				java.lang.reflect.Field f = logic.attack.AttackUtilities.getAttackUtilites().getClass().getDeclaredField("powerUsed");
 				f.setAccessible(true);
-				powerUsed = (boolean[][]) f.get(main.logic.attack.AttackUtilities.getAttackUtilites());
+				powerUsed = (boolean[][]) f.get(logic.attack.AttackUtilities.getAttackUtilites());
 			} catch(Exception ex) {}
-			int idx = main.logic.attack.AttackUtilities.getAttackUtilites().getCurrentPlayerIndex();
+			int idx = logic.attack.AttackUtilities.getAttackUtilites().getCurrentPlayerIndex();
 			int powerIdx = -1;
 			if ("AirAttack".equals(selectedPower)) powerIdx = 0;
 			else if ("ScatterBomb".equals(selectedPower)) powerIdx = 1;
@@ -134,8 +133,8 @@ public class Cell extends JPanel implements MouseListener{
 				if(powerUsed[idx][powerIdx]) {
 					// Power già usato - fornisci feedback e resetta la selezione
 					System.out.println("[POWER] " + selectedPower + " already used by player " + (idx + 1) + "!");
-					main.logic.attack.AttackUtilities.getAttackUtilites().clearSelectedPower();
-					main.logic.attack.AttackUtilities.getAttackUtilites().setErrorMessage(selectedPower + " already used! Select another power or make a regular attack.");
+					logic.attack.AttackUtilities.getAttackUtilites().clearSelectedPower();
+					logic.attack.AttackUtilities.getAttackUtilites().setErrorMessage(selectedPower + " already used! Select another power or make a regular attack.");
 					return;
 				}
 				
@@ -148,9 +147,9 @@ public class Cell extends JPanel implements MouseListener{
 						Cell c = getCellAt(gridX, row);
 						if(c != null) c.highlightTemporarily(new Color(255, 100, 100));
 					}
-					main.logic.attack.AttackUtilities.getAttackUtilites().markPowerUsed();
+					logic.attack.AttackUtilities.getAttackUtilites().markPowerUsed();
 					System.out.println("[POWER] AirAttack used on column: " + (char)('A'+gridX));
-					main.rules.designPatterns.RulesFacade.getRules().nextPlayer();
+					rules.designPatterns.RulesFacade.getRules().nextPlayer();
 					return;
 				} else if(selectedPower.equals("ScatterBomb")) {
 					for(int dx = -1; dx <= 1; dx++) {
@@ -164,15 +163,15 @@ public class Cell extends JPanel implements MouseListener{
 							}
 						}
 					}
-					main.logic.attack.AttackUtilities.getAttackUtilites().markPowerUsed();
+					logic.attack.AttackUtilities.getAttackUtilites().markPowerUsed();
 					System.out.println("[POWER] ScatterBomb used at: " + (char)('A'+gridX)+(gridY+1));
-					main.rules.designPatterns.RulesFacade.getRules().nextPlayer();
+					rules.designPatterns.RulesFacade.getRules().nextPlayer();
 					return;
 				}
 			}
 		}
 		
-		if(RulesFacade.getRules().getPhase() == PHASE.POSITION) {
+		if(RulesFacade.getRules().getPhase() == BattleshipConfiguration.PHASE.POSITION) {
 			Ship selectedShip = RulesFacade.getRules().getSelectedShip();
 			if(selectedShip == null && cellColor.getRed() != 105) {
 				RulesFacade.getRules().repositionShip(x/BattleshipConfiguration.SQUARE_SIZE, y/BattleshipConfiguration.SQUARE_SIZE, 
@@ -202,7 +201,7 @@ public class Cell extends JPanel implements MouseListener{
 	public void mouseEntered(MouseEvent e) {
 		if(unclickable) return;
 		
-		if(RulesFacade.getRules().getPhase() == PHASE.POSITION 
+		if(RulesFacade.getRules().getPhase() == BattleshipConfiguration.PHASE.POSITION
 				&& RulesFacade.getRules().getSelectedShip() != null) {
 			paintSelectedCells();
 			return;
@@ -219,7 +218,7 @@ public class Cell extends JPanel implements MouseListener{
 	public void mouseExited(MouseEvent e) {	
 		if(unclickable) return;
 		
-		if(RulesFacade.getRules().getPhase() == PHASE.POSITION) {
+		if(RulesFacade.getRules().getPhase() == BattleshipConfiguration.PHASE.POSITION) {
 			PositioningGrid.getGrid().unpaintTemporaryCells();
 		}
 		

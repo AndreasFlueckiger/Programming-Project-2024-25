@@ -1,8 +1,8 @@
-package main.logic.ships;
+package logic.ships;
 
 import java.awt.geom.Rectangle2D;
 
-import main.battleship.BattleshipConfiguration;
+import battleship.main.battleship.*;
 
 /**
  * Class representing the Seaplane ship.

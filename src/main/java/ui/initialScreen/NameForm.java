@@ -1,12 +1,12 @@
-package main.ui.initialScreen;
+package ui.initialScreen;
 
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
 
-import main.logic.shippositioning.ShipSelection;
-import main.rules.designPatterns.RulesFacade;
+import logic.shippositioning.ShipSelection;
+import rules.designPatterns.RulesFacade;
 
 /**
  * NameForm is a form-based JFrame that allows players to input names

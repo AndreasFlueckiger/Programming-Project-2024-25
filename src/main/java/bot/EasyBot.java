@@ -1,12 +1,8 @@
-package main.bot;
+package bot;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
-import main.logic.shippositioning.ShipPlacementValidator;
-import main.battleship.BattleshipConfiguration;
 
 // The EasyBot generates random valid moves and avoids repeating them
 // EasyBot: selects random valid moves and avoids repeating them. No advanced strategy.

@@ -1,4 +1,4 @@
-package main.logic.victory;
+package logic.victory;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -10,19 +10,7 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import javax.swing.Timer;
 
-import main.battleship.BattleshipConfiguration;
-import main.logic.attack.Attack;
-import main.logic.attack.AttackUtilities;
-import main.ui.initialScreen.InitialFrame;
-import main.logic.shippositioning.ShipSelection;
-import main.logic.shippositioning.PositioningGrid;
-import main.logic.shippositioning.SelectionUtilities;
-import main.logic.shippositioning.ShipOptions;
-import main.logic.ships.Battleship;
-import main.logic.ships.Cruiser;
-import main.logic.ships.Destroyer;
-// import main.logic.ships.Seaplane;
-import main.logic.ships.Submarine;
+import battleship.main.battleship.*;
 
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -31,9 +19,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-
-import main.rules.designPatterns.RulesFacade;
-import main.bot.BotManager;
 
 
 @SuppressWarnings("serial")

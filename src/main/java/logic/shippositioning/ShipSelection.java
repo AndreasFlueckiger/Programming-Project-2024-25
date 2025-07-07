@@ -1,4 +1,4 @@
-package main.logic.shippositioning;
+package logic.shippositioning;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,13 +7,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import main.Title;
-import main.battleship.BattleshipConfiguration;
-import main.logic.powers.AirAttack;
-import main.logic.powers.ScatterBomb;
-import main.rules.designPatterns.Observable;
-import main.rules.designPatterns.Observer;
-import main.rules.designPatterns.RulesFacade;
+
+import logic.powers.main.logic.powers.AirAttack;
+import logic.powers.main.logic.powers.ScatterBomb;
+import ui.main.Title;
+import battleship.main.battleship.*;
+import rules.designPatterns.Observable;
+import rules.designPatterns.Observer;
+import rules.designPatterns.RulesFacade;
 
 // GUI class for selecting and positioning ships.
 // Also handles selection and execution of power abilities (AirAttack, ScatterBomb).
@@ -84,7 +85,7 @@ public class ShipSelection extends JFrame implements KeyListener, Observer{
 		setTitle("Ship Selection - " + RulesFacade.getRules().getPlayerName(currentPlayerNum));
 		
 		// Skip screen if current player is a bot
-		String botType = main.rules.designPatterns.RulesFacade.player2Type;
+		String botType = rules.designPatterns.RulesFacade.player2Type;
 		boolean isBot = "EasyBot".equals(botType) || "HardBot".equals(botType);
 		if (currentPlayerNum == 2 && isBot) {
 			setVisible(false);

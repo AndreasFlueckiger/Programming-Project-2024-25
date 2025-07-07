@@ -1,4 +1,4 @@
-package main.ui.initialScreen;
+package ui.initialScreen;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -6,7 +6,7 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
-import main.battleship.BattleshipConfiguration;
+import battleship.main.battleship.*;
 
 /**
  * The InitialFrame class defines the main window displayed when the game starts.

@@ -1,4 +1,4 @@
-package main.logic.victory;
+package logic.victory;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -6,7 +6,7 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
-import main.battleship.BattleshipConfiguration;
+import battleship.main.battleship.*;
 
 /**
  * Victory is a JFrame that represents the victory screen

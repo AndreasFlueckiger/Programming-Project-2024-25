@@ -1,9 +1,9 @@
-package main.rules.designPatterns;
+package rules.designPatterns;
 
 
-import main.battleship.BattleshipConfiguration.PHASE;
-import main.logic.ships.Ship;
-import main.rules.CtrlRules;
+import battleship.main.battleship.*;
+import logic.ships.Ship;
+import rules.CtrlRules;
 
 /**
  * RulesFacade is a Singleton class that acts as a facade over the CtrlRules class.
@@ -98,7 +98,7 @@ public class RulesFacade {
 
 // the "Get" and "Set"
 
-        public PHASE getPhase() {
+        public BattleshipConfiguration.PHASE getPhase() {
     	return ctrl.getPhase();
     }
     public void setSelectedShip(Ship ship) {

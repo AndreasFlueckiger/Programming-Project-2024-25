@@ -1,8 +1,8 @@
-package main.logic.board;
+package logic.board;
 
 import java.awt.*;
 import javax.swing.*;
-import main.battleship.BattleshipConfiguration;
+import battleship.main.battleship.*;
 
 /**
  * The Board class is a visual container that represents the static labels
