@@ -1,276 +1,251 @@
-# Battleship Programming Project
+# Battleship War
 
-## Team
-
-Alexis Andreas Fleuckiger (AndreasFlueckiger)<br>
-Matteo Fina (MatteoFindus)<br>
-Marco Meneghetti (SirMarkusIT)<br>
-Leonardo Fabricio Reyna Salas (Superleoxx)
-
-## Distribution of the workload
-<ul>
-<li> <b> GUI</b> Alexis</li>
-<li> <b> Powers</b> Marco</li>
-<li> <b> CtrlRules</b> Matteo and Alexis</li>
-<li> <b> Ships</b> Marco and Alexis</li>
-<li> <b> Attack logic</b> Matteo</li>
-<li> <b> Bots</b> Matteo</li>
-</ul>
+A graphical Battleship board game built with Java 21 and Swing, supporting
+**Player vs Bot** and **Player vs Player** modes.
+Each player secretly places 3 **mines** in addition to the standard fleet —
+triggering a mine punishes the attacking player and hits 3 random cells on their board.
 
 ---
 
-**Language:** Java 17  
-**GUI:** Java Swing  
-**Build Tool:** Maven  
-**Grid Size:** 10 × 10
+## Group members
+
+
 
 ---
 
-## Instructions to run it
+## Requirements
 
-### Prerequisites
-- Java 17 or later
-- Maven 3.6 or later
+- **Java 21** (or any JDK starting from version 17)
+- **Maven 3.6+**
 
-### Quick Start (Recommended)
-
-#### On macOS/Linux:
+Verify your versions using:
 ```bash
-./run.sh
+java -version
+mvn -version
 ```
 
-#### On Windows:
-```cmd
-run.bat
+---
+
+## Build
+
+From the project root (the folder containing `pom.xml`):
+
+```bash
+mvn package
 ```
 
-These scripts will automatically:
-- Check if Java and Maven are installed
-- Build the project if needed
-- Launch the game
+This compiles all sources and produces a self-contained über-jar at:
 
-### Manual Running with Maven
+```
+target/battleship-3.0.jar
+```
 
-1. **Clone or download the project**
-
-2. **Navigate to the project directory**
-   ```bash
-   cd Programming-Project-2024-25
-   ```
-
-3. **Compile and run the project**
-   ```bash
-   # Compile the project
-   mvn clean compile
-   
-   # Run the game
-   mvn exec:java -Dexec.mainClass="main.ui.main.Launcher"
-   ```
-
-### Alternative: Run the JAR file
-
-1. **Build the executable JAR**
-   ```bash
-   mvn clean package
-   ```
-
-2. **Run the JAR file**
-   ```bash
-   java -jar target/battleship-game-1.0.0.jar
-   ```
-
-### Development
-
-- **Compile:** `mvn compile`
-- **Test:** `mvn test`
-- **Package:** `mvn package`
-- **Clean:** `mvn clean`
+The über-jar bundles all dependencies so no external classpath is needed.
 
 ---
 
-This is a fully functional **2-player Battleship game** built using **Java Swing**. It includes ship placement, attack phase, power abilities (Air Attack and Scatter Bomb), and game state saving/loading.
+## Run
+
+```bash
+java -jar target/battleship-3.0.jar
+```
+
+The game window opens immediately. No command-line arguments are required.
 
 ---
 
-## Overview
+## Description
 
-This project is a digital implementation of the classic **Battleship** strategy game with two game modes:
+Battleship War is a turn-based naval combat game for one or two players.
 
-Players can choose between:
+**Player vs Bot** — one human faces a computer opponent that uses a
+**hunt-and-target strategy**: it fires at a sparse checkerboard pattern until
+it scores a hit, then methodically attacks orthogonal neighbours until the
+ship sinks, before returning to hunt mode.
 
-- **Player vs Player (PvP)**
-- **Player vs Bot (PvBot)**
-  (Bot available in Easy, Hard and learning difficulties levels)
+**Player vs Player (local)** — two humans share the same computer. After
+every shot a "pass the computer" privacy screen hides both boards until the
+next player confirms they are ready, preventing accidental peeking and cheating.
 
----
-
-## Special Powers (Modern Mode Only)
-
-Each power can be used once per game. Only one power can be used per turn.
-
-- **Scatter Bomb**: Hits a 3×3 area centered on a selected cell. Ends your turn.
-- **Air Attack**: Attacks all cells in a selected column. Ends your turn.
-
-## Gameplay Flow
-
-1. **Game Start**  
-   Choose between PvP or PvBot.
-
-2. **Username Input**  
-   Usernames are entered for history tracking.
-
-3. **Ship Placement**  
-   - Player 1 places their fleet.
-   - Screen prompts for Player 2 to place ships (to avoid cheating).
-   - Ships are placed by clicking on the grid, with a button to toggle orientation.
-   - Left Click: Place ship
-   - Right Click: Rotate ship
-   - R: Reset board
-   - Esc: Unselect ship
-
-4. **Save/Load**
-   - Saves game state to .ser file using Java's ObjectOutputStream
-   - Load the game from file using the "Load Game" option on the home/main screen
-
-5. **Game Loop**  
-   - Players take turns guessing coordinates.
-   - The opponent confirms each hit or miss.
-   - The tracking grid shows hits (O) and misses (X).
-   - Powers can be used in Modern mode.
-
-6. **Winning the Game**  
-   The first player to sink all opponent ships wins.
+**Mine mechanic** — during setup each player secretly plants 3 mines on
+empty water cells on their own board. When the opponent shoots a mined cell
+a `MINE_TRIGGER` result fires: The attacking player gets hit on 3 random tiles
+as a punishment for hitting the hidden **Mine**.
 
 ---
 
-## Bot Difficulty
+### Cell colour key
 
-- **Easy:** Bot picks random untried coordinates.
-- **Hard:** Bot picks random untried coordinates and can use powers.
+| Colour | Meaning |
+|--------|---------|
+| Dark green | Water (un-shot) |
+| Bright green `#` | Your own ship |
+| Yellow `*` | Your mine (visible only on your board) |
+| Dim green `o` | Miss |
+| Red `X` | Hit |
+| Dark red `X` | Sunk ship |
+| Amber `*` | Mine blast zone |
 
----
+### Fleet
 
-## Powers
-
-- **Air Attack:** works on the row and despite the user coordinate the program choose a random row.
-- **Scatter bomb:** this power has an effect on a 3x3 area, but like the Air Attack despite the input of the player choose the area of hitting randomly.
-
-There is a bug for the use of the powers in a player vs player match, if the first player uses a power the next player to use the same needs to click another power than he/she can use the power that previously doesn't work properly.
-
----
-
-## Project Structure
-
-- `src/main/java/`
-  - `main/ui/`
-    - `main/` – Launcher class (`Launcher.java`)
-    - `initialScreen/` – Main menu, name form, screen layout
-  - `main/logic/`
-    - `attack/` – Attack logic and utilities (`Attack.java`, `AttackUtilities.java`)
-    - `board/` – Grid, Cell, and Board logic
-    - `powers/` – Power classes (`AirAttack`, `Scanner`, `ScatterBomb`) + `PowerManager`
-    - `ships/` – Ship classes: `Battleship`, `Cruiser`, `Submarine`, etc.
-    - `shippositioning/` – Ship placement logic, validation, selection boards
-    - `victory/` – Victory screen UI, fireworks GIF, and result memory
-  - `main/bot/` – AI players: `EasyBot`, `HardBot`, `LearningBot`
-  - `main/rules/`
-    - `designPatterns/` – `Observer` and `Observable`
-    - `CtrlRules.java` – Core rule engine
-  - `main/saveload/` – `SaveLoadManager.java` for saving/loading progress
-  - `main/battleship/` – `BattleshipConfiguration.java` with global constants and enums
-- `src/main/resources/` – Game resources (images, data files)
-- `target/` – Compiled classes and JAR files (generated by Maven)
-
-## Key Classes Overview
-
-| Class                         | Role                              |
-| ----------------------------- | --------------------------------- |
-| `Launcher.java`               | Starts the GUI                    |
-| `InitialScreen.java`          | Renders the main menu             |
-| `NameForm.java`               | Allows players to input names     |
-| `Board.java`, `Cell.java`     | Grid and cell management          |
-| `Attack.java`                 | Performs attack operations        |
-| `PowerManager.java`           | Activates and manages powers      |
-| `AirAttack.java`              | Power that attacks a full line    |
-| `ShipPlacementValidator.java` | Ensures valid placement           |
-| `VictoryPanel.java`           | Displays win screen and animation |
-| `LearningBot.java`            | Bot that improves from experience |
-| `SaveLoadManager.java`        | Handles saving/loading game data  |
+| Ship | Size |
+|------|------|
+| Carrier | 5 |
+| Battleship | 4 |
+| Destroyer | 3 |
+| Submarine | 3 |
+| Patrol Boat | 2 |
 
 ---
 
-## Game Concept
+## Implementation overview (This part is written by chatgbt)
 
-Battleship is a turn-based strategy game played on two 10×10 grids per player.  
-One grid is used to place the player's own fleet; the other is used to record attacks on the opponent.  
-Players alternate turns by calling out grid coordinates (e.g., "B5"). The opponent responds with "hit" or "miss." When all the tiles of a ship are hit, the ship is sunk. The first player to sink all of their opponent's ships wins.
+### High-level components
 
-## Different (high-level) components and interfaces between components
+```
+┌─────────────────────────────────────────────────────────┐
+│                        UI Layer                         │
+│  MenuFrame   SetupFrame   GameFrame   Theme             │
+└───────────────────────┬─────────────────────────────────┘
+                        │ calls
+┌───────────────────────▼─────────────────────────────────┐
+│                      Game Model                         │
+│  Board   Ship   Cell   BotAI   GameMode   ShotResult    │
+└─────────────────────────────────────────────────────────┘
+```
 
-<ol>
-         <li>Observer Pattern (Design Pattern)
-            Where?
+**`Board`** — owns the 10×10 `Cell` grid, the `Ship` list, and all mine
+positions. Exposes `placeShip`, `placeMine`, `shoot`, `allShipsSunk`, and
+query helpers. This is the main interface between the model and the UI.
 
-            Observable / Observer interfaces
+**`BotAI`** — consults `Board.wasShotAt` and calls `Board.shoot` internally
+to decide and execute each bot turn. It maintains its own hunt queue and
+target queue; the UI only calls `BotAI.takeTurn()` and reads back the
+chosen coordinates.
 
-            Classes like CtrlRules notify Attack or ShipSelection when data changes.
+**`GameFrame`** — the top-level game window. It owns references to both
+`Board` objects and the optional `BotAI`, and delegates all grid rendering
+and shot processing to private helper methods. It does not contain any game
+logic beyond calling `Board.shoot` and reading the returned `ShotResult`.
 
-            Why it's complex:
+**`SetupFrame`** — drives the interactive fleet/mine placement phase. It
+writes directly into a `Board` via `Board.placeShip` and `Board.placeMine`,
+then passes the completed `Board` to `GameFrame`.
 
-            Requires understanding of loose coupling and event-driven architecture.
+**`Theme`** — a stateless utility class. Every colour constant, font, and
+Swing component factory lives here. No other class contains hard-coded
+colour or font values.
 
-            Implements decoupled update propagation to multiple observers.
+**`MenuFrame`** — the splash and mode-selection screens. It constructs a
+`SetupFrame` with the chosen `GameMode` when the player clicks SELECT.
 
-            Example:
+### Third-party libraries
 
-            for (Observer o : lob) {
-               o.notify(this);
-            }
-   </li>
-         <li> MVC (Model-View-Controller) Architecture
-            Where?
+No third party libraries are used. The project uses only the Java 21 standard library (Java Swing / AWT for
+the UI, `java.util` and `Random`).
 
-            Model: CtrlRules, PowerManager, ShipOptions
+### Notable programming techniques
 
-            View: Attack, ShipSelection, VictoryPanel
+**Enum-driven branching (`GameMode`, `ShotResult`)** — using enums instead
+of boolean flags or integer constants makes every branch in `GameFrame` and
+`SetupFrame` self-documenting and exhaustive. Java's `switch` expressions
+produce a compile-time error if a case is missing, eliminating a whole
+class of bugs.
 
-            Controller: RulesFacade coordinates actions and game state
+/** 
+**Sealed blast-radius chain reaction** = this explains the Mine aspect of the game (finsih this)
+*/
 
-            Why it's complex:
+**Factory-method design system (`Theme`)** — all Swing component creation
+goes through static factory methods (`Theme.button`, `Theme.cellButton`,
+`Theme.label`, etc.). Adding a hover effect to every button in one place
+means a visual change requires editing exactly one method rather than
+touching every screen class.
 
-            Enforces separation of concerns, requiring structure and discipline.
+**Timer-based bot delay** — the bot's shot is triggered via
+`javax.swing.Timer` with a 500 ms delay rather than `Thread.sleep`, keeping
+the Event Dispatch Thread free and the UI fully responsive during the pause.
 
-            Ensures testability, flexibility, and scalability.
-   </li>
-   <li>Serialization for Saving and Loading Game State
-      Where?
+**Hunt/target AI with checkerboard seeding** — `BotAI` pre-builds a
+shuffled list of every cell where `(row + col) % 2 == 0`. Because every
+ship of length ≥ 2 must cover at least one such cell, this halves the
+expected number of hunt shots compared to a fully random approach.
 
-      CtrlRules implements Serializable
+**Pattern matching in switch expressions (Java 21)** — `ShotResult` cases
+are handled with Java 21 switch expressions throughout `GameFrame`, making
+the result-to-visual mapping compact and exhaustive without nested
+if/else chains.
 
-      SaveLoadManager uses ObjectOutputStream / ObjectInputStream
+---
 
-      Why it's complex:
+## Human experience
 
-      Requires correct versioning, transient fields, and class compatibility.
+### Workload distribution
 
-      Ensures full game state is stored/restored safely
-   </li>
-   </ol>
+| Task | Member |
+|------|--------|
+| Game model (`Board`, `Ship`, `Cell`, `ShotResult`, `GameMode`) | Student  |
+| Bot AI (`BotAI`) | Student A |
+| Main menu and setup UI (`MenuFrame`, `SetupFrame`) | Student |
+| Game screen UI (`GameFrame`) | Student  |
+| Design system (`Theme`) | Student  |
+| Integration, testing, and README | All Students |
 
-## Experience
+### How git was used (This part here is chatgbt edit this when I have time)
 
-On the workload distribution have worked Alexis, in fact he distributed work to the group and then we discussed weekly updates who did what and how the workload should be redistributed.
-Git was used only like a cloud repository to store the project without any usage of the coordination tools. The group faced some problems as removing directories after pivoting ideas.
-In the project there isn't third party librariers.
+Each member worked on a dedicated feature branch (`feature/model`,
+`feature/ui`) and opened a pull request when a component was complete.
+The other member reviewed and merged. Commit messages follow the format
+`[component] short description`, e.g. `[BotAI] add checkerboard hunt queue`.
+The `main` branch was kept in a runnable state at all times.
+No force-pushes were used on `main`; all integration happened through
+merge commits so the full history of both contributors is visible.
 
-<ul>
-   <li>
-       <b>Alexis<b>: My biggest challenge was designing the GUI from stratch and to incorporate the code written by other members of the group.
-   </li>
-   <li>
-       <b>Matteo<b>: My biggest challenge was to create the bots and make them work on different levels of difficulties.
-   </li>
-   <li>
-       <b>Marco<b>: My biggest challenge was when I was coding the savement of the multiplayers results, here I applied a more complex way of serialisation and desesrialisation that we saw in the class, because I need not to lose any previous information.
-   </li>
-</ul>
+### Challenges
+
+**Student ** — Implementing the mine chain-reaction correctly was tricky.
+The first attempt used a recursive call that could re-enter the same cell,
+causing a `StackOverflowError` on dense mine layouts. The fix was to check
+`mineDetonated` before recursing and set the flag immediately on entry,
+turning the implicit recursion guard into an explicit one.
+
+**Student ** — Swing's paint model made the CRT scanline overlay
+(`Theme.paintScanlines`) difficult. Calling `repaint()` inside a
+`MouseListener` caused visible flicker because Swing double-buffers per
+component, not per window. The solution was to draw the overlay directly
+inside each panel's `paintComponent` override rather than as a separate
+glass-pane layer, which gave flicker-free rendering.
+
+---
+
+## Repository structure
+
+```
+.
+├── .gitignore
+├── README.md
+├── pom.xml
+└── src/
+    └── main/
+        └── java/
+            └── com/example/battleship/
+                ├── Main.java          Entry point
+                ├── Theme.java         Design system (colours, fonts, factories)
+                ├── MenuFrame.java     Splash + mode-selection UI
+                ├── SetupFrame.java    Ship & mine placement UI
+                ├── GameFrame.java     Main game window (PvP + PvBot)
+                ├── GameMode.java      Enum: PLAYER_VS_PLAYER / PLAYER_VS_BOT
+                ├── Board.java         10×10 grid, ship/mine placement, shooting
+                ├── BotAI.java         Hunt/target AI
+                ├── Ship.java          Ship model
+                ├── Cell.java          Cell model
+                └── ShotResult.java    Shot outcome enum
+```
+
+---
+
+## External references
+
+No external libraries, tutorials, or third-party source code were used.
+The hunt/target AI strategy is a well-known Battleship heuristic; the
+implementation here is original.
