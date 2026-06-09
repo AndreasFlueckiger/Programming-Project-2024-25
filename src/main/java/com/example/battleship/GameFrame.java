@@ -72,6 +72,8 @@ public class GameFrame extends JFrame {
         if (mode == GameMode.PLAYER_VS_PLAYER) {
             // In PVP, start with a dialog to pass control
             SwingUtilities.invokeLater(this::showPassDialog);
+            //hides the board of the second player when the PVP starts
+            hideBoard(btn2, board2);
         } else {
             // In PVB, show intro messages and let Player begin
             log("MISSION START — Click enemy grid to fire.", Theme.GREEN);
