@@ -9,7 +9,9 @@ triggering a mine punishes the attacking player and hits 3 random cells on their
 
 ## Group members
 
-
+Alexis Flueckiger - 22870 - AndreasFlueckiger
+Matteo Fina -  - MatteoFindus
+Marco Meneghetti - 23931 - SirMurkusIT
 
 ---
 
@@ -98,21 +100,9 @@ as a punishment for hitting the hidden **Mine**.
 
 ---
 
-## Implementation overview (This part is written by chatgbt)
+## Implementation overview
 
 ### High-level components
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                        UI Layer                         │
-│  MenuFrame   SetupFrame   GameFrame   Theme             │
-└───────────────────────┬─────────────────────────────────┘
-                        │ calls
-┌───────────────────────▼─────────────────────────────────┐
-│                      Game Model                         │
-│  Board   Ship   Cell   BotAI   GameMode   ShotResult    │
-└─────────────────────────────────────────────────────────┘
-```
 
 **`Board`** — owns the 10×10 `Cell` grid, the `Ship` list, and all mine
 positions. Exposes `placeShip`, `placeMine`, `shoot`, `allShipsSunk`, and
@@ -146,14 +136,12 @@ the UI, `java.util` and `Random`).
 
 ### Notable programming techniques
 
-**Enum-driven branching (`GameMode`, `ShotResult`)** — using enums instead
+**Enum branching (`GameMode`, `ShotResult`)** — using enums instead
 of boolean flags or integer constants makes every branch in `GameFrame` and
-`SetupFrame` self-documenting and exhaustive. Java's `switch` expressions
-produce a compile-time error if a case is missing, eliminating a whole
-class of bugs.
+`SetupFrame` self-documenting and exhaustive.
 
 /** 
-**Sealed blast-radius chain reaction** = this explains the Mine aspect of the game (finsih this)
+**Sealed blast-radius chain reaction**
 */
 
 **Factory-method design system (`Theme`)** — all Swing component creation
@@ -184,37 +172,24 @@ if/else chains.
 
 | Task | Member |
 |------|--------|
-| Game model (`Board`, `Ship`, `Cell`, `ShotResult`, `GameMode`) | Student  |
-| Bot AI (`BotAI`) | Student A |
-| Main menu and setup UI (`MenuFrame`, `SetupFrame`) | Student |
-| Game screen UI (`GameFrame`) | Student  |
-| Design system (`Theme`) | Student  |
-| Integration, testing, and README | All Students |
+| Game model (`Board`, `Ship`, `Cell`, `ShotResult`, `GameMode`) | Alexis, Matteo, Marco  |
+| Bot AI (`BotAI`) | Alexis, Matteo |
+| Main menu and setup UI (`MenuFrame`, `SetupFrame`) | Alexis, Matteo, Marco |
+| Game screen UI (`GameFrame`) | Alexis, Matteo, Marco |
+| Design system (`Theme`) | Alexis, Matteo, Marco  |
+| Integration, testing, and README | Alexis, Matteo, Marco |
 
-### How git was used (This part here is chatgbt edit this when I have time)
+### How git was used
 
-Each member worked on a dedicated feature branch (`feature/model`,
-`feature/ui`) and opened a pull request when a component was complete.
-The other member reviewed and merged. Commit messages follow the format
-`[component] short description`, e.g. `[BotAI] add checkerboard hunt queue`.
-The `main` branch was kept in a runnable state at all times.
-No force-pushes were used on `main`; all integration happened through
-merge commits so the full history of both contributors is visible.
+We use gitHub at the end of the project, because the problems that we had the last year. We have worked on VScode. Then we upload all the work on gitHub to testing it on different platforms and to share it with the professor.
 
 ### Challenges
 
-**Student ** — Implementing the mine chain-reaction correctly was tricky.
-The first attempt used a recursive call that could re-enter the same cell,
-causing a `StackOverflowError` on dense mine layouts. The fix was to check
-`mineDetonated` before recursing and set the flag immediately on entry,
-turning the implicit recursion guard into an explicit one.
+The main challenge as group was the organisation and work distribution because we don't live in the same city and we are from different years.
 
-**Student ** — Swing's paint model made the CRT scanline overlay
-(`Theme.paintScanlines`) difficult. Calling `repaint()` inside a
-`MouseListener` caused visible flicker because Swing double-buffers per
-component, not per window. The solution was to draw the overlay directly
-inside each panel's `paintComponent` override rather than as a separate
-glass-pane layer, which gave flicker-free rendering.
+Alex - the setting up of the frontend adn setting up the UI.
+Matteo - setting up and develop the bot AI logic.
+Marco - making sure that the player ships and board is difficult to be seen by the another player.
 
 ---
 
@@ -247,5 +222,4 @@ glass-pane layer, which gave flicker-free rendering.
 ## External references
 
 No external libraries, tutorials, or third-party source code were used.
-The hunt/target AI strategy is a well-known Battleship heuristic; the
-implementation here is original.
+The hunt/target AI strategy is a well-known Battleship heuristic.
