@@ -6,6 +6,7 @@ package com.example.battleship;
  * A cell can hold a Ship reference, a mine flag, and tracks whether it has
  * already been revealed (shot or mine-exploded).
  */
+//Matteo
 public class Cell {
 
     /** The ship occupying this cell, or null if empty. */

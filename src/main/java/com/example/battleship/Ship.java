@@ -4,6 +4,7 @@ package com.example.battleship;
  * Represents a single ship on the board.
  * Tracks its length, display name, and how many times it has been hit.
  */
+//Matteo
 public class Ship {
 
     private final int length;

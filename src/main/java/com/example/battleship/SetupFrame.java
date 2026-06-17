@@ -1,10 +1,28 @@
 package com.example.battleship;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Random;
+
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Ship and mine placement screen, styled with a military green theme.
@@ -45,6 +63,7 @@ public class SetupFrame extends JFrame {
     private JLabel mineLabel;
     private JLabel scoreLabel;   // shows ships placed count
 
+    //Alexis
     public SetupFrame(GameMode mode, int playerNumber, Board player1Board) {
         this.mode         = mode;
         this.playerNumber = playerNumber;
@@ -69,7 +88,7 @@ public class SetupFrame extends JFrame {
     }
 
     // Root layout 
-
+    //Marco
     private JPanel buildRoot(String who) {
         JPanel root = new JPanel(new BorderLayout(10, 10)) {
             @Override protected void paintComponent(Graphics g) {
@@ -92,6 +111,7 @@ public class SetupFrame extends JFrame {
     }
 
     // Header 
+    //Matteo
 
     private JPanel buildHeader(String who) {
         JPanel p = new JPanel(new BorderLayout());
@@ -112,7 +132,7 @@ public class SetupFrame extends JFrame {
     }
 
     // Grid Panel
-
+    //Marco
     private JPanel buildGridPanel() {
         JPanel outer = new JPanel(new BorderLayout());
         outer.setOpaque(false);
@@ -175,7 +195,7 @@ public class SetupFrame extends JFrame {
     }
 
     // Sidebar layout 
-
+    //Alexis
     private JPanel buildSidebar() {
         JPanel side = new JPanel();
         side.setLayout(new BoxLayout(side, BoxLayout.Y_AXIS));
@@ -244,7 +264,7 @@ public class SetupFrame extends JFrame {
     }
 
     // Footer 
-
+    //Marco
     private JPanel buildFooter() {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         p.setOpaque(false);
@@ -258,12 +278,13 @@ public class SetupFrame extends JFrame {
     }
 
     // Interaction 
-
+    //Alexis
     private void onCellClick(int row, int col) {
         if (placingMines) placeMineAt(row, col);
         else              placeShipAt(row, col);
     }
 
+    //Alexis
     private void placeShipAt(int row, int col) {
         if (shipIndex >= SHIP_LENGTHS.length) return;
         String name = SHIP_NAMES[shipIndex].split(" \\(")[0];
@@ -277,7 +298,7 @@ public class SetupFrame extends JFrame {
             updateLabels();
         }
     }
-
+    //Marco
     private void placeMineAt(int row, int col) {
         if (minesLeft <= 0) return;
         if (myBoard.placeMine(row, col)) {
@@ -292,7 +313,7 @@ public class SetupFrame extends JFrame {
             }
         }
     }
-
+    //Marco
     private void randomiseAll() {
         Random rnd = new Random();
         Board fresh = new Board(10);
@@ -319,7 +340,7 @@ public class SetupFrame extends JFrame {
         t.setRepeats(false);
         t.start();
     }
-
+    //Alexis
     private void proceed() {
         dispose();
         if (mode == GameMode.PLAYER_VS_PLAYER && playerNumber == 1) {
@@ -332,9 +353,10 @@ public class SetupFrame extends JFrame {
             new GameFrame(mode, myBoard, bot, "YOU", "BOT");
         } else {
             new GameFrame(mode, player1Board, myBoard, "PLAYER 1", "PLAYER 2");
+            //possible position where hide the board of the second player
         }
     }
-
+    //Matteo
     private void showPassScreen() {
         JDialog dlg = new JDialog(this, "PASS TO PLAYER 2", true);
         dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -365,7 +387,7 @@ public class SetupFrame extends JFrame {
     }
 
     // Grid rendering
-
+    //Matteo
     private void refreshGrid() {
         // Compute preview
         boolean[] preview = new boolean[100];
@@ -412,7 +434,7 @@ public class SetupFrame extends JFrame {
             }
         }
     }
-
+    //Marco
     private boolean canPreview(int len, int sr, int sc, boolean horiz) {
         int er = horiz ? sr : sr + len - 1;
         int ec = horiz ? sc + len - 1 : sc;
@@ -424,7 +446,7 @@ public class SetupFrame extends JFrame {
         }
         return true;
     }
-
+    //Alexis
     private void updateLabels() {
         scoreLabel.setText("SHIPS PLACED: " + shipIndex + " / 5"); // Score bar
 

@@ -12,6 +12,7 @@ package com.example.battleship;
  *                reveals a 3×3 area around it (bonus intel) but counts as a miss.
  * ALREADY_SHOT – the cell was already targeted; illegal move.
  */
+//Matteo
 public enum ShotResult {
     MISS,
     HIT,

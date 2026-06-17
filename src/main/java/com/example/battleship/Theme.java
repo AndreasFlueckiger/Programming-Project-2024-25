@@ -1,9 +1,25 @@
 package com.example.battleship;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.LayoutManager;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 /**
  * Main design system for the military aesthetic.
@@ -23,7 +39,7 @@ public final class Theme {
     private Theme() {}
 
     // Colours 
-
+    //Alexis
     /** Page / window background — near-black with green tint. */
     public static final Color BG             = new Color(8,  14,  8);
     /** Panel / card background. */
@@ -68,7 +84,7 @@ public final class Theme {
 
 
     // Fonts 
-
+    //Matteo
     /** Large stencil-style title font (like the screenshots). */
     public static final Font FONT_TITLE  = new Font("Impact", Font.PLAIN, 52);
     /** Medium title. */
@@ -84,7 +100,7 @@ public final class Theme {
 
 
     // Borders
-
+    //Marco
     /** Standard 1px green border. */
     public static Border borderGreen() {
         return BorderFactory.createLineBorder(GREEN, 1);
@@ -117,7 +133,7 @@ public final class Theme {
     }
 
     // Component factories
-
+    //Matteo
     /**
      * Creates a panel with standard dark background.
      */
@@ -151,6 +167,7 @@ public final class Theme {
      * Creates a military-style button — dark bg, green border & text,
      * with hover brightening and click darkening via mouse.
      */
+    //Alexis
     public static JButton button(String text) {
         JButton btn = new JButton(text);
         btn.setFont(FONT_LABEL);
@@ -186,6 +203,7 @@ public final class Theme {
     /**
      * Red variant button — used for destructive or enemy-related actions.
      */
+    //Matteo
     public static JButton buttonRed(String text) {
         JButton btn = button(text);
         btn.setForeground(RED);
@@ -217,6 +235,7 @@ public final class Theme {
      *
      * @param enemy true = clickable enemy grid (no ship markers)
      */
+    //Alexis
     public static JButton cellButton(boolean enemy) {
         JButton btn = new JButton();
         btn.setPreferredSize(new Dimension(40, 40));
@@ -233,6 +252,7 @@ public final class Theme {
     /**
      * Creates a text area styled as a military log readout (CRT green on black).
      */
+    //Matteo
     public static JTextArea logArea() {
         JTextArea ta = new JTextArea();
         ta.setEditable(false);
@@ -248,6 +268,7 @@ public final class Theme {
     /**
      * Wraps a component in a scroll pane styled to the theme.
      */
+    //Alexis
     public static JScrollPane scrollPane(JComponent c) {
         JScrollPane sp = new JScrollPane(c);
         sp.setBorder(borderGreen());
@@ -261,6 +282,7 @@ public final class Theme {
      * Applies the dark background to a frame and sets its title bar colour
      * (depends on OS).
      */
+    //Matteo
     public static void styleFrame(JFrame frame) {
         frame.getContentPane().setBackground(BG);
         frame.setBackground(BG);
@@ -274,6 +296,7 @@ public final class Theme {
      * @param w  component width
      * @param h  component height
      */
+    //Matteo
     public static void paintScanlines(Graphics g, int w, int h) {
         g.setColor(new Color(0, 0, 0, 30));
         for (int y = 0; y < h; y += 3) {

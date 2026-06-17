@@ -1,11 +1,29 @@
+
 package com.example.battleship;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.util.List;
 import java.util.Random;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Main game window for Battleship Game
@@ -17,6 +35,7 @@ import java.util.Random;
 
 public class GameFrame extends JFrame {
 
+    //Alexis
     // Label for board coordinates
     private static final String[] ROW_LABELS = {"A","B","C","D","E","F","G","H","I","J"};
 
@@ -84,7 +103,7 @@ public class GameFrame extends JFrame {
 /** 
  * Builds the entire window layout: top bar, two boards, log panel, bottom ship trays.
  */
-
+    //Alexis
     private void buildWindow() {
         // Root panel for grid lines and scanlines
         JPanel root = new JPanel(new BorderLayout(6, 6)) {
@@ -126,6 +145,7 @@ public class GameFrame extends JFrame {
     /**
      * creates top bar with game title, turn indicator and round counter
      */
+    //Alexis
     private JPanel buildTopBar() {
         JPanel p = new JPanel(new BorderLayout(0, 0));
         p.setOpaque(false);
@@ -159,7 +179,7 @@ public class GameFrame extends JFrame {
  * @param board Board Model to associate with clicks
  * @return JPanel with the baord UI
  */
-
+    //Alexis
     private JPanel buildBoardPanel(String title, JButton[][] buttons, Board board) {
         JPanel outer = new JPanel(new BorderLayout(0, 4));
         outer.setOpaque(false);
@@ -220,6 +240,7 @@ public class GameFrame extends JFrame {
     /**
      * Builds the central log panel showing battle messages and legend panel (explains cell colors). 
      */
+    //Matteo
     private JPanel buildLogPanel() {
         JPanel p = new JPanel(new BorderLayout(0, 6));
         p.setBackground(Theme.PANEL);
@@ -240,6 +261,7 @@ public class GameFrame extends JFrame {
         return p;
     }
 
+    //Marco
     private JPanel buildLegend() {
         JPanel p = new JPanel(new GridLayout(5, 1, 2, 2));
         p.setBackground(Theme.PANEL);
@@ -255,6 +277,7 @@ public class GameFrame extends JFrame {
     /**
      * Helper to create a single row in the legend
      */
+    //Marco
     private JPanel legendRow(Color c, String text) {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
         row.setBackground(Theme.PANEL);
@@ -273,6 +296,7 @@ public class GameFrame extends JFrame {
     /**
      * Builds the bottom bar showing ship health trays, score and menu button
      */
+    //Matteo
     private JPanel buildBottomBar() {
         JPanel p = new JPanel(new BorderLayout(0, 0));
         p.setBackground(new Color(0, 8, 0));
@@ -315,6 +339,7 @@ public class GameFrame extends JFrame {
      * Creates a ship health tray for a player
      * Contains colored bars representing each ship's health
      */
+    //Alexis
     private JPanel buildShipTray(String playerName, Board board) {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
         p.setBackground(new Color(0, 8, 0));
@@ -342,6 +367,7 @@ public class GameFrame extends JFrame {
      * @param tray the tray panel containing the bars
      * @param shipIndex INdex of the ship (0-4)
      */
+    //Alexis
     private void sinkTrayBar(JPanel tray, int shipIndex) {
         int found = 0;
         for (Component c : tray.getComponents()) {
@@ -361,6 +387,8 @@ public class GameFrame extends JFrame {
      * Paints a player own board, showing their ships (#) and mines (*).
      * Called at start and after each turn in PvP when it's the players respective turn
      */
+
+    //Marco
     private void paintOwnBoard(Board board, JButton[][] buttons) {
         for (int r = 0; r < 10; r++) {
             for (int c = 0; c < 10; c++) {
@@ -386,6 +414,7 @@ public class GameFrame extends JFrame {
      * @param col Column index (0-9)
      * @param result Shotresult from Board.shoot()
      */
+    //Marco
     private void applyShot(Board targetBoard, JButton[][] buttons,
                            int row, int col, ShotResult result) {
         JButton btn = buttons[row][col];
@@ -414,6 +443,7 @@ public class GameFrame extends JFrame {
     /**
      * Mark all cells belonging to a sunk ship with dark red background.
      */
+    //Alexis
     private void markSunk(Board board, JButton[][] buttons, Ship ship) {
         for (int r = 0; r < 10; r++)
             for (int c = 0; c < 10; c++)
@@ -427,6 +457,7 @@ public class GameFrame extends JFrame {
     /**
      * Reveals all ship positions (for endgame) by showing '#' on the unshot cells.
      */
+    //Alexis
     private void revealBoard(Board board, JButton[][] buttons) {
         for (int r = 0; r < 10; r++)
             for (int c = 0; c < 10; c++)
@@ -440,6 +471,7 @@ public class GameFrame extends JFrame {
     /**
      * Hides the opppenent's board by clearing unshot cells (used during turn pass in PvP)
      */
+    //Marco
     private void hideBoard(JButton[][] buttons, Board board) {
         for (int r = 0; r < 10; r++)
             for (int c = 0; c < 10; c++)
@@ -453,6 +485,7 @@ public class GameFrame extends JFrame {
      * Finds the index (order in board.ships list) of a given ship
      * skipping already sunk ships to align with health bar order.
      */
+    //Matteo
     private int countSunkIndex(Board board, Ship ship) {
         int idx = 0;
         for (Ship s : board.ships) {
@@ -469,6 +502,7 @@ public class GameFrame extends JFrame {
      * @param targetButtons Button grid of the attacker's board
      * @param hits List of coordinates [row,col] to hit
      */
+    //Marco
     private void applyCounterHits(Board targetBoard, JButton[][] targetButtons, List<int[]> hits) {
         for (int[] coord : hits) {
             int r = coord[0], c = coord[1];
@@ -489,6 +523,7 @@ public class GameFrame extends JFrame {
      * Click handler using direct board object comparison.
      * This is the corrected method – it uses board references, not IDs.
      */
+    //Matteo
     private void onPlayerClick(int row, int col, Board clickedBoard) {
         if (gameOver) return;
 
@@ -581,6 +616,7 @@ public class GameFrame extends JFrame {
      * Bots turn in PvB
      * The bot AI selects coordinates, shoots and updates UI
      */
+    //Matteo
     private void botTurn() {
         ShotResult result = botAI.takeTurn();
         int[] shot = botAI.getLastShot();
@@ -621,6 +657,7 @@ public class GameFrame extends JFrame {
      * Shows a dialog to pass the turn in PvP mode
      * The dialog hides the board of the current player until they click "Ready"
      */
+    //Alexis
     private void showPassDialog() {
         String nextName = player1Turn ? name1 : name2;
         Color nextCol = player1Turn ? Theme.GREEN : Theme.RED;
@@ -666,6 +703,7 @@ public class GameFrame extends JFrame {
      * Ends the game, reveals all the ships and give a replay option for the user
      * @param headline headline Winner message
      */
+    //Marco
     private void endGame(String headline) {
         gameOver = true;
         revealBoard(board1, btn1);
@@ -692,6 +730,7 @@ public class GameFrame extends JFrame {
      * @param msg Message text
      * @param c Color (used for HTML styling via Theme's logArea)
      */
+    //Marco
     private void log(String msg, Color c) {
         logArea.append(msg + "\n");
         logArea.setCaretPosition(logArea.getDocument().getLength());

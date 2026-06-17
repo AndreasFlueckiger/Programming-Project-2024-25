@@ -41,7 +41,7 @@ public class Board {
     }
 
     // ── Ship placement ────────────────────────────────────────────────────────
-
+    //Alexis and Matteo
     public void placeFleetRandomly(int[] shipLengths, Random random) {
         for (int i = 0; i < shipLengths.length; i++) {
             placeSingleShipRandomly(shipLengths[i], SHIP_NAMES[i], random);
@@ -89,7 +89,7 @@ public class Board {
     }
 
     // ── Mine placement ────────────────────────────────────────────────────────
-
+    //Marco
     public boolean placeMine(int row, int col) {
         if (minesPlaced >= MINE_COUNT)           return false;
         if (grid[row][col].ship    != null)      return false;
@@ -128,6 +128,7 @@ public class Board {
      * When a mine triggers, the attacker will later call consumeCounterHits()
      * to retrieve the coordinates that must be hit on the attacker's own board.
      */
+    //Alexis
     public ShotResult shoot(int row, int col) {
         Cell cell = grid[row][col];
         if (cell.wasShot) return ShotResult.ALREADY_SHOT;
@@ -153,6 +154,7 @@ public class Board {
      * Recursively detonates a mine and all adjacent mines.
      * Each detonated mine adds 3 random counter‑hits (to be applied on attacker's board).
      */
+    //Marco
     private void detonateMine(int row, int col) {
         addRandomCounterHits(3);   // this mine damages the attacker
 
@@ -176,6 +178,7 @@ public class Board {
      * Adds `count` random unshot cells from THIS board to pendingCounterHits.
      * These represent the damage inflicted on the attacker.
      */
+    //Alexis
     private void addRandomCounterHits(int count) {
         int added = 0;
         int attempts = 0;

@@ -9,6 +9,8 @@ import java.util.Random;
  * Target AI for Player vs Bot mode.
  * Returns the ShotResult of each shot and provides the last shot coordinates.
  */
+
+//Matteo and Alexis
 public class BotAI {
 
     private final Board target;

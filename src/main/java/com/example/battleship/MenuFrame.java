@@ -1,9 +1,32 @@
 package com.example.battleship;
 
-import javax.swing.*;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.*;
 
 /**
  * Main menu — two screens:
@@ -35,7 +58,7 @@ public class MenuFrame extends JFrame {
     }
 
     // ── Splash screen ─────────────────────────────────────────────────────────
-
+    //Matteo
     private JPanel buildSplash() {
         // Custom panel that draws a subtle grid texture behind everything
         JPanel p = new JPanel(new GridBagLayout()) {
@@ -79,6 +102,7 @@ public class MenuFrame extends JFrame {
     /**
      * The green-bordered square PLAY button with a triangle icon.
      */
+    //Matteo
     private JButton buildPlayButton() {
         JButton btn = new JButton("▶") {
             @Override protected void paintComponent(Graphics g) {
@@ -107,6 +131,7 @@ public class MenuFrame extends JFrame {
     }
 
     /** Simple SVG-style ship silhouettes using coloured rectangles. */
+    //Alexis
     private JPanel buildShipSilhouettes() {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 14, 0));
         p.setOpaque(false);
@@ -139,7 +164,7 @@ public class MenuFrame extends JFrame {
     }
 
     // ── Mode select screen ─────────────────────────────────────
-
+    //Alexis
     private JPanel buildModeSelect() {
         JPanel p = new JPanel(new BorderLayout(0, 0)) {
             @Override protected void paintComponent(Graphics g) {
@@ -188,6 +213,7 @@ public class MenuFrame extends JFrame {
      * Styled like the Classic/Advanced cards in Image 4:
      * dark background, coloured border, icon area, label below.
      */
+    //Matteo
     private JPanel buildModeCard(String title, String sub, String desc,
                                   Color accent, GameMode mode) {
         JPanel card = new JPanel(new GridBagLayout()) {
@@ -263,6 +289,7 @@ public class MenuFrame extends JFrame {
      * Bot mode: crosshair target circles.
      * PvP mode: two silhouettes facing each other.
      */
+    //Alexis
     private JPanel buildCardIcon(Color accent, GameMode mode) {
         JPanel icon = new JPanel() {
             @Override protected void paintComponent(Graphics g) {
@@ -298,7 +325,7 @@ public class MenuFrame extends JFrame {
         icon.setOpaque(false);
         return icon;
     }
-
+    //Matteo
     private void drawShipIcon(Graphics2D g2, int x, int y, Color c, boolean flip) {
         g2.setColor(c);
         int dir = flip ? -1 : 1;
@@ -315,6 +342,7 @@ public class MenuFrame extends JFrame {
     // ── Shared background grid ────────────────────────────────────────────────
 
     /** Draws the faint green grid that appears on every screen background. */
+    //Alexis
     private static void drawGrid(Graphics g, int w, int h) {
         g.setColor(new Color(0, 60, 0, 40));
         for (int x = 0; x < w; x += 40) g.drawLine(x, 0, x, h);
